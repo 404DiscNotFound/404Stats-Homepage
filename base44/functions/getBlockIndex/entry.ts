@@ -49,6 +49,7 @@ Deno.serve(async (req) => {
           uuid, name: p.name, mined: p.mined, placed: p.placed, total: p.mined + p.placed
         })).sort((a, b) => b.total - a.total);
         const top = playerList[0] || null;
+        const topPlayers = playerList.slice(0, 5);
         return {
           material: m.material,
           mined: m.mined,
@@ -57,6 +58,7 @@ Deno.serve(async (req) => {
           playerCount: playerList.length,
           playerPct: uniquePlayers.size > 0 ? Math.round((playerList.length / uniquePlayers.size) * 100) : 0,
           topContributor: top ? { uuid: top.uuid, name: top.name, total: top.total, mined: top.mined, placed: top.placed } : null,
+          topPlayers,
           sharePct: grandTotal > 0 ? Math.round(((m.mined + m.placed) / grandTotal) * 100) : 0
         };
       })

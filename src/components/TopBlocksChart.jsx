@@ -1,8 +1,9 @@
 import { useRef, useState } from "react";
 import BlockIcon from "./BlockIcon";
+import BlockPlayersTooltip from "./BlockPlayersTooltip";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
-export default function TopBlocksChart({ materials }) {
+export default function TopBlocksChart({ materials, mode = "player" }) {
   const tooltipRef = useRef(null);
   const [active, setActive] = useState(null);
 
@@ -13,8 +14,8 @@ export default function TopBlocksChart({ materials }) {
 
   const positionTooltip = (clientX, clientY) => {
     if (!tooltipRef.current) return;
-    const tw = 180;
-    const th = 100;
+    const tw = mode === "server" ? 240 : 180;
+    const th = mode === "server" ? 170 : 100;
     const x = Math.min(clientX + 14, window.innerWidth - tw - 8);
     const y = clientY - th - 10 < 8 ? clientY + 16 : clientY - th - 10;
     tooltipRef.current.style.left = `${x}px`;
@@ -61,39 +62,41 @@ export default function TopBlocksChart({ materials }) {
         ))}
       </div>
 
-      {/* Floating tooltip — player share vs server */}
-      <div
-        ref={tooltipRef}
-        className="pointer-events-none fixed z-50 rounded-lg border border-[#00F5FF]/30 bg-[#0A0A0F] px-3 py-2 shadow-[0_0_15px_rgba(0,245,255,0.1)]"
-        style={{ display: active ? "block" : "none", minWidth: "170px" }}
-      >
-        {active && (
-          <div className="whitespace-nowrap">
-            <p className="text-[10px] font-bold text-white">{formatMaterial(active.material)}</p>
-            <div className="mt-1 space-y-0.5 text-[10px]">
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-gray-500">Your share</span>
-                <span className="font-black text-[#00F5FF]">{active.sharePct}%</span>
+      {mode === "server" ? (
+        <BlockPlayersTooltip tooltipRef={tooltipRef} active={active} metric="total" />
+      ) : (
+        <div
+          ref={tooltipRef}
+          className="pointer-events-none fixed z-50 rounded-lg border border-[#00F5FF]/30 bg-[#0A0A0F] px-3 py-2 shadow-[0_0_15px_rgba(0,245,255,0.1)]"
+          style={{ display: active ? "block" : "none", minWidth: "170px" }}
+        >
+          {active && (
+            <div className="whitespace-nowrap">
+              <p className="text-[10px] font-bold text-white">{formatMaterial(active.material)}</p>
+              <div className="mt-1 space-y-0.5 text-[10px]">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-gray-500">Your share</span>
+                  <span className="font-black text-[#00F5FF]">{active.sharePct}%</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-gray-500">You</span>
+                  <span className="text-white">{formatNumber(active.total)}</span>
+                </div>
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-gray-500">Server total</span>
+                  <span className="text-gray-400">{formatNumber(active.serverTotal)}</span>
+                </div>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-gray-500">You</span>
-                <span className="text-white">{formatNumber(active.total)}</span>
-              </div>
-              <div className="flex items-center justify-between gap-3">
-                <span className="text-gray-500">Server total</span>
-                <span className="text-gray-400">{formatNumber(active.serverTotal)}</span>
+              <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#111118]">
+                <div
+                  className="bg-gradient-to-r from-[#00F5FF] to-[#FF0055]"
+                  style={{ width: `${active.sharePct}%`, boxShadow: "0 0 6px rgba(0,245,255,0.4)" }}
+                />
               </div>
             </div>
-            {/* Share bar */}
-            <div className="mt-1.5 h-1.5 overflow-hidden rounded-full bg-[#111118]">
-              <div
-                className="bg-gradient-to-r from-[#00F5FF] to-[#FF0055]"
-                style={{ width: `${active.sharePct}%`, boxShadow: "0 0 6px rgba(0,245,255,0.4)" }}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
     </>
   );
 }

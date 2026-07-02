@@ -141,7 +141,7 @@ export default function ServerDashboard() {
               <Gem className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
               Top 25 Blocks
             </h2>
-            <TopBlocksChart materials={data.topMaterials} />
+            <TopBlocksChart materials={data.topMaterials} mode="server" />
           </div>
 
           {/* Leaderboards */}

@@ -33,10 +33,15 @@ Deno.serve(async (req) => {
       totalPlaced += (stat.placed || 0);
 
       if (!materialMap[stat.material]) {
-        materialMap[stat.material] = { material: stat.material, mined: 0, placed: 0 };
+        materialMap[stat.material] = { material: stat.material, mined: 0, placed: 0, players: {} };
       }
       materialMap[stat.material].mined += (stat.mined || 0);
       materialMap[stat.material].placed += (stat.placed || 0);
+      if (!materialMap[stat.material].players[stat.uuid]) {
+        materialMap[stat.material].players[stat.uuid] = { name: stat.player_name, mined: 0, placed: 0 };
+      }
+      materialMap[stat.material].players[stat.uuid].mined += (stat.mined || 0);
+      materialMap[stat.material].players[stat.uuid].placed += (stat.placed || 0);
 
       if (!playerMap[stat.uuid]) {
         playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0 };
@@ -46,7 +51,16 @@ Deno.serve(async (req) => {
     }
 
     const topMaterials = Object.values(materialMap)
-      .map(m => ({ ...m, total: m.mined + m.placed }))
+      .map(m => {
+        const total = m.mined + m.placed;
+        const topPlayers = Object.entries(m.players)
+          .map(([uuid, p]) => ({
+            uuid, name: p.name, mined: p.mined, placed: p.placed, total: p.mined + p.placed
+          }))
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5);
+        return { material: m.material, mined: m.mined, placed: m.placed, total, topPlayers };
+      })
       .sort((a, b) => b.total - a.total)
       .slice(0, 25);
 

@@ -1,11 +1,12 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Search, ArrowLeft } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
 import BlockIcon from "@/components/BlockIcon";
 import TopBlocksCard from "@/components/TopBlocksCard";
+import BlockPlayersTooltip from "@/components/BlockPlayersTooltip";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const SORT_TABS = [
@@ -21,6 +22,25 @@ export default function BlockIndex() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("total");
+  const tooltipRef = useRef(null);
+  const [hoverBlock, setHoverBlock] = useState(null);
+
+  const positionTooltip = (clientX, clientY) => {
+    if (!tooltipRef.current) return;
+    const tw = 240;
+    const th = 170;
+    const x = Math.min(clientX + 14, window.innerWidth - tw - 8);
+    const y = clientY - th - 10 < 8 ? clientY + 16 : clientY - th - 10;
+    tooltipRef.current.style.left = `${x}px`;
+    tooltipRef.current.style.top = `${y}px`;
+  };
+
+  const handleBlockHover = (e, m) => {
+    positionTooltip(e.clientX, e.clientY);
+    if (!hoverBlock || hoverBlock.material !== m.material) {
+      setHoverBlock(m);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -133,7 +153,7 @@ export default function BlockIndex() {
               </p>
             </div>
           ) : (
-            <div className="space-y-1.5">
+            <div className="space-y-1.5" onMouseLeave={() => setHoverBlock(null)}>
               {materials.map((m, i) => {
                 const val = m[sort] || 0;
                 const minedPct = sort === "total" ? (m.mined / maxValue) * 100 : 0;
@@ -144,6 +164,7 @@ export default function BlockIndex() {
                   <div
                     key={i}
                     className="group flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[#0F0F18] sm:gap-3 sm:px-3 sm:py-2"
+                    onMouseMove={(e) => handleBlockHover(e, m)}
                   >
                     <span className="w-5 shrink-0 text-right text-[10px] font-bold text-gray-700 sm:w-8 sm:text-xs">
                       {i + 1}
@@ -201,9 +222,11 @@ export default function BlockIndex() {
                 );
               })}
             </div>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
+            )}
+
+            <BlockPlayersTooltip tooltipRef={tooltipRef} active={hoverBlock} metric={sort} />
+            </div>
+            </div>
+            </div>
+            );
+            }
