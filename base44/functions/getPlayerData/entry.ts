@@ -127,22 +127,40 @@ Deno.serve(async (req) => {
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
 
-    // Compute all-time totals from BlockStat
-    const allTimePlayer = { mined: 0, placed: 0, materials: {} };
-    const materialSet = new Set();
+    // Compute all-time totals per mode (survival vs creative)
+    const allTimeSurvival = { mined: 0, placed: 0, materials: {} };
+    const allTimeCreative = { mined: 0, placed: 0, materials: {} };
+    const materialSetS = new Set();
+    const materialSetC = new Set();
     for (const stat of allTimeStats) {
       if (stat.player_name.toLowerCase() !== playerName.toLowerCase()) continue;
       const gm = stat.game_mode || 'SURVIVAL';
-      if (gameMode !== 'ALL' && gm !== gameMode) continue;
-      allTimePlayer.mined += (stat.mined || 0);
-      allTimePlayer.placed += (stat.placed || 0);
-      materialSet.add(stat.material);
-      if (!allTimePlayer.materials[stat.material]) allTimePlayer.materials[stat.material] = { mined: 0, placed: 0 };
-      allTimePlayer.materials[stat.material].mined += (stat.mined || 0);
-      allTimePlayer.materials[stat.material].placed += (stat.placed || 0);
+      const isCreative = gm === 'CREATIVE';
+      const bucket = isCreative ? allTimeCreative : allTimeSurvival;
+      const matSet = isCreative ? materialSetC : materialSetS;
+      bucket.mined += (stat.mined || 0);
+      bucket.placed += (stat.placed || 0);
+      matSet.add(stat.material);
+      if (!bucket.materials[stat.material]) bucket.materials[stat.material] = { mined: 0, placed: 0 };
+      bucket.materials[stat.material].mined += (stat.mined || 0);
+      bucket.materials[stat.material].placed += (stat.placed || 0);
     }
 
-    const allTimeTotal = allTimePlayer.mined + allTimePlayer.placed;
+    // For rare blocks — combine based on game mode filter
+    const allTimePlayer = gameMode === 'CREATIVE' ? allTimeCreative
+      : gameMode === 'SURVIVAL' ? allTimeSurvival
+      : {
+          mined: allTimeSurvival.mined + allTimeCreative.mined,
+          placed: allTimeSurvival.placed + allTimeCreative.placed,
+          materials: { ...allTimeSurvival.materials },
+        };
+    if (gameMode === 'ALL') {
+      for (const [mat, data] of Object.entries(allTimeCreative.materials)) {
+        if (!allTimePlayer.materials[mat]) allTimePlayer.materials[mat] = { mined: 0, placed: 0 };
+        allTimePlayer.materials[mat].mined += data.mined;
+        allTimePlayer.materials[mat].placed += data.placed;
+      }
+    }
     const hasMat = (names) => names.some(n => allTimePlayer.materials[n]);
 
     // Fetch daily stats for this player to compute achievement unlock dates
@@ -150,73 +168,153 @@ Deno.serve(async (req) => {
       { server_id: server.id, uuid: targetPlayer.uuid }, 'date', 10000
     );
 
-    // Walk through daily stats to find when each milestone was first reached
-    const milestones = {};
-    let cumMined = 0, cumPlaced = 0, cumTotal = 0;
-    const materialFirstSeen = {};
-    const seenMats = new Set();
+    // Track milestones per mode separately
+    const milestonesS = {};
+    const milestonesC = {};
+    let cumMinedS = 0, cumPlacedS = 0, cumTotalS = 0;
+    let cumMinedC = 0, cumPlacedC = 0, cumTotalC = 0;
+    const materialFirstSeenS = {};
+    const materialFirstSeenC = {};
+    const seenMatsS = new Set();
+    const seenMatsC = new Set();
 
     for (const ds of playerDaily) {
       const dsGm = ds.game_mode || 'SURVIVAL';
-      if (gameMode !== 'ALL' && dsGm !== gameMode) continue;
-      cumMined += ds.mined || 0;
-      cumPlaced += ds.placed || 0;
-      cumTotal = cumMined + cumPlaced;
+      const isCreative = dsGm === 'CREATIVE';
+      const ms = isCreative ? milestonesC : milestonesS;
+      const seenMats = isCreative ? seenMatsC : seenMatsS;
+      const materialFirstSeen = isCreative ? materialFirstSeenC : materialFirstSeenS;
       const ts = ds.created_date || ds.date;
+
+      if (isCreative) {
+        cumMinedC += ds.mined || 0;
+        cumPlacedC += ds.placed || 0;
+        cumTotalC = cumMinedC + cumPlacedC;
+      } else {
+        cumMinedS += ds.mined || 0;
+        cumPlacedS += ds.placed || 0;
+        cumTotalS = cumMinedS + cumPlacedS;
+      }
+      const cumMined = isCreative ? cumMinedC : cumMinedS;
+      const cumPlaced = isCreative ? cumPlacedC : cumPlacedS;
+      const cumTotal = isCreative ? cumTotalC : cumTotalS;
 
       if (!seenMats.has(ds.material)) {
         seenMats.add(ds.material);
-        milestones[`variety_${seenMats.size}`] = ts;
+        ms[`variety_${seenMats.size}`] = ts;
       }
       if (!materialFirstSeen[ds.material]) materialFirstSeen[ds.material] = ts;
 
-      if (cumTotal >= 1 && !milestones['first_block']) milestones['first_block'] = ts;
+      if (cumTotal >= 1 && !ms['first_block']) ms['first_block'] = ts;
 
-      const checks = [
-        ['miner_100', cumMined, 100], ['miner_1k', cumMined, 1000], ['miner_10k', cumMined, 10000], ['miner_100k', cumMined, 100000],
-        ['builder_100', cumPlaced, 100], ['builder_1k', cumPlaced, 1000], ['builder_10k', cumPlaced, 10000], ['builder_100k', cumPlaced, 100000],
-        ['total_1k', cumTotal, 1000], ['total_10k', cumTotal, 10000], ['total_100k', cumTotal, 100000], ['total_1m', cumTotal, 1000000],
-      ];
-      for (const [id, val, thresh] of checks) {
-        if (val >= thresh && !milestones[id]) milestones[id] = ts;
+      if (!isCreative) {
+        const checks = [
+          ['miner_100', cumMined, 100], ['miner_1k', cumMined, 1000], ['miner_10k', cumMined, 10000], ['miner_100k', cumMined, 100000],
+          ['builder_100', cumPlaced, 100], ['builder_1k', cumPlaced, 1000], ['builder_10k', cumPlaced, 10000], ['builder_100k', cumPlaced, 100000],
+          ['total_1k', cumTotal, 1000], ['total_10k', cumTotal, 10000], ['total_100k', cumTotal, 100000], ['total_1m', cumTotal, 1000000],
+        ];
+        for (const [id, val, thresh] of checks) {
+          if (val >= thresh && !ms[id]) ms[id] = ts;
+        }
+      } else {
+        const checks = [
+          ['cre_builder_1k', cumPlaced, 1000], ['cre_builder_10k', cumPlaced, 10000], ['cre_builder_50k', cumPlaced, 50000], ['cre_builder_100k', cumPlaced, 100000], ['cre_builder_500k', cumPlaced, 500000],
+          ['cre_total_10k', cumTotal, 10000], ['cre_total_100k', cumTotal, 100000], ['cre_total_500k', cumTotal, 500000], ['cre_total_1m', cumTotal, 1000000],
+        ];
+        for (const [id, val, thresh] of checks) {
+          if (val >= thresh && !ms[id]) ms[id] = ts;
+        }
       }
     }
 
-    // Material-based achievement dates
-    const matAchievements = {
+    // Survival material-based achievement dates
+    const survivalMatAch = {
       diamond: ['DIAMOND_ORE', 'DEEPSLATE_DIAMOND_ORE'],
       emerald: ['EMERALD_ORE', 'DEEPSLATE_EMERALD_ORE'],
       netherite: ['ANCIENT_DEBRIS'],
       gold: ['GOLD_ORE', 'DEEPSLATE_GOLD_ORE'],
     };
-    for (const [id, mats] of Object.entries(matAchievements)) {
+    for (const [id, mats] of Object.entries(survivalMatAch)) {
       for (const m of mats) {
-        if (materialFirstSeen[m]) { milestones[id] = materialFirstSeen[m]; break; }
+        if (materialFirstSeenS[m]) { milestonesS[id] = materialFirstSeenS[m]; break; }
       }
     }
 
-    const achievements = [
-      { id: 'first_block', name: 'Erster Block', desc: 'Interagiere mit 1 Block', icon: '🧱', unlocked: allTimeTotal >= 1, unlocked_date: milestones['first_block'] || null },
-      { id: 'miner_100', name: 'Steinbrucharbeiter', desc: '100 Blöcke abgebaut', icon: '⛏', unlocked: allTimePlayer.mined >= 100, unlocked_date: milestones['miner_100'] || null },
-      { id: 'miner_1k', name: 'Bergmann', desc: '1.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimePlayer.mined >= 1000, unlocked_date: milestones['miner_1k'] || null },
-      { id: 'miner_10k', name: 'Meisterbergmann', desc: '10.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimePlayer.mined >= 10000, unlocked_date: milestones['miner_10k'] || null },
-      { id: 'miner_100k', name: 'Legendärer Bergmann', desc: '100.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimePlayer.mined >= 100000, unlocked_date: milestones['miner_100k'] || null },
-      { id: 'builder_100', name: 'Baumeister', desc: '100 Blöcke gesetzt', icon: '🏗', unlocked: allTimePlayer.placed >= 100, unlocked_date: milestones['builder_100'] || null },
-      { id: 'builder_1k', name: 'Architekt', desc: '1.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimePlayer.placed >= 1000, unlocked_date: milestones['builder_1k'] || null },
-      { id: 'builder_10k', name: 'Master Builder', desc: '10.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimePlayer.placed >= 10000, unlocked_date: milestones['builder_10k'] || null },
-      { id: 'builder_100k', name: 'Legendärer Builder', desc: '100.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimePlayer.placed >= 100000, unlocked_date: milestones['builder_100k'] || null },
-      { id: 'total_1k', name: 'Fleißig', desc: '1.000 Blöcke gesamt', icon: '📊', unlocked: allTimeTotal >= 1000, unlocked_date: milestones['total_1k'] || null },
-      { id: 'total_10k', name: 'Aktiv', desc: '10.000 Blöcke gesamt', icon: '📊', unlocked: allTimeTotal >= 10000, unlocked_date: milestones['total_10k'] || null },
-      { id: 'total_100k', name: 'Besessen', desc: '100.000 Blöcke gesamt', icon: '🔥', unlocked: allTimeTotal >= 100000, unlocked_date: milestones['total_100k'] || null },
-      { id: 'total_1m', name: 'Maschine', desc: '1.000.000 Blöcke gesamt', icon: '🤖', unlocked: allTimeTotal >= 1000000, unlocked_date: milestones['total_1m'] || null },
-      { id: 'diamond', name: 'Diamantenjäger', desc: 'Diamanterz abgebaut', icon: '💎', unlocked: hasMat(['DIAMOND_ORE', 'DEEPSLATE_DIAMOND_ORE']), unlocked_date: milestones['diamond'] || null },
-      { id: 'emerald', name: 'Smaragdjäger', desc: 'Smaragderz abgebaut', icon: '💚', unlocked: hasMat(['EMERALD_ORE', 'DEEPSLATE_EMERALD_ORE']), unlocked_date: milestones['emerald'] || null },
-      { id: 'netherite', name: 'Netheritjäger', desc: 'Ancient Debris abgebaut', icon: '🔥', unlocked: hasMat(['ANCIENT_DEBRIS']), unlocked_date: milestones['netherite'] || null },
-      { id: 'gold', name: 'Goldsucher', desc: 'Golderz abgebaut', icon: '🟡', unlocked: hasMat(['GOLD_ORE', 'DEEPSLATE_GOLD_ORE']), unlocked_date: milestones['gold'] || null },
-      { id: 'variety_10', name: 'Sammler', desc: '10 verschiedene Blöcke', icon: '🌈', unlocked: materialSet.size >= 10, unlocked_date: milestones['variety_10'] || null },
-      { id: 'variety_50', name: 'Allrounder', desc: '50 verschiedene Blöcke', icon: '🎨', unlocked: materialSet.size >= 50, unlocked_date: milestones['variety_50'] || null },
-      { id: 'variety_100', name: 'Enzyklopädie', desc: '100 verschiedene Blöcke', icon: '📚', unlocked: materialSet.size >= 100, unlocked_date: milestones['variety_100'] || null },
-    ];
+    // Creative special-block achievement dates
+    const creativeMatAch = {
+      cre_beacon: ['BEACON'],
+      cre_conduit: ['CONDUIT'],
+      cre_dragon_egg: ['DRAGON_EGG'],
+      cre_spawner: ['SPAWNER'],
+      cre_ender_chest: ['ENDER_CHEST'],
+    };
+    for (const [id, mats] of Object.entries(creativeMatAch)) {
+      for (const m of mats) {
+        if (materialFirstSeenC[m]) { milestonesC[id] = materialFirstSeenC[m]; break; }
+      }
+    }
+
+    const buildSurvivalAchievements = () => {
+      const total = allTimeSurvival.mined + allTimeSurvival.placed;
+      const hasMatS = (names) => names.some(n => allTimeSurvival.materials[n]);
+      return [
+        { id: 'first_block', name: 'Erster Block', desc: 'Interagiere mit 1 Block', icon: '🧱', unlocked: total >= 1, unlocked_date: milestonesS['first_block'] || null },
+        { id: 'miner_100', name: 'Steinbrucharbeiter', desc: '100 Blöcke abgebaut', icon: '⛏', unlocked: allTimeSurvival.mined >= 100, unlocked_date: milestonesS['miner_100'] || null },
+        { id: 'miner_1k', name: 'Bergmann', desc: '1.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimeSurvival.mined >= 1000, unlocked_date: milestonesS['miner_1k'] || null },
+        { id: 'miner_10k', name: 'Meisterbergmann', desc: '10.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimeSurvival.mined >= 10000, unlocked_date: milestonesS['miner_10k'] || null },
+        { id: 'miner_100k', name: 'Legendärer Bergmann', desc: '100.000 Blöcke abgebaut', icon: '⛏', unlocked: allTimeSurvival.mined >= 100000, unlocked_date: milestonesS['miner_100k'] || null },
+        { id: 'builder_100', name: 'Baumeister', desc: '100 Blöcke gesetzt', icon: '🏗', unlocked: allTimeSurvival.placed >= 100, unlocked_date: milestonesS['builder_100'] || null },
+        { id: 'builder_1k', name: 'Architekt', desc: '1.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimeSurvival.placed >= 1000, unlocked_date: milestonesS['builder_1k'] || null },
+        { id: 'builder_10k', name: 'Master Builder', desc: '10.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimeSurvival.placed >= 10000, unlocked_date: milestonesS['builder_10k'] || null },
+        { id: 'builder_100k', name: 'Legendärer Builder', desc: '100.000 Blöcke gesetzt', icon: '🏗', unlocked: allTimeSurvival.placed >= 100000, unlocked_date: milestonesS['builder_100k'] || null },
+        { id: 'total_1k', name: 'Fleißig', desc: '1.000 Blöcke gesamt', icon: '📊', unlocked: total >= 1000, unlocked_date: milestonesS['total_1k'] || null },
+        { id: 'total_10k', name: 'Aktiv', desc: '10.000 Blöcke gesamt', icon: '📊', unlocked: total >= 10000, unlocked_date: milestonesS['total_10k'] || null },
+        { id: 'total_100k', name: 'Besessen', desc: '100.000 Blöcke gesamt', icon: '🔥', unlocked: total >= 100000, unlocked_date: milestonesS['total_100k'] || null },
+        { id: 'total_1m', name: 'Maschine', desc: '1.000.000 Blöcke gesamt', icon: '🤖', unlocked: total >= 1000000, unlocked_date: milestonesS['total_1m'] || null },
+        { id: 'diamond', name: 'Diamantenjäger', desc: 'Diamanterz abgebaut', icon: '💎', unlocked: hasMatS(['DIAMOND_ORE', 'DEEPSLATE_DIAMOND_ORE']), unlocked_date: milestonesS['diamond'] || null },
+        { id: 'emerald', name: 'Smaragdjäger', desc: 'Smaragderz abgebaut', icon: '💚', unlocked: hasMatS(['EMERALD_ORE', 'DEEPSLATE_EMERALD_ORE']), unlocked_date: milestonesS['emerald'] || null },
+        { id: 'netherite', name: 'Netheritjäger', desc: 'Ancient Debris abgebaut', icon: '🔥', unlocked: hasMatS(['ANCIENT_DEBRIS']), unlocked_date: milestonesS['netherite'] || null },
+        { id: 'gold', name: 'Goldsucher', desc: 'Golderz abgebaut', icon: '🟡', unlocked: hasMatS(['GOLD_ORE', 'DEEPSLATE_GOLD_ORE']), unlocked_date: milestonesS['gold'] || null },
+        { id: 'variety_10', name: 'Sammler', desc: '10 verschiedene Blöcke', icon: '🌈', unlocked: materialSetS.size >= 10, unlocked_date: milestonesS['variety_10'] || null },
+        { id: 'variety_50', name: 'Allrounder', desc: '50 verschiedene Blöcke', icon: '🎨', unlocked: materialSetS.size >= 50, unlocked_date: milestonesS['variety_50'] || null },
+        { id: 'variety_100', name: 'Enzyklopädie', desc: '100 verschiedene Blöcke', icon: '📚', unlocked: materialSetS.size >= 100, unlocked_date: milestonesS['variety_100'] || null },
+      ];
+    };
+
+    const buildCreativeAchievements = () => {
+      const total = allTimeCreative.mined + allTimeCreative.placed;
+      const hasMatC = (names) => names.some(n => allTimeCreative.materials[n]);
+      return [
+        { id: 'cre_first_block', name: 'Erster Kreativblock', desc: '1 Block im Kreativmodus', icon: '🎨', unlocked: total >= 1, unlocked_date: milestonesC['first_block'] || null },
+        { id: 'cre_builder_1k', name: 'Erstes Werk', desc: '1.000 Blöcke platziert', icon: '🏗', unlocked: allTimeCreative.placed >= 1000, unlocked_date: milestonesC['cre_builder_1k'] || null },
+        { id: 'cre_builder_10k', name: 'Baumeister', desc: '10.000 Blöcke platziert', icon: '🏗', unlocked: allTimeCreative.placed >= 10000, unlocked_date: milestonesC['cre_builder_10k'] || null },
+        { id: 'cre_builder_50k', name: 'Visionär', desc: '50.000 Blöcke platziert', icon: '🎨', unlocked: allTimeCreative.placed >= 50000, unlocked_date: milestonesC['cre_builder_50k'] || null },
+        { id: 'cre_builder_100k', name: 'Monumental', desc: '100.000 Blöcke platziert', icon: '🏛', unlocked: allTimeCreative.placed >= 100000, unlocked_date: milestonesC['cre_builder_100k'] || null },
+        { id: 'cre_builder_500k', name: 'Weltenschöpfer', desc: '500.000 Blöcke platziert', icon: '🌍', unlocked: allTimeCreative.placed >= 500000, unlocked_date: milestonesC['cre_builder_500k'] || null },
+        { id: 'cre_total_10k', name: 'Schaffenskraft', desc: '10.000 Blöcke gesamt', icon: '📊', unlocked: total >= 10000, unlocked_date: milestonesC['cre_total_10k'] || null },
+        { id: 'cre_total_100k', name: 'Masterpiece', desc: '100.000 Blöcke gesamt', icon: '✨', unlocked: total >= 100000, unlocked_date: milestonesC['cre_total_100k'] || null },
+        { id: 'cre_total_500k', name: 'Götterwerk', desc: '500.000 Blöcke gesamt', icon: '⚡', unlocked: total >= 500000, unlocked_date: milestonesC['cre_total_500k'] || null },
+        { id: 'cre_total_1m', name: 'Universum', desc: '1.000.000 Blöcke gesamt', icon: '🌌', unlocked: total >= 1000000, unlocked_date: milestonesC['cre_total_1m'] || null },
+        { id: 'cre_variety_25', name: 'Künstler', desc: '25 verschiedene Blöcke', icon: '🎨', unlocked: materialSetC.size >= 25, unlocked_date: milestonesC['variety_25'] || null },
+        { id: 'cre_variety_50', name: 'Kunstvolles Werk', desc: '50 verschiedene Blöcke', icon: '🖼', unlocked: materialSetC.size >= 50, unlocked_date: milestonesC['variety_50'] || null },
+        { id: 'cre_variety_100', name: 'Block-Galerie', desc: '100 verschiedene Blöcke', icon: '🏛', unlocked: materialSetC.size >= 100, unlocked_date: milestonesC['variety_100'] || null },
+        { id: 'cre_variety_200', name: 'Block-Universum', desc: '200 verschiedene Blöcke', icon: '🌈', unlocked: materialSetC.size >= 200, unlocked_date: milestonesC['variety_200'] || null },
+        { id: 'cre_beacon', name: 'Leuchtfeuer', desc: 'Beacon platziert', icon: '🔆', unlocked: hasMatC(['BEACON']), unlocked_date: milestonesC['cre_beacon'] || null },
+        { id: 'cre_conduit', name: 'Meeressäule', desc: 'Conduit platziert', icon: '🌊', unlocked: hasMatC(['CONDUIT']), unlocked_date: milestonesC['cre_conduit'] || null },
+        { id: 'cre_dragon_egg', name: 'Drachenhort', desc: 'Drachenei platziert', icon: '🐉', unlocked: hasMatC(['DRAGON_EGG']), unlocked_date: milestonesC['cre_dragon_egg'] || null },
+        { id: 'cre_spawner', name: 'Spawner-Meister', desc: 'Spawner platziert', icon: '🕸', unlocked: hasMatC(['SPAWNER']), unlocked_date: milestonesC['cre_spawner'] || null },
+        { id: 'cre_ender_chest', name: 'Dimensionskammer', desc: 'Endertruhe platziert', icon: '🔮', unlocked: hasMatC(['ENDER_CHEST']), unlocked_date: milestonesC['cre_ender_chest'] || null },
+      ];
+    };
+
+    let achievements;
+    if (gameMode === 'CREATIVE') {
+      achievements = buildCreativeAchievements();
+    } else if (gameMode === 'SURVIVAL') {
+      achievements = buildSurvivalAchievements();
+    } else {
+      achievements = [...buildSurvivalAchievements(), ...buildCreativeAchievements()];
+    }
 
     // Compute rare blocks (all-time for this player)
     const rareBlocks = [];
