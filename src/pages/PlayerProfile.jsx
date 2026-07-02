@@ -135,7 +135,7 @@ export default function PlayerProfile() {
 
           {/* Donut Charts */}
           <div className="mt-4 sm:mt-6">
-            <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} />
+            <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} mode="player" />
           </div>
 
           {/* Fun Facts */}

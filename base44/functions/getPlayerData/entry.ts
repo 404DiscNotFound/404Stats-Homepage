@@ -118,6 +118,8 @@ Deno.serve(async (req) => {
     const targetLower = playerName.toLowerCase();
     const targetCategoryMap = {};
     const targetWorldMap = {};
+    const serverCategoryMap = {};
+    const serverWorldMap = {};
     for (const stat of rangeStats) {
       const gm = stat.game_mode || 'SURVIVAL';
 
@@ -137,6 +139,14 @@ Deno.serve(async (req) => {
       playerMap[stat.uuid].mined += (stat.mined || 0);
       playerMap[stat.uuid].placed += (stat.placed || 0);
       playerMap[stat.uuid].materials.push({ material: stat.material, mined: stat.mined || 0, placed: stat.placed || 0 });
+
+      // Server-wide category + world totals (all players, filtered by game mode)
+      const svCat = getMaterialCategory(stat.material);
+      if (!serverCategoryMap[svCat]) serverCategoryMap[svCat] = { total: 0 };
+      serverCategoryMap[svCat].total += (stat.mined || 0) + (stat.placed || 0);
+      const svWn = stat.world_name || 'world';
+      if (!serverWorldMap[svWn]) serverWorldMap[svWn] = { total: 0 };
+      serverWorldMap[svWn].total += (stat.mined || 0) + (stat.placed || 0);
 
       if (stat.player_name.toLowerCase() === targetLower) {
         const cat = getMaterialCategory(stat.material);
@@ -418,10 +428,16 @@ Deno.serve(async (req) => {
 
     // Material categories + world distribution
     const materialCategories = Object.entries(targetCategoryMap)
-      .map(([cat, data]) => ({ category: cat, ...data }))
+      .map(([cat, data]) => {
+        const svTotal = (serverCategoryMap[cat] || { total: data.total }).total;
+        return { category: cat, ...data, serverTotal: svTotal, sharePct: svTotal > 0 ? Math.round(data.total / svTotal * 100) : 100 };
+      })
       .sort((a, b) => b.total - a.total);
     const worldDistribution = Object.entries(targetWorldMap)
-      .map(([world, data]) => ({ world, ...data }))
+      .map(([world, data]) => {
+        const svTotal = (serverWorldMap[world] || { total: data.total }).total;
+        return { world, ...data, serverTotal: svTotal, sharePct: svTotal > 0 ? Math.round(data.total / svTotal * 100) : 100 };
+      })
       .sort((a, b) => b.total - a.total);
 
     // Compute neighbors (above/below for each metric)

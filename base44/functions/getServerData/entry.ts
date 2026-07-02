@@ -81,6 +81,8 @@ Deno.serve(async (req) => {
     const gameModeMap = {};
     const categoryMap = {};
     const worldMap = {};
+    const categoryPlayerMap = {};
+    const worldPlayerMap = {};
 
     for (const stat of allStats) {
       const mined = stat.mined || 0;
@@ -104,12 +106,18 @@ Deno.serve(async (req) => {
       categoryMap[cat].mined += mined;
       categoryMap[cat].placed += placed;
       categoryMap[cat].total += mined + placed;
+      if (!categoryPlayerMap[cat]) categoryPlayerMap[cat] = {};
+      if (!categoryPlayerMap[cat][stat.uuid]) categoryPlayerMap[cat][stat.uuid] = { name: stat.player_name, total: 0 };
+      categoryPlayerMap[cat][stat.uuid].total += mined + placed;
 
       const wn = stat.world_name || 'world';
       if (!worldMap[wn]) worldMap[wn] = { mined: 0, placed: 0, total: 0 };
       worldMap[wn].mined += mined;
       worldMap[wn].placed += placed;
       worldMap[wn].total += mined + placed;
+      if (!worldPlayerMap[wn]) worldPlayerMap[wn] = {};
+      if (!worldPlayerMap[wn][stat.uuid]) worldPlayerMap[wn][stat.uuid] = { name: stat.player_name, total: 0 };
+      worldPlayerMap[wn][stat.uuid].total += mined + placed;
 
       if (!materialMap[stat.material]) {
         materialMap[stat.material] = { material: stat.material, mined: 0, placed: 0, players: {} };
@@ -192,10 +200,22 @@ Deno.serve(async (req) => {
 
     // Material categories + world distribution
     const materialCategories = Object.entries(categoryMap)
-      .map(([cat, data]) => ({ category: cat, ...data }))
+      .map(([cat, data]) => {
+        const players = Object.values(categoryPlayerMap[cat] || {})
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5)
+          .map(p => ({ name: p.name, total: p.total, pct: data.total > 0 ? Math.round(p.total / data.total * 100) : 0 }));
+        return { category: cat, ...data, topPlayers: players };
+      })
       .sort((a, b) => b.total - a.total);
     const worldDistribution = Object.entries(worldMap)
-      .map(([world, data]) => ({ world, ...data }))
+      .map(([world, data]) => {
+        const players = Object.values(worldPlayerMap[world] || {})
+          .sort((a, b) => b.total - a.total)
+          .slice(0, 5)
+          .map(p => ({ name: p.name, total: p.total, pct: data.total > 0 ? Math.round(p.total / data.total * 100) : 0 }));
+        return { world, ...data, topPlayers: players };
+      })
       .sort((a, b) => b.total - a.total);
 
     // Fun facts

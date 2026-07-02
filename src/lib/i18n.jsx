@@ -297,6 +297,9 @@ const translations = {
     "donuts.overworld": "Overworld",
     "donuts.other": "Other",
     "donuts.noData": "No data available",
+    "donuts.yourShare": "Your share",
+    "donuts.you": "You",
+    "donuts.serverTotal": "Server total",
   },
   de: {
     // Common
@@ -592,6 +595,9 @@ const translations = {
     "donuts.overworld": "Oberwelt",
     "donuts.other": "Sonstige",
     "donuts.noData": "Keine Daten verfügbar",
+    "donuts.yourShare": "Dein Anteil",
+    "donuts.you": "Du",
+    "donuts.serverTotal": "Server gesamt",
   },
 };
 
