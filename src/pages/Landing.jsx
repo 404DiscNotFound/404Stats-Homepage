@@ -3,8 +3,9 @@ import { Link } from "react-router-dom";
 import GlitchLogo from "@/components/GlitchLogo";
 import { base44 } from "@/api/base44Client";
 import { formatNumber } from "@/lib/format";
-import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight, Globe } from "lucide-react";
+import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight, Globe, Gem, TrendingUp, Boxes, CalendarRange } from "lucide-react";
 import ShareButtons from "@/components/ShareButtons";
+import ImageCarousel from "@/components/ImageCarousel";
 
 export default function Landing() {
   const [totalBlocks, setTotalBlocks] = useState(null);
@@ -109,6 +110,11 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Screenshot Carousel */}
+      <div className="relative z-10 mx-auto max-w-3xl px-6 pb-16">
+        <ImageCarousel />
+      </div>
+
       {/* Features */}
       <div id="features" className="relative z-10 mx-auto max-w-5xl px-6 py-16">
         <div className="mb-12 text-center">
@@ -116,12 +122,18 @@ export default function Landing() {
           <p className="mt-2 text-sm text-gray-500">Powerful analytics built for Minecraft communities</p>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Feature icon={BarChart3} title="Live Dashboard" desc="Real-time stats for your server — blocks mined, placed, and combined totals." accent="cyan" />
-          <Feature icon={Users} title="Leaderboards" desc="Top miners and builders ranked side by side with player heads." accent="pink" />
-          <Feature icon={Search} title="Player Profiles" desc="Detailed profiles with rank, top blocks, and activity heatmap." accent="cyan" />
-          <Feature icon={Swords} title="Player Compare" desc="Side-by-side comparison of two players' stats and achievements." accent="pink" />
-          <Feature icon={Trophy} title="Achievements" desc="20+ unlockable milestones with dates — from first block to 1M blocks." accent="cyan" />
-          <Feature icon={Clock} title="Activity Heatmap" desc="See when your players are most active — by day and hour, in their timezone." accent="pink" />
+          <Feature icon={BarChart3} title="Live Dashboard" desc="Real-time server stats — blocks mined, placed, combined totals, and player count." accent="cyan" />
+          <Feature icon={Users} title="Leaderboards" desc="Top 25 miners and builders ranked side by side with player heads and split stats." accent="pink" />
+          <Feature icon={Search} title="Player Profiles" desc="Detailed profiles with rank, top blocks, achievements, rare blocks, and activity heatmap." accent="cyan" />
+          <Feature icon={Swords} title="Player Compare" desc="Deep side-by-side comparison — win tallies, ratios, diversity, heatmaps, and achievement progress." accent="pink" />
+          <Feature icon={Trophy} title="Achievements" desc="20+ unlockable milestones with exact unlock dates — from first block to 1M blocks." accent="cyan" />
+          <Feature icon={Clock} title="Activity Heatmap" desc="See when players are most active — by day and hour, converted to their local timezone." accent="pink" />
+          <Feature icon={Boxes} title="Block Index" desc="Searchable, sortable block catalog with Top 10 Hall of Fame and per-block contributor breakdown." accent="cyan" />
+          <Feature icon={TrendingUp} title="Server Trends" desc="30-day mined vs. placed trend chart to track your server's activity over time." accent="pink" />
+          <Feature icon={Gem} title="Rare Blocks" desc="Track diamond, emerald, ancient debris, and other rare block interactions per player." accent="cyan" />
+          <Feature icon={CalendarRange} title="Time Range Filter" desc="Filter player stats by day, week, month, year, or all-time to spot trends and spikes." accent="pink" />
+          <Feature icon={Globe} title="Global Stats" desc="Anonymized cross-server statistics aggregating data from all connected servers worldwide." accent="cyan" />
+          <Feature icon={Download} title="Zero Setup" desc="No account, no login. Drop the plugin in, restart, and your stats are live instantly." accent="pink" />
         </div>
       </div>
 
