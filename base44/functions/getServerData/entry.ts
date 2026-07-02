@@ -12,13 +12,14 @@ Deno.serve(async (req) => {
 
     const base44 = createClientFromRequest(req);
 
-    const servers = await base44.entities.Server.filter({ server_slug: slug });
+    // Public read — data is intentionally public (RLS: read=true), service role needed for anonymous access
+    const servers = await base44.asServiceRole.entities.Server.filter({ server_slug: slug });
     if (!servers || servers.length === 0) {
       return Response.json({ error: 'Server nicht gefunden' }, { status: 404 });
     }
     const server = servers[0];
 
-    const allStats = await base44.entities.BlockStat.filter(
+    const allStats = await base44.asServiceRole.entities.BlockStat.filter(
       { server_id: server.id }, '-created_date', 10000
     );
 
