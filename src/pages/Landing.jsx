@@ -4,6 +4,7 @@ import GlitchLogo from "@/components/GlitchLogo";
 import { base44 } from "@/api/base44Client";
 import { formatNumber } from "@/lib/format";
 import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight, Globe } from "lucide-react";
+import ShareButtons from "@/components/ShareButtons";
 
 export default function Landing() {
   const [totalBlocks, setTotalBlocks] = useState(null);
@@ -85,6 +86,10 @@ export default function Landing() {
           <a href="#how" className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#2A2A3A] hover:text-white">
             See how it works <ArrowRight className="h-4 w-4" />
           </a>
+        </div>
+
+        <div className="mt-6">
+          <ShareButtons url={typeof window !== "undefined" ? window.location.origin : ""} title="404Stats — Track every block. See every stat." />
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
 import GlitchLogo from "./GlitchLogo";
+import ShareButtons from "./ShareButtons";
 
 export default function ServerHeader({ slug, displayName }) {
   return (
@@ -13,13 +14,20 @@ export default function ServerHeader({ slug, displayName }) {
             <p className="hidden text-xs text-gray-600 sm:block">/server/{slug}</p>
           </div>
         </Link>
-        <Link
-          to="/"
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]"
-        >
-          <Home className="h-3.5 w-3.5" />
-          <span className="hidden sm:inline">404Stats</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <ShareButtons
+            compact
+            url={typeof window !== "undefined" ? `${window.location.origin}/server/${slug}` : ""}
+            title={`${displayName || "Minecraft Server"} on 404Stats`}
+          />
+          <Link
+            to="/"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]"
+          >
+            <Home className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">404Stats</span>
+          </Link>
+        </div>
       </div>
     </header>
   );
