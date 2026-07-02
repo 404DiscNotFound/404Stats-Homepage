@@ -169,7 +169,11 @@ export default function Landing() {
             <GlitchLogo size="sm" />
             <span className="text-xs text-gray-600">Block analytics for Minecraft servers</span>
           </div>
-          <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
+          <div className="flex items-center gap-4">
+            <Link to="/terms" className="text-xs text-gray-600 transition-colors hover:text-[#00F5FF]">Terms</Link>
+            <Link to="/privacy" className="text-xs text-gray-600 transition-colors hover:text-[#00F5FF]">Privacy</Link>
+            <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
+          </div>
         </div>
       </footer>
     </div>

@@ -13,6 +13,8 @@ import NotFound from './pages/NotFound';
 import ComparePlayers from './pages/ComparePlayers';
 import BlockIndex from './pages/BlockIndex';
 import GlobalStats from './pages/GlobalStats';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -46,6 +48,8 @@ const AuthenticatedApp = () => {
       <Route path="/server/:slug/compare" element={<ComparePlayers />} />
       <Route path="/server/:slug/blocks" element={<BlockIndex />} />
       <Route path="/global-stats" element={<GlobalStats />} />
+      <Route path="/terms" element={<Terms />} />
+      <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
