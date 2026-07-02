@@ -1,7 +1,9 @@
 import { ChevronUp, ChevronDown } from "lucide-react";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function RankNeighbors({ title, neighbors, accent = "cyan", currentValue }) {
+  const t = useT();
   if (!neighbors) return null;
   const color = accent === "cyan" ? "#00F5FF" : "#FF0055";
 
@@ -28,13 +30,13 @@ export default function RankNeighbors({ title, neighbors, accent = "cyan", curre
         </div>
       ) : (
         <div className="mb-2 flex items-center gap-1.5 text-xs text-gray-700">
-          <ChevronUp className="h-3 w-3" /> Top of the board!
+          <ChevronUp className="h-3 w-3" /> {t("rankNeighbors.topOfBoard")}
         </div>
       )}
 
       {/* Current (you) */}
       <div className="mb-2 flex items-center justify-between rounded bg-[#111118] px-2 py-1 text-xs">
-        <span className="font-bold text-white">You</span>
+        <span className="font-bold text-white">{t("rankNeighbors.you")}</span>
         <span className="font-bold" style={{ color }}>{formatNumber(currentValue)}</span>
       </div>
 
@@ -52,7 +54,7 @@ export default function RankNeighbors({ title, neighbors, accent = "cyan", curre
         </div>
       ) : (
         <div className="flex items-center gap-1.5 text-xs text-gray-700">
-          <ChevronDown className="h-3 w-3" /> No one behind you!
+          <ChevronDown className="h-3 w-3" /> {t("rankNeighbors.noOneBehind")}
         </div>
       )}
     </div>

@@ -1,6 +1,8 @@
 import { useMemo } from "react";
+import { useT } from "@/lib/i18n";
 
 export default function ServerActivityGlow({ trends }) {
+  const t = useT();
   const waves = useMemo(() => {
     if (!trends || trends.length === 0) return null;
     const recent = trends.slice(-30);
@@ -64,9 +66,9 @@ export default function ServerActivityGlow({ trends }) {
       <div className="relative z-10 mb-3 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
           <span className="h-2 w-2 animate-pulse rounded-full bg-[#00F5FF] shadow-[0_0_8px_rgba(0,245,255,0.6)]" />
-          Server Activity
+          {t("serverActivity.title")}
         </h2>
-        <span className="text-[10px] text-gray-600 sm:text-xs">Last 30 days</span>
+        <span className="text-[10px] text-gray-600 sm:text-xs">{t("serverActivity.last30Days")}</span>
       </div>
 
       {/* Flowing gradient waves */}
@@ -123,7 +125,7 @@ export default function ServerActivityGlow({ trends }) {
             className="h-0.5 w-4 rounded-full"
             style={{ background: "linear-gradient(to right, #00F5FF, #FF0055)" }}
           />
-          Flow
+          {t("serverActivity.flow")}
         </span>
       </div>
     </div>

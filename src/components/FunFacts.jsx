@@ -1,13 +1,15 @@
 import { Sparkles } from "lucide-react";
+import { useT } from "@/lib/i18n";
 
 export default function FunFacts({ facts }) {
+  const t = useT();
   if (!facts || facts.length === 0) return null;
 
   return (
     <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
       <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
         <Sparkles className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-        Fun Facts
+        {t("funFacts.title")}
       </h2>
       <div className="grid gap-2 sm:grid-cols-2">
         {facts.map((fact, i) => (

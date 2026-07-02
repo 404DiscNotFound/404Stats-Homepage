@@ -33,7 +33,7 @@ export default function PlayerSearch({ players, slug }) {
           onChange={e => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 200)}
-          placeholder="Search players..."
+          placeholder={t("playerSearch.placeholder")}
           className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/50 focus:shadow-[0_0_15px_rgba(0,245,255,0.1)]"
         />
       </div>
@@ -47,7 +47,7 @@ export default function PlayerSearch({ players, slug }) {
             >
               <PlayerHead uuid={p.uuid} name={p.player_name} size={24} />
               <span className="flex-1 text-sm text-white">{p.player_name}</span>
-              <span className="text-xs text-gray-600">{formatNumber(p.total)} blocks</span>
+              <span className="text-xs text-gray-600">{formatNumber(p.total)} {t("common.blocks")}</span>
             </button>
           ))}
         </div>

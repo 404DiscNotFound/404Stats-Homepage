@@ -1,10 +1,12 @@
 import { Link } from "react-router-dom";
 import PlayerHead from "./PlayerHead";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function TopPlayersList({ players, slug, metric = "total", accent = "cyan" }) {
+  const t = useT();
   if (!players || players.length === 0) {
-    return <p className="py-8 text-center text-sm text-gray-600">No player data yet.</p>;
+    return <p className="py-8 text-center text-sm text-gray-600">{t("topPlayers.noData")}</p>;
   }
 
   const accentColor = accent === "cyan" ? "#00F5FF" : "#FF0055";

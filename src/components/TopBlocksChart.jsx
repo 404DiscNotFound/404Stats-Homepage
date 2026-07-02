@@ -2,13 +2,15 @@ import { useRef, useState } from "react";
 import BlockIcon from "./BlockIcon";
 import BlockPlayersTooltip from "./BlockPlayersTooltip";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function TopBlocksChart({ materials, mode = "player" }) {
+  const t = useT();
   const tooltipRef = useRef(null);
   const [active, setActive] = useState(null);
 
   if (!materials || materials.length === 0) {
-    return <p className="py-8 text-center text-sm text-gray-600">No block data yet.</p>;
+    return <p className="py-8 text-center text-sm text-gray-600">{t("topBlocks.noData")}</p>;
   }
   const maxTotal = Math.max(...materials.map(m => m.total), 1);
 
@@ -75,15 +77,15 @@ export default function TopBlocksChart({ materials, mode = "player" }) {
               <p className="text-[10px] font-bold text-white">{formatMaterial(active.material)}</p>
               <div className="mt-1 space-y-0.5 text-[10px]">
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-gray-500">Your share</span>
+                  <span className="text-gray-500">{t("topBlocks.yourShare")}</span>
                   <span className="font-black text-[#00F5FF]">{active.sharePct}%</span>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-gray-500">You</span>
+                  <span className="text-gray-500">{t("topBlocks.you")}</span>
                   <span className="text-white">{formatNumber(active.total)}</span>
                 </div>
                 <div className="flex items-center justify-between gap-3">
-                  <span className="text-gray-500">Server total</span>
+                  <span className="text-gray-500">{t("topBlocks.serverTotal")}</span>
                   <span className="text-gray-400">{formatNumber(active.serverTotal)}</span>
                 </div>
               </div>

@@ -1,5 +1,6 @@
 import PlayerHead from "./PlayerHead";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 const rankStyles = [
   "border-yellow-400/40 bg-yellow-400/5",
@@ -8,6 +9,7 @@ const rankStyles = [
 ];
 
 export default function TopPlayersCard({ players }) {
+  const t = useT();
   if (!players || players.length === 0) return null;
 
   const top10 = players.slice(0, 10);
@@ -17,9 +19,9 @@ export default function TopPlayersCard({ players }) {
     <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-          <span className="text-base">🏆</span> Top 10 Players Hall of Fame
+          <span className="text-base">🏆</span> {t("hallOfFame.topPlayers")}
         </h2>
-        <span className="text-[10px] text-gray-600 sm:text-xs">Most active players</span>
+        <span className="text-[10px] text-gray-600 sm:text-xs">{t("hallOfFame.mostActivePlayers")}</span>
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
@@ -66,11 +68,11 @@ export default function TopPlayersCard({ players }) {
 
               {/* Stats line */}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] text-gray-600">
-                <span className="text-[#00F5FF]/70">{formatNumber(p.mined)} mined</span>
+                <span className="text-[#00F5FF]/70">{formatNumber(p.mined)} {t("common.mined").toLowerCase()}</span>
                 <span className="text-gray-700">·</span>
-                <span className="text-[#FF0055]/70">{formatNumber(p.placed)} placed</span>
+                <span className="text-[#FF0055]/70">{formatNumber(p.placed)} {t("common.placed").toLowerCase()}</span>
                 <span className="text-gray-700">·</span>
-                <span>{p.blockVariety} blocks</span>
+                <span>{p.blockVariety} {t("common.blocks")}</span>
               </div>
             </div>
           </div>

@@ -1,9 +1,11 @@
 import BlockIcon from "./BlockIcon";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function RareBlocksList({ blocks }) {
+  const t = useT();
   if (!blocks || blocks.length === 0) {
-    return <p className="py-4 text-center text-sm text-gray-600">No rare blocks found yet.</p>;
+    return <p className="py-4 text-center text-sm text-gray-600">{t("rareBlocks.noData")}</p>;
   }
 
   return (

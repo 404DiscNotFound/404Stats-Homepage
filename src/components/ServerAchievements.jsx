@@ -3,8 +3,10 @@ import { Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function ServerAchievements({ slug, gameMode = "SURVIVAL", accessToken }) {
+  const t = useT();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -38,7 +40,7 @@ export default function ServerAchievements({ slug, gameMode = "SURVIVAL", access
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
           <Trophy className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-          Server Achievements
+          {t("serverAchievements.title")}
         </h2>
         <span className="text-xs text-gray-500">
           {data.unlockedCount} / {data.totalCount}

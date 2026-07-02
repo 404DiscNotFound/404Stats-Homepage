@@ -1,8 +1,10 @@
 import PlayerHead from "./PlayerHead";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function BlockPlayersTooltip({ tooltipRef, active, metric = "total" }) {
-  const metricLabel = metric === "mined" ? "Abgebaut" : metric === "placed" ? "Gebaut" : "Gesamt";
+  const t = useT();
+  const metricLabel = metric === "mined" ? t("common.mined") : metric === "placed" ? t("common.placed") : t("common.total");
   const accentColor = metric === "placed" ? "#FF0055" : "#00F5FF";
   const materialVal = active
     ? metric === "mined" ? active.mined : metric === "placed" ? active.placed : active.total
@@ -22,7 +24,7 @@ export default function BlockPlayersTooltip({ tooltipRef, active, metric = "tota
       {active && (
         <div>
           <p className="text-[10px] font-bold text-white">{formatMaterial(active.material)}</p>
-          <p className="mt-0.5 text-[9px] text-gray-500">Top 5 Spieler · {metricLabel}</p>
+          <p className="mt-0.5 text-[9px] text-gray-500">{t("blockPlayers.top5")} · {metricLabel}</p>
           <div className="mt-1.5 space-y-1">
             {players.map((p, i) => {
               const pct = materialVal > 0 ? Math.round((p.val / materialVal) * 100) : 0;
@@ -42,7 +44,7 @@ export default function BlockPlayersTooltip({ tooltipRef, active, metric = "tota
               );
             })}
             {players.length === 0 && (
-              <p className="py-1 text-[10px] text-gray-600">Keine Spielerdaten</p>
+              <p className="py-1 text-[10px] text-gray-600">{t("blockPlayers.noData")}</p>
             )}
           </div>
         </div>

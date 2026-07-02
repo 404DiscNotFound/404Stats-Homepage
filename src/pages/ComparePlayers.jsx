@@ -15,11 +15,13 @@ import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const ACCENTS = ["#00F5FF", "#FF0055"];
 
 export default function ComparePlayers() {
+  const t = useT();
+  const DAYS = t("heatmap.days").split(',');
   const { slug } = useParams();
   const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [allPlayers, setAllPlayers] = useState([]);
@@ -69,7 +71,7 @@ export default function ComparePlayers() {
         if (handlePasswordError(err)) return;
         setData1(null);
         setData2(null);
-        setError(err.response?.data?.error || "Failed to load player data");
+        setError(err.response?.data?.error || t("compare.failedLoad"));
       } finally {
         setLoading(false);
       }
@@ -115,20 +117,20 @@ export default function ComparePlayers() {
         <ServerHeader slug={slug} />
         <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
           <Link to={`/server/${slug}`} className="mb-5 flex items-center gap-2 text-sm text-gray-500 hover:text-white sm:mb-6">
-            <ArrowLeft className="h-4 w-4" /> Back to server
+            <ArrowLeft className="h-4 w-4" /> {t("common.backToServer")}
           </Link>
 
           <div className="mb-5 flex items-center justify-between sm:mb-6">
             <h1 className="flex items-center gap-2 text-lg font-black text-white">
               <Swords className="h-5 w-5 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
-              Compare Players
+              {t("compare.title")}
             </h1>
             <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={serverGameModes} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <PlayerPicker label="Player 1" players={allPlayers} value={p1} onSelect={setP1} accent="#00F5FF" />
-            <PlayerPicker label="Player 2" players={allPlayers} value={p2} onSelect={setP2} accent="#FF0055" />
+            <PlayerPicker label={t("compare.player1")} players={allPlayers} value={p1} onSelect={setP1} accent="#00F5FF" />
+            <PlayerPicker label={t("compare.player2")} players={allPlayers} value={p2} onSelect={setP2} accent="#FF0055" />
           </div>
 
           {loading && (
@@ -151,14 +153,14 @@ export default function ComparePlayers() {
             const achTotal = (data1.achievements || []).length || 20;
 
             const allStats = [
-              { label: 'Mined', p1Val: data1.player.mined, p2Val: data2.player.mined },
-              { label: 'Placed', p1Val: data1.player.placed, p2Val: data2.player.placed },
-              { label: 'Total', p1Val: data1.player.total, p2Val: data2.player.total },
-              { label: 'Unique Blocks', p1Val: (data1.topMaterials || []).length, p2Val: (data2.topMaterials || []).length },
-              { label: 'Rare Blocks', p1Val: (data1.rareBlocks || []).length, p2Val: (data2.rareBlocks || []).length },
-              { label: 'Achievements', p1Val: a1.length, p2Val: a2.length },
-              { label: 'Active Hours', p1Val: h1.activeHours, p2Val: h2.activeHours },
-              { label: 'Peak Activity', p1Val: h1.peakVal, p2Val: h2.peakVal },
+              { label: t("common.mined"), p1Val: data1.player.mined, p2Val: data2.player.mined },
+              { label: t("common.placed"), p1Val: data1.player.placed, p2Val: data2.player.placed },
+              { label: t("common.total"), p1Val: data1.player.total, p2Val: data2.player.total },
+              { label: t("compare.uniqueBlocks"), p1Val: (data1.topMaterials || []).length, p2Val: (data2.topMaterials || []).length },
+              { label: t("player.rareBlocks"), p1Val: (data1.rareBlocks || []).length, p2Val: (data2.rareBlocks || []).length },
+              { label: t("compare.achievements"), p1Val: a1.length, p2Val: a2.length },
+              { label: t("compare.activeHours"), p1Val: h1.activeHours, p2Val: h2.activeHours },
+              { label: t("compare.peakActivity"), p1Val: h1.peakVal, p2Val: h2.peakVal },
             ];
             const { p1Score, p2Score } = countWins(allStats);
             const tieCount = allStats.length - p1Score - p2Score;
@@ -172,7 +174,7 @@ export default function ComparePlayers() {
                       <div key={i} className="flex flex-col items-center text-center">
                         <PlayerHead uuid={d.player.uuid} name={d.player.player_name} size={56} className="sm:!w-16 sm:!h-16" />
                         <p className="mt-2 text-sm font-bold text-white">{d.player.player_name}</p>
-                        <p className="text-xs text-gray-500">Rank #{d.player.rank} / {d.player.totalPlayers}</p>
+                        <p className="text-xs text-gray-500">{t("player.rank")} #{d.player.rank} / {d.player.totalPlayers}</p>
                       </div>
                     ))}
                   </div>
@@ -180,22 +182,22 @@ export default function ComparePlayers() {
                   <div className="mt-4 flex items-center justify-center gap-6 border-t border-[#1A1A24] pt-4">
                     <div className="text-center">
                       <p className="text-2xl font-black text-[#00F5FF]" style={{ textShadow: "0 0 10px rgba(0,245,255,0.3)" }}>{p1Score}</p>
-                      <p className="text-[10px] uppercase tracking-wider text-gray-600">Wins</p>
+                      <p className="text-[10px] uppercase tracking-wider text-gray-600">{t("compare.wins")}</p>
                     </div>
-                    <span className="text-xs font-black text-gray-700">{tieCount > 0 ? `${tieCount} ties` : 'VS'}</span>
+                    <span className="text-xs font-black text-gray-700">{tieCount > 0 ? `${tieCount} ${t("compare.ties")}` : t("compare.vs")}</span>
                     <div className="text-center">
                       <p className="text-2xl font-black text-[#FF0055]" style={{ textShadow: "0 0 10px rgba(255,0,85,0.3)" }}>{p2Score}</p>
-                      <p className="text-[10px] uppercase tracking-wider text-gray-600">Wins</p>
+                      <p className="text-[10px] uppercase tracking-wider text-gray-600">{t("compare.wins")}</p>
                     </div>
                   </div>
 
                   {p1Score !== p2Score && (
                     <p className="mt-3 text-center text-xs font-bold text-gray-400">
-                      🏆 <span style={{ color: p1Score > p2Score ? "#00F5FF" : "#FF0055" }}>{p1Score > p2Score ? data1.player.player_name : data2.player.player_name}</span> leads {Math.max(p1Score, p2Score)}–{Math.min(p1Score, p2Score)}
+                      🏆 <span style={{ color: p1Score > p2Score ? "#00F5FF" : "#FF0055" }}>{p1Score > p2Score ? data1.player.player_name : data2.player.player_name}</span> {t("compare.leads")} {Math.max(p1Score, p2Score)}–{Math.min(p1Score, p2Score)}
                     </p>
                   )}
                   {p1Score === p2Score && p1Score > 0 && (
-                    <p className="mt-3 text-center text-xs font-bold text-gray-500">🤝 It's a dead heat!</p>
+                    <p className="mt-3 text-center text-xs font-bold text-gray-500">{t("compare.deadHeat")}</p>
                   )}
                 </div>
 
@@ -203,12 +205,12 @@ export default function ComparePlayers() {
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <TrendingUp className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                    Core Stats
+                    {t("compare.coreStats")}
                   </h2>
                   <div className="space-y-4">
-                    <CompareStatBar label="Mined" p1Val={data1.player.mined} p2Val={data2.player.mined} />
-                    <CompareStatBar label="Placed" p1Val={data1.player.placed} p2Val={data2.player.placed} />
-                    <CompareStatBar label="Total" p1Val={data1.player.total} p2Val={data2.player.total} />
+                    <CompareStatBar label={t("common.mined")} p1Val={data1.player.mined} p2Val={data2.player.mined} />
+                    <CompareStatBar label={t("common.placed")} p1Val={data1.player.placed} p2Val={data2.player.placed} />
+                    <CompareStatBar label={t("common.total")} p1Val={data1.player.total} p2Val={data2.player.total} />
                   </div>
                 </div>
 
@@ -216,31 +218,31 @@ export default function ComparePlayers() {
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <Percent className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                    Ratios & Breakdown
+                    {t("compare.ratios")}
                   </h2>
                   <div className="space-y-4">
                     <CompareStatBar
-                      label="Mining Focus %"
+                      label={t("compare.miningFocus")}
                       p1Val={data1.player.total > 0 ? Math.round((data1.player.mined / data1.player.total) * 100) : 0}
                       p2Val={data2.player.total > 0 ? Math.round((data2.player.mined / data2.player.total) * 100) : 0}
                       suffix="%"
                     />
                     <CompareStatBar
-                      label="Building Focus %"
+                      label={t("compare.buildingFocus")}
                       p1Val={data1.player.total > 0 ? Math.round((data1.player.placed / data1.player.total) * 100) : 0}
                       p2Val={data2.player.total > 0 ? Math.round((data2.player.placed / data2.player.total) * 100) : 0}
                       suffix="%"
                     />
                     {serverTotals && (
                       <CompareStatBar
-                        label="Server Share %"
+                        label={t("compare.serverShare")}
                         p1Val={serverTotals.combined > 0 ? +((data1.player.total / serverTotals.combined) * 100).toFixed(2) : 0}
                         p2Val={serverTotals.combined > 0 ? +((data2.player.total / serverTotals.combined) * 100).toFixed(2) : 0}
                         suffix="%"
                       />
                     )}
                     <CompareStatBar
-                      label="Mined : Placed Ratio"
+                      label={t("compare.minedPlacedRatio")}
                       p1Val={data1.player.placed > 0 ? +(data1.player.mined / data1.player.placed).toFixed(2) : data1.player.mined}
                       p2Val={data2.player.placed > 0 ? +(data2.player.mined / data2.player.placed).toFixed(2) : data2.player.mined}
                       suffix="x"
@@ -252,14 +254,14 @@ export default function ComparePlayers() {
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <Layers className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                    Diversity & Achievements
+                    {t("compare.diversityAchievements")}
                   </h2>
                   <div className="space-y-4">
-                    <CompareStatBar label="Unique Block Types" p1Val={(data1.topMaterials || []).length} p2Val={(data2.topMaterials || []).length} />
-                    <CompareStatBar label="Rare Blocks Found" p1Val={(data1.rareBlocks || []).length} p2Val={(data2.rareBlocks || []).length} />
-                    <CompareStatBar label="Achievements Unlocked" p1Val={a1.length} p2Val={a2.length} suffix={`/${achTotal}`} />
+                    <CompareStatBar label={t("compare.uniqueBlockTypes")} p1Val={(data1.topMaterials || []).length} p2Val={(data2.topMaterials || []).length} />
+                    <CompareStatBar label={t("compare.rareBlocksFound")} p1Val={(data1.rareBlocks || []).length} p2Val={(data2.rareBlocks || []).length} />
+                    <CompareStatBar label={t("compare.achievementsUnlocked")} p1Val={a1.length} p2Val={a2.length} suffix={`/${achTotal}`} />
                     <CompareStatBar
-                      label="Achievement Progress %"
+                      label={t("compare.achievementProgress")}
                       p1Val={Math.round((a1.length / achTotal) * 100)}
                       p2Val={Math.round((a2.length / achTotal) * 100)}
                       suffix="%"
@@ -271,7 +273,7 @@ export default function ComparePlayers() {
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <Zap className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                    Favorite Block
+                    {t("compare.favoriteBlock")}
                   </h2>
                   <div className="grid grid-cols-2 gap-4">
                     {[data1, data2].map((d, i) => {
@@ -282,10 +284,10 @@ export default function ComparePlayers() {
                             <>
                               <BlockIcon material={fav.material} size={40} />
                               <p className="text-xs font-bold text-white">{formatMaterial(fav.material)}</p>
-                              <p className="text-[10px] text-gray-500">{formatNumber(fav.total)} blocks</p>
+                              <p className="text-[10px] text-gray-500">{formatNumber(fav.total)} {t("common.blocks")}</p>
                             </>
                           ) : (
-                            <p className="text-xs text-gray-600">No data</p>
+                            <p className="text-xs text-gray-600">{t("compare.noData")}</p>
                           )}
                         </div>
                       );
@@ -297,7 +299,7 @@ export default function ComparePlayers() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   {[data1, data2].map((d, i) => (
                     <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
-                      <h3 className="mb-3 text-xs font-black uppercase tracking-wider text-white">⛏ Top Blocks</h3>
+                      <h3 className="mb-3 text-xs font-black uppercase tracking-wider text-white">⛏ {t("compare.topBlocks")}</h3>
                       <TopBlocksChart materials={d.topMaterials} />
                     </div>
                   ))}
@@ -309,10 +311,10 @@ export default function ComparePlayers() {
                     {[data1, data2].map((d, i) => (
                       <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
                         <h3 className="mb-3 flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-white">
-                          <Gem className="h-3.5 w-3.5" style={{ color: ACCENTS[i] }} /> Rare Blocks
+                          <Gem className="h-3.5 w-3.5" style={{ color: ACCENTS[i] }} /> {t("player.rareBlocks")}
                         </h3>
                         {(d.rareBlocks || []).length === 0 ? (
-                          <p className="py-4 text-center text-xs text-gray-600">No rare blocks yet</p>
+                          <p className="py-4 text-center text-xs text-gray-600">{t("compare.noRareBlocks")}</p>
                         ) : (
                           <div className="space-y-1.5">
                             {(d.rareBlocks || []).map((rb, j) => (
@@ -333,7 +335,7 @@ export default function ComparePlayers() {
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <Activity className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                    Activity Patterns
+                    {t("compare.activityPatterns")}
                   </h2>
                   <div className="space-y-6">
                     {[data1, data2].map((d, i) => {
@@ -344,10 +346,10 @@ export default function ComparePlayers() {
                             <span className="font-bold" style={{ color: ACCENTS[i] }}>{d.player.player_name}</span>
                             {h.peakVal > 0 && (
                               <span className="text-gray-500">
-                                Peak: <span className="text-gray-300">{DAYS[h.peakDay]} {String(h.peakHour).padStart(2, '0')}:00</span> ({formatNumber(h.peakVal)})
+                                {t("compare.peak")}: <span className="text-gray-300">{DAYS[h.peakDay]} {String(h.peakHour).padStart(2, '0')}:00</span> ({formatNumber(h.peakVal)})
                               </span>
                             )}
-                            <span className="text-gray-500">Active: <span className="text-gray-300">{h.activeHours}h</span></span>
+                            <span className="text-gray-500">{t("compare.active")}: <span className="text-gray-300">{h.activeHours}h</span></span>
                           </div>
                           <ActivityHeatmap activity={d.heatmap} />
                         </div>
@@ -365,7 +367,7 @@ export default function ComparePlayers() {
                       <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
                         <div className="mb-3 flex items-center justify-between">
                           <h3 className="flex items-center gap-1.5 text-xs font-black uppercase tracking-wider text-white">
-                            <Trophy className="h-3.5 w-3.5" style={{ color: ACCENTS[i] }} /> Achievements
+                            <Trophy className="h-3.5 w-3.5" style={{ color: ACCENTS[i] }} /> {t("compare.achievements")}
                           </h3>
                           <span className="text-xs font-black" style={{ color: ACCENTS[i] }}>{unlocked.length}/{achTotal}</span>
                         </div>
@@ -400,7 +402,7 @@ export default function ComparePlayers() {
 
           {!loading && !error && (!data1 || !data2) && (
             <div className="mt-6 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-6 text-center sm:mt-8 sm:p-8">
-              <p className="text-sm text-gray-600">Select two players to compare their stats.</p>
+              <p className="text-sm text-gray-600">{t("compare.selectTwo")}</p>
             </div>
           )}
         </div>

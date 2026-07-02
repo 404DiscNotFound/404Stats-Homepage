@@ -18,8 +18,10 @@ import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function PlayerProfile() {
+  const t = useT();
   const { slug, playerName } = useParams();
   const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
@@ -38,7 +40,7 @@ export default function PlayerProfile() {
         setData(res.data);
       } catch (err) {
         if (handlePasswordError(err)) return;
-        setError(err.response?.data?.error || "Player not found");
+        setError(err.response?.data?.error || t("common.playerNotFound"));
       } finally {
         setLoading(false);
       }
@@ -75,7 +77,7 @@ export default function PlayerProfile() {
           <div className="flex flex-col items-center pt-20 text-center">
             <p className="text-5xl font-black text-white">404</p>
             <p className="mt-2 text-sm text-gray-500">{error}</p>
-            <Link to={`/server/${slug}`} className="mt-6 text-sm text-[#00F5FF] hover:underline">← Back to server</Link>
+            <Link to={`/server/${slug}`} className="mt-6 text-sm text-[#00F5FF] hover:underline">{t("common.backToServer")}</Link>
           </div>
         </div>
       </div>
@@ -92,7 +94,7 @@ export default function PlayerProfile() {
 
         <div className="mx-auto max-w-4xl px-4 py-5 sm:px-6 sm:py-8">
           <Link to={`/server/${slug}`} className="mb-5 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-white sm:mb-6">
-            <ArrowLeft className="h-4 w-4" /> Back to server
+            <ArrowLeft className="h-4 w-4" /> {t("common.backToServer")}
           </Link>
 
           {/* Player Header + Time Range */}
@@ -104,7 +106,7 @@ export default function PlayerProfile() {
                   {p.player_name}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  Rank <span className="font-bold text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.4)" }}>#{p.rank}</span> of {p.totalPlayers} players
+                  {t("player.rank")} <span className="font-bold text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.4)" }}>#{p.rank}</span> / {p.totalPlayers} {t("player.ofPlayers")}
                 </p>
               </div>
             </div>
@@ -116,17 +118,17 @@ export default function PlayerProfile() {
 
           {/* Stats */}
           <div className="mt-6 grid gap-3 sm:grid-cols-3 sm:gap-4">
-            <StatCard label="Blocks Mined" value={formatNumber(p.mined)} accent="cyan" />
-            <StatCard label="Blocks Placed" value={formatNumber(p.placed)} accent="pink" />
-            <StatCard label="Total" value={formatNumber(p.total)} accent="cyan" />
+            <StatCard label={t("dashboard.blocksMined")} value={formatNumber(p.mined)} accent="cyan" />
+            <StatCard label={t("dashboard.blocksPlaced")} value={formatNumber(p.placed)} accent="pink" />
+            <StatCard label={t("common.total")} value={formatNumber(p.total)} accent="cyan" />
           </div>
 
           {/* Rank Neighbors */}
           {data.neighbors && (
             <div className="mt-4 grid gap-3 sm:grid-cols-3 sm:gap-4">
-              <RankNeighbors title="Mined" neighbors={data.neighbors.mined} accent="cyan" currentValue={p.mined} />
-              <RankNeighbors title="Placed" neighbors={data.neighbors.placed} accent="pink" currentValue={p.placed} />
-              <RankNeighbors title="Total" neighbors={data.neighbors.total} accent="cyan" currentValue={p.total} />
+              <RankNeighbors title={t("common.mined")} neighbors={data.neighbors.mined} accent="cyan" currentValue={p.mined} />
+              <RankNeighbors title={t("common.placed")} neighbors={data.neighbors.placed} accent="pink" currentValue={p.placed} />
+              <RankNeighbors title={t("common.total")} neighbors={data.neighbors.total} accent="cyan" currentValue={p.total} />
             </div>
           )}
 
@@ -140,13 +142,13 @@ export default function PlayerProfile() {
           {/* Top Blocks */}
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xs font-black uppercase tracking-wider text-white sm:text-sm">⚡ Top Blocks</h2>
+              <h2 className="text-xs font-black uppercase tracking-wider text-white sm:text-sm">⚡ {t("player.topBlocks")}</h2>
               <div className="flex gap-3 text-[10px] text-gray-600 sm:gap-4 sm:text-xs">
                 <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />Mined
+                  <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />{t("common.mined")}
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />Placed
+                  <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />{t("common.placed")}
                 </span>
               </div>
             </div>
@@ -155,20 +157,20 @@ export default function PlayerProfile() {
 
           {/* Achievements */}
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
-            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">🏆 Achievements</h2>
+            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">🏆 {t("player.achievements")}</h2>
             <AchievementsList achievements={data.achievements} />
           </div>
 
           {/* Activity Heatmap */}
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
-            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">🕐 Activity Heatmap</h2>
+            <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">🕐 {t("player.activityHeatmap")}</h2>
             <ActivityHeatmap activity={data.heatmap} />
           </div>
 
           {/* Rare Blocks */}
           {data.rareBlocks && data.rareBlocks.length > 0 && (
             <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
-              <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">💎 Rare Blocks</h2>
+              <h2 className="mb-4 text-xs font-black uppercase tracking-wider text-white sm:text-sm">💎 {t("player.rareBlocks")}</h2>
               <RareBlocksList blocks={data.rareBlocks} />
             </div>
           )}

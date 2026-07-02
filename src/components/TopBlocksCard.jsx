@@ -1,8 +1,10 @@
 import BlockIcon from "./BlockIcon";
 import PlayerHead from "./PlayerHead";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function TopBlocksCard({ materials }) {
+  const t = useT();
   if (!materials || materials.length === 0) return null;
 
   const top10 = materials.slice(0, 10);
@@ -18,9 +20,9 @@ export default function TopBlocksCard({ materials }) {
     <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
       <div className="mb-4 flex items-center justify-between">
         <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-          <span className="text-base">🏆</span> Top 10 Blocks Hall of Fame
+          <span className="text-base">🏆</span> {t("hallOfFame.topBlocks")}
         </h2>
-        <span className="text-[10px] text-gray-600 sm:text-xs">Most active blocks</span>
+        <span className="text-[10px] text-gray-600 sm:text-xs">{t("hallOfFame.mostActiveBlocks")}</span>
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3">
@@ -67,11 +69,11 @@ export default function TopBlocksCard({ materials }) {
 
               {/* Stats line */}
               <div className="mt-1.5 flex items-center gap-2 text-[10px] text-gray-600">
-                <span className="text-[#00F5FF]/70">{formatNumber(m.mined)} mined</span>
+                <span className="text-[#00F5FF]/70">{formatNumber(m.mined)} {t("common.mined").toLowerCase()}</span>
                 <span className="text-gray-700">·</span>
-                <span className="text-[#FF0055]/70">{formatNumber(m.placed)} placed</span>
+                <span className="text-[#FF0055]/70">{formatNumber(m.placed)} {t("common.placed").toLowerCase()}</span>
                 <span className="text-gray-700">·</span>
-                <span>{m.playerCount} {m.playerCount === 1 ? "player" : "players"}</span>
+                <span>{m.playerCount} {m.playerCount === 1 ? t("common.player") : t("common.players")}</span>
                 {m.sharePct >= 1 && (
                   <>
                     <span className="text-gray-700">·</span>

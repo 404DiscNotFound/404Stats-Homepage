@@ -6,12 +6,14 @@ import Background from "@/components/Background";
 import GlitchLogo from "@/components/GlitchLogo";
 import BlockIcon from "@/components/BlockIcon";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 const SECRET = "Pelle";
 const CACHE_KEY = "globalStats_cache";
 const CACHE_TTL = 3 * 60 * 60 * 1000; // 3 hours
 
 export default function GlobalStats() {
+  const t = useT();
   const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem("globalStats_unlocked") === "1");
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
@@ -46,7 +48,7 @@ export default function GlobalStats() {
       setData(res.data);
       setCacheAge(0);
     } catch (err) {
-      setError(err.response?.data?.error || "Failed to load stats");
+      setError(err.response?.data?.error || t("global.failedLoad"));
     } finally {
       setLoading(false);
     }
@@ -69,8 +71,8 @@ export default function GlobalStats() {
           <div className="mb-4 inline-flex rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
             <Lock className="h-8 w-8 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 8px rgba(0,245,255,0.4))" }} />
           </div>
-          <h1 className="text-2xl font-black text-white">Restricted Area</h1>
-          <p className="mt-1 text-xs text-gray-500">Global platform statistics — access code required</p>
+          <h1 className="text-2xl font-black text-white">{t("global.restrictedArea")}</h1>
+          <p className="mt-1 text-xs text-gray-500">{t("global.accessCodeRequired")}</p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -79,7 +81,7 @@ export default function GlobalStats() {
                 setUnlocked(true);
                 setError("");
               } else {
-                setError("Wrong access code");
+                setError(t("global.wrongCode"));
               }
             }}
             className="mt-6 space-y-3"
@@ -88,7 +90,7 @@ export default function GlobalStats() {
               type="password"
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Enter access code..."
+              placeholder={t("global.enterAccessCode")}
               autoFocus
               className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-3 text-center text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/40 focus:shadow-[0_0_15px_rgba(0,245,255,0.1)]"
             />
@@ -97,11 +99,11 @@ export default function GlobalStats() {
               type="submit"
               className="w-full rounded-lg bg-[#00F5FF] px-4 py-3 text-sm font-black text-black transition-all hover:shadow-[0_0_20px_rgba(0,245,255,0.3)]"
             >
-              Unlock
+              {t("global.unlock")}
             </button>
           </form>
           <Link to="/" className="mt-6 inline-block text-xs text-gray-600 hover:text-white">
-            ← Back to home
+            {t("common.backToHome")}
           </Link>
         </div>
       </div>
@@ -124,7 +126,7 @@ export default function GlobalStats() {
         <div className="relative z-10">
           <p className="text-6xl font-black text-white">500</p>
           <p className="mt-2 text-sm text-gray-500">{error}</p>
-          <button onClick={() => fetchData(true)} className="mt-6 text-sm text-[#00F5FF] hover:underline">Try again</button>
+          <button onClick={() => fetchData(true)} className="mt-6 text-sm text-[#00F5FF] hover:underline">{t("global.tryAgain")}</button>
         </div>
       </div>
     );
@@ -132,11 +134,11 @@ export default function GlobalStats() {
 
   if (!data) return null;
 
-  const t = data.totals;
+  const totals = data.totals;
   const f = data.funStats;
   const cacheMinutes = cacheAge != null ? Math.floor(cacheAge / 60000) : null;
   const cacheText = cacheMinutes != null
-    ? cacheMinutes < 1 ? "just now" : `${cacheMinutes}m ago`
+    ? cacheMinutes < 1 ? t("global.justNow") : `${cacheMinutes}${t("global.mAgo")}`
     : "";
 
   return (
@@ -149,13 +151,13 @@ export default function GlobalStats() {
             <Link to="/" className="flex items-center gap-2.5">
               <GlitchLogo size="sm" />
               <div>
-                <p className="text-sm font-bold text-white">Global Stats</p>
-                <p className="hidden text-xs text-gray-600 sm:block">All servers · All time</p>
+                <p className="text-sm font-bold text-white">{t("global.title")}</p>
+                <p className="hidden text-xs text-gray-600 sm:block">{t("global.subtitle")}</p>
               </div>
             </Link>
             <div className="flex items-center gap-3">
               {cacheText && (
-                <span className="hidden text-xs text-gray-600 sm:inline">Updated {cacheText}</span>
+                <span className="hidden text-xs text-gray-600 sm:inline">{t("global.updated")} {cacheText}</span>
               )}
               <button
                 onClick={() => fetchData(true)}
@@ -163,14 +165,14 @@ export default function GlobalStats() {
                 className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF] disabled:opacity-50"
               >
                 <RefreshCw className={`h-3.5 w-3.5 ${loading ? "animate-spin" : ""}`} />
-                <span className="hidden sm:inline">Refresh</span>
+                <span className="hidden sm:inline">{t("global.refresh")}</span>
               </button>
               <Link
                 to="/"
                 className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]"
               >
                 <Globe className="h-3.5 w-3.5" />
-                <span className="hidden sm:inline">Home</span>
+                <span className="hidden sm:inline">{t("global.home")}</span>
               </Link>
             </div>
           </div>
@@ -179,19 +181,19 @@ export default function GlobalStats() {
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
           {/* Hero stat grid */}
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
-            <BigStat icon={Server} label="Servers" value={formatNumber(t.servers)} accent="cyan" />
-            <BigStat icon={Users} label="Players" value={formatNumber(t.players)} accent="pink" />
-            <BigStat icon={Pickaxe} label="Blocks Mined" value={formatNumber(t.mined)} accent="cyan" />
-            <BigStat icon={Boxes} label="Blocks Placed" value={formatNumber(t.placed)} accent="pink" />
+            <BigStat icon={Server} label={t("global.servers")} value={formatNumber(totals.servers)} accent="cyan" />
+            <BigStat icon={Users} label={t("global.players")} value={formatNumber(totals.players)} accent="pink" />
+            <BigStat icon={Pickaxe} label={t("global.blocksMined")} value={formatNumber(totals.mined)} accent="cyan" />
+            <BigStat icon={Boxes} label={t("global.blocksPlaced")} value={formatNumber(totals.placed)} accent="pink" />
           </div>
 
           {/* Combined total banner */}
           <div className="mt-3 overflow-hidden rounded-xl border border-[#1A1A24] bg-gradient-to-r from-[#0A0A0F] via-[#0F0A12] to-[#0A0A0F] p-5 sm:mt-4 sm:p-8">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs uppercase tracking-widest text-gray-600">Total block interactions</p>
+                <p className="text-xs uppercase tracking-widest text-gray-600">{t("global.totalInteractions")}</p>
                 <p className="mt-1 text-3xl font-black text-white sm:text-5xl" style={{ textShadow: "0 0 30px rgba(0,245,255,0.15)" }}>
-                  {formatNumber(t.combined)}
+                  {formatNumber(totals.combined)}
                 </p>
               </div>
               <Zap className="h-10 w-10 text-[#00F5FF] sm:h-14 sm:w-14" style={{ filter: "drop-shadow(0 0 12px rgba(0,245,255,0.4))" }} />
@@ -202,23 +204,23 @@ export default function GlobalStats() {
           <div className="mt-4 sm:mt-6">
             <h2 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
               <Trophy className="h-4 w-4 text-[#FF0055]" style={{ filter: "drop-shadow(0 0 4px rgba(255,0,85,0.5))" }} />
-              Fun Stats & Insights
+              {t("global.funStats")}
             </h2>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              <FunCard icon="⛏" label="Avg blocks per player" value={formatNumber(f.avgBlocksPerPlayer)} sub="across all servers" />
-              <FunCard icon="📊" label="Avg blocks per server" value={formatNumber(f.avgBlocksPerServer)} sub="server average" />
-              <FunCard icon="🎨" label="Unique block types" value={formatNumber(t.uniqueMaterials)} sub="different materials tracked" />
-              <FunCard icon="💎" label="Diamonds mined" value={formatNumber(f.diamondsMined)} sub="ore blocks total" accent="cyan" />
-              <FunCard icon="💚" label="Emeralds mined" value={formatNumber(f.emeraldsMined)} sub="ore blocks total" />
-              <FunCard icon="🟡" label="Gold mined" value={formatNumber(f.goldMined)} sub="ore blocks total" />
+              <FunCard icon="⛏" label={t("global.avgPerPlayer")} value={formatNumber(f.avgBlocksPerPlayer)} sub={t("global.acrossAllServers")} />
+              <FunCard icon="📊" label={t("global.avgPerServer")} value={formatNumber(f.avgBlocksPerServer)} sub={t("global.serverAverage")} />
+              <FunCard icon="🎨" label={t("global.uniqueBlockTypes")} value={formatNumber(totals.uniqueMaterials)} sub={t("global.materialsTracked")} />
+              <FunCard icon="💎" label={t("global.diamondsMined")} value={formatNumber(f.diamondsMined)} sub={t("global.oreBlocksTotal")} accent="cyan" />
+              <FunCard icon="💚" label={t("global.emeraldsMined")} value={formatNumber(f.emeraldsMined)} sub={t("global.oreBlocksTotal")} />
+              <FunCard icon="🟡" label={t("global.goldMined")} value={formatNumber(f.goldMined)} sub={t("global.oreBlocksTotal")} />
               {f.ancientDebrisMined > 0 && (
-                <FunCard icon="🔥" label="Ancient Debris" value={formatNumber(f.ancientDebrisMined)} sub="netherite ready" accent="pink" />
+                <FunCard icon="🔥" label={t("global.ancientDebris")} value={formatNumber(f.ancientDebrisMined)} sub={t("global.netheriteReady")} accent="pink" />
               )}
               {f.mostMinedBlock && (
-                <FunCard icon="📉" label="Most mined block" value={formatMaterial(f.mostMinedBlock.material)} sub={`${formatNumber(f.mostMinedBlock.count)} times`} />
+                <FunCard icon="📉" label={t("global.mostMinedBlock")} value={formatMaterial(f.mostMinedBlock.material)} sub={`${formatNumber(f.mostMinedBlock.count)} ${t("global.times")}`} />
               )}
               {f.mostPlacedBlock && (
-                <FunCard icon="📈" label="Most placed block" value={formatMaterial(f.mostPlacedBlock.material)} sub={`${formatNumber(f.mostPlacedBlock.count)} times`} />
+                <FunCard icon="📈" label={t("global.mostPlacedBlock")} value={formatMaterial(f.mostPlacedBlock.material)} sub={`${formatNumber(f.mostPlacedBlock.count)} ${t("global.times")}`} />
               )}
             </div>
           </div>
@@ -227,7 +229,7 @@ export default function GlobalStats() {
           <div className="mt-4 sm:mt-6">
             <h2 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
               <Gem className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-              Top 10 Blocks Globally
+              {t("global.top10Blocks")}
             </h2>
             <div className="space-y-1.5">
               {data.topBlocks.map((m, i) => {
@@ -259,8 +261,8 @@ export default function GlobalStats() {
 
           {/* Footer */}
           <div className="mt-8 flex items-center justify-between border-t border-[#1A1A24] pt-4 text-xs text-gray-600">
-            <span>Auto-refreshes every 3 hours</span>
-            {cacheText && <span>Last update: {cacheText}</span>}
+            <span>{t("global.autoRefresh")}</span>
+            {cacheText && <span>{t("global.lastUpdate")} {cacheText}</span>}
           </div>
         </div>
       </div>

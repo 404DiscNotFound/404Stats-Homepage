@@ -2,8 +2,10 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import PlayerHead from "@/components/PlayerHead";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function PlayerPicker({ label, players, value, onSelect, accent }) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
 
@@ -47,7 +49,7 @@ export default function PlayerPicker({ label, players, value, onSelect, accent }
           onChange={e => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setTimeout(() => setFocused(false), 150)}
-          placeholder="Player name..."
+          placeholder={t("playerPicker.placeholder")}
           className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/50"
           style={{ boxShadow: query ? `0 0 10px ${accent}20` : undefined }}
         />

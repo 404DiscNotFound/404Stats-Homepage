@@ -1,32 +1,33 @@
 import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
-const SLIDES = [
-  {
-    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/b740d0fce_Seeyourmostactiveplayersandevenstatistics.png",
-    title: "Live Dashboard",
-    subtitle: "See your most active players and even statistics",
-  },
-  {
-    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/242a50b92_1vs1-whoisthebiggestblockaddict.png",
-    title: "Player Compare",
-    subtitle: "1v1 — who is the biggest block addict?",
-  },
-  {
-    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/4d595df1e_Seethemostlovedblocksofyourplayers.png",
-    title: "Block Index",
-    subtitle: "See the most loved blocks of your players",
-  },
-  {
-    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/45b6e64d5_Trackindividualplayersandtheirstats.png",
-    title: "Player Profiles",
-    subtitle: "Track individual players and their stats",
-  },
-];
+import { useT } from "@/lib/i18n";
 
 const DURATION = 5000;
 
 export default function ImageCarousel() {
+  const t = useT();
+  const SLIDES = [
+    {
+      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/b740d0fce_Seeyourmostactiveplayersandevenstatistics.png",
+      title: t("landing.features.liveDashboard"),
+      subtitle: t("carousel.dashboardSubtitle"),
+    },
+    {
+      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/242a50b92_1vs1-whoisthebiggestblockaddict.png",
+      title: t("landing.features.playerCompare"),
+      subtitle: t("carousel.compareSubtitle"),
+    },
+    {
+      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/4d595df1e_Seethemostlovedblocksofyourplayers.png",
+      title: t("landing.features.blockIndex"),
+      subtitle: t("carousel.blockIndexSubtitle"),
+    },
+    {
+      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/45b6e64d5_Trackindividualplayersandtheirstats.png",
+      title: t("landing.features.playerProfiles"),
+      subtitle: t("carousel.profilesSubtitle"),
+    },
+  ];
   const [current, setCurrent] = useState(0);
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);

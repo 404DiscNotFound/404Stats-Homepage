@@ -1,8 +1,10 @@
 import LegalLayout from "@/components/LegalLayout";
+import { useT } from "@/lib/i18n";
 
 export default function Privacy() {
+  const t = useT();
   return (
-    <LegalLayout title="Privacy Policy" lastUpdated="July 2, 2026">
+    <LegalLayout title={t("legal.privacyPolicy")} lastUpdated="July 2, 2026">
       <Section title="1. Who We Are">
         <p>
           404Stats is a free, non-commercial hobby project operated by <strong>404DiscNotFound</strong>

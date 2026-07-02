@@ -18,8 +18,10 @@ import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function ServerDashboard() {
+  const t = useT();
   const { slug } = useParams();
   const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
@@ -42,7 +44,7 @@ export default function ServerDashboard() {
         setTrends(trendsRes.data.trends);
       } catch (err) {
         if (handlePasswordError(err)) return;
-        setError(err.response?.data?.error || "Server not found");
+        setError(err.response?.data?.error || t("common.serverNotFound"));
       } finally {
         setLoading(false);
       }
@@ -77,7 +79,7 @@ export default function ServerDashboard() {
         <div className="relative z-10">
           <p className="text-6xl font-black text-white">404</p>
           <p className="mt-2 text-sm text-gray-500">{error}</p>
-          <Link to="/" className="mt-6 text-sm text-[#00F5FF] hover:underline">← Back to home</Link>
+          <Link to="/" className="mt-6 text-sm text-[#00F5FF] hover:underline">{t("common.backToHome")}</Link>
         </div>
       </div>
     );
@@ -97,9 +99,9 @@ export default function ServerDashboard() {
 
             {/* Hero Stats */}
           <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
-            <StatCard label="Blocks Mined" value={formatNumber(data.totals.mined)} accent="cyan" />
-            <StatCard label="Blocks Placed" value={formatNumber(data.totals.placed)} accent="pink" />
-            <StatCard label="Total" value={formatNumber(data.totals.combined)} sublabel={`${data.totalPlayers} players`} accent="cyan" />
+            <StatCard label={t("dashboard.blocksMined")} value={formatNumber(data.totals.mined)} accent="cyan" />
+            <StatCard label={t("dashboard.blocksPlaced")} value={formatNumber(data.totals.placed)} accent="pink" />
+            <StatCard label={t("common.total")} value={formatNumber(data.totals.combined)} sublabel={`${data.totalPlayers} ${t("dashboard.players")}`} accent="cyan" />
           </div>
 
           {/* Activity Glow */}
@@ -124,19 +126,19 @@ export default function ServerDashboard() {
                 to={`/server/${slug}/players`}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2.5 text-sm font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]"
               >
-                <Users className="h-4 w-4" /> Players
+                <Users className="h-4 w-4" /> {t("dashboard.players")}
               </Link>
               <Link
                 to={`/server/${slug}/blocks`}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#FF0055]/30 bg-[#FF0055]/5 px-4 py-2.5 text-sm font-bold text-[#FF0055] transition-all hover:bg-[#FF0055]/10 hover:shadow-[0_0_15px_rgba(255,0,85,0.15)]"
               >
-                <Boxes className="h-4 w-4" /> Block Index
+                <Boxes className="h-4 w-4" /> {t("dashboard.blockIndex")}
               </Link>
               <Link
                 to={`/server/${slug}/compare`}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2.5 text-sm font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]"
               >
-                <Swords className="h-4 w-4" /> Compare
+                <Swords className="h-4 w-4" /> {t("dashboard.compare")}
               </Link>
             </div>
           </div>
@@ -146,14 +148,14 @@ export default function ServerDashboard() {
             <div className="mb-4 flex items-center justify-between">
               <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
                 <TrendingUp className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                Server Trend
+                {t("dashboard.serverTrend")}
               </h2>
               <div className="flex gap-3 text-[10px] text-gray-600 sm:gap-4 sm:text-xs">
                 <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />Mined
+                  <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />{t("common.mined")}
                 </span>
                 <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />Placed
+                  <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />{t("common.placed")}
                 </span>
               </div>
             </div>
@@ -164,7 +166,7 @@ export default function ServerDashboard() {
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
             <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
               <Gem className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-              Top 25 Blocks
+              {t("dashboard.topBlocks")}
             </h2>
             <TopBlocksChart materials={data.topMaterials} mode="server" />
           </div>
@@ -174,14 +176,14 @@ export default function ServerDashboard() {
             <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
                 <span className="text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.5)" }}>⛏</span>
-                Top 25 Miners
+                {t("dashboard.topMiners")}
               </h2>
               <TopPlayersList players={data.topMiners} slug={slug} metric="mined" accent="cyan" />
             </div>
             <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
                 <span className="text-[#FF0055]" style={{ textShadow: "0 0 8px rgba(255,0,85,0.5)" }}>🧱</span>
-                Top 25 Builders
+                {t("dashboard.topBuilders")}
               </h2>
               <TopPlayersList players={data.topBuilders} slug={slug} metric="placed" accent="pink" />
             </div>
@@ -191,7 +193,7 @@ export default function ServerDashboard() {
           {data.rareBlocks && data.rareBlocks.length > 0 && (
             <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-                <span>💎</span> Rare Blocks
+                <span>💎</span> {t("dashboard.rareBlocks")}
               </h2>
               <RareBlocksList blocks={data.rareBlocks} />
             </div>
@@ -205,10 +207,10 @@ export default function ServerDashboard() {
           {/* Legend */}
           <div className="mt-4 flex gap-6 text-xs text-gray-600">
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />Mined
+              <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />{t("common.mined")}
             </span>
             <span className="flex items-center gap-1.5">
-              <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />Placed
+              <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />{t("common.placed")}
             </span>
           </div>
         </div>

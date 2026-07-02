@@ -12,14 +12,16 @@ import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber, formatMaterial } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 const SORT_TABS = [
-  { key: "total", label: "Gesamt", accent: "text-white" },
-  { key: "mined", label: "Abgebaut", accent: "text-[#00F5FF]" },
-  { key: "placed", label: "Gebaut", accent: "text-[#FF0055]" },
+  { key: "total", labelKey: "blockIndex.sortTotal", accent: "text-white" },
+  { key: "mined", labelKey: "blockIndex.sortMined", accent: "text-[#00F5FF]" },
+  { key: "placed", labelKey: "blockIndex.sortPlaced", accent: "text-[#FF0055]" },
 ];
 
 export default function BlockIndex() {
+  const t = useT();
   const { slug } = useParams();
   const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
@@ -58,7 +60,7 @@ export default function BlockIndex() {
         setData(res.data);
       } catch (err) {
         if (handlePasswordError(err)) return;
-        setError(err.response?.data?.error || "Server nicht gefunden");
+        setError(err.response?.data?.error || t("common.serverNotFound"));
       } finally {
         setLoading(false);
       }
@@ -93,7 +95,7 @@ export default function BlockIndex() {
         <div className="relative z-10">
           <p className="text-6xl font-black text-white">404</p>
           <p className="mt-2 text-sm text-gray-500">{error}</p>
-          <Link to="/" className="mt-6 text-sm text-[#00F5FF] hover:underline">← Zurück zur Startseite</Link>
+          <Link to="/" className="mt-6 text-sm text-[#00F5FF] hover:underline">{t("common.backToHome")}</Link>
         </div>
       </div>
     );
@@ -115,9 +117,9 @@ export default function BlockIndex() {
           {/* Header */}
           <div className="mb-4 flex items-center justify-between sm:mb-6">
             <div>
-              <h1 className="text-lg font-black text-white sm:text-2xl">Block Index</h1>
+              <h1 className="text-lg font-black text-white sm:text-2xl">{t("blockIndex.title")}</h1>
               <p className="text-xs text-gray-600 sm:text-sm">
-                {data?.totalMaterials || 0} unique blocks · {formatNumber(data?.totals?.combined || 0)} total actions
+                {data?.totalMaterials || 0} {t("blockIndex.uniqueBlocks")} · {formatNumber(data?.totals?.combined || 0)} {t("blockIndex.totalActions")}
               </p>
             </div>
             <Link
@@ -125,7 +127,7 @@ export default function BlockIndex() {
               className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              <span className="hidden sm:inline">Dashboard</span>
+              <span className="hidden sm:inline">{t("common.dashboard")}</span>
             </Link>
           </div>
 
@@ -149,7 +151,7 @@ export default function BlockIndex() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Blöcke durchsuchen..."
+                placeholder={t("blockIndex.searchPlaceholder")}
                 className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/40"
               />
             </div>
@@ -164,7 +166,7 @@ export default function BlockIndex() {
                       : "border-[#1A1A24] bg-[#0A0A0F] text-gray-500 hover:text-gray-300"
                   }`}
                 >
-                  {tab.label}
+                  {t(tab.labelKey)}
                 </button>
               ))}
             </div>
@@ -174,7 +176,7 @@ export default function BlockIndex() {
           {materials.length === 0 ? (
             <div className="py-16 text-center">
               <p className="text-sm text-gray-600">
-                {search ? "Keine Blöcke gefunden." : "Noch keine Blockdaten vorhanden."}
+                {search ? t("blockIndex.noResults") : t("blockIndex.noData")}
               </p>
             </div>
           ) : (
@@ -200,7 +202,7 @@ export default function BlockIndex() {
                         {formatMaterial(m.material)}
                       </div>
                       <div className="text-[9px] text-gray-600 sm:text-[10px]">
-                        {m.playerPct != null ? `${m.playerPct}% of players` : ""}
+                        {m.playerPct != null ? `${m.playerPct}% ${t("blockIndex.ofPlayers")}` : ""}
                       </div>
                     </div>
                     <div className="flex h-5 min-w-[40px] flex-1 overflow-hidden rounded bg-[#111118] sm:h-6">

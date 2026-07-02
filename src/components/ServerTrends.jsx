@@ -1,9 +1,11 @@
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from "recharts";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function ServerTrends({ trends }) {
+  const t = useT();
   if (!trends || trends.length === 0) {
-    return <p className="py-8 text-center text-sm text-gray-600">No trend data yet.</p>;
+    return <p className="py-8 text-center text-sm text-gray-600">{t("trends.noData")}</p>;
   }
 
   const data = trends.map(t => ({
@@ -31,7 +33,7 @@ export default function ServerTrends({ trends }) {
         <Tooltip
           contentStyle={{ background: '#0A0A0F', border: '1px solid #1A1A24', borderRadius: '8px', fontSize: '12px' }}
           labelStyle={{ color: '#666' }}
-          formatter={(v, n) => [formatNumber(v), n === 'mined' ? 'Mined' : 'Placed']}
+          formatter={(v, n) => [formatNumber(v), n === 'mined' ? t("common.mined") : t("common.placed")]}
         />
         <Area type="monotone" dataKey="mined" stroke="#00F5FF" fill="url(#colorMined)" strokeWidth={2} />
         <Area type="monotone" dataKey="placed" stroke="#FF0055" fill="url(#colorPlaced)" strokeWidth={2} />

@@ -1,11 +1,13 @@
 import { useRef, useState } from "react";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
-const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 export default function ActivityHeatmap({ activity }) {
+  const t = useT();
+  const DAYS = t("heatmap.days").split(',');
   const tzOffset = -new Date().getTimezoneOffset() / 60;
   const tooltipRef = useRef(null);
   const [active, setActive] = useState(null);
@@ -62,7 +64,7 @@ export default function ActivityHeatmap({ activity }) {
       >
         <div className="min-w-[480px] sm:min-w-[520px]">
           <div className="flex items-center justify-between pl-8 pr-1">
-            <span className="text-[9px] text-gray-700">Local time (browser) · tap or hover a cell</span>
+            <span className="text-[9px] text-gray-700">{t("heatmap.localTime")}</span>
           </div>
           <div className="flex pl-8">
             {HOURS.map(h => (
@@ -97,11 +99,11 @@ export default function ActivityHeatmap({ activity }) {
             </div>
           ))}
           <div className="mt-2 flex items-center gap-2 pl-8 text-[9px] text-gray-700">
-            <span>Less</span>
+            <span>{t("heatmap.less")}</span>
             {[0.05, 0.25, 0.5, 0.75, 1].map(op => (
               <div key={op} className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: `rgba(0, 245, 255, ${0.1 + op * 0.9})` }} />
             ))}
-            <span>More</span>
+            <span>{t("heatmap.more")}</span>
           </div>
         </div>
       </div>
@@ -119,7 +121,7 @@ export default function ActivityHeatmap({ activity }) {
               <span className="text-[#00F5FF]">⛏ {formatNumber(active.mined)}</span>
               <span className="text-[#FF0055]">🧱 {formatNumber(active.placed)}</span>
             </div>
-            <p className="mt-0.5 text-[10px] font-black text-white">{formatNumber(active.total)} total</p>
+            <p className="mt-0.5 text-[10px] font-black text-white">{formatNumber(active.total)} {t("common.total").toLowerCase()}</p>
           </div>
         )}
       </div>

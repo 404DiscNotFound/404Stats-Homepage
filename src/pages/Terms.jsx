@@ -1,8 +1,10 @@
 import LegalLayout from "@/components/LegalLayout";
+import { useT } from "@/lib/i18n";
 
 export default function Terms() {
+  const t = useT();
   return (
-    <LegalLayout title="Terms of Service" lastUpdated="July 2, 2026">
+    <LegalLayout title={t("legal.termsOfService")} lastUpdated="July 2, 2026">
       <Section title="1. About 404Stats">
         <p>
           404Stats is a free, non-commercial hobby project that provides live block analytics

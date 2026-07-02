@@ -127,6 +127,9 @@ const translations = {
     "compare.uniqueBlocks": "Unique Blocks",
     "compare.activeHours": "Active Hours",
     "compare.peakActivity": "Peak Activity",
+    "compare.failedLoad": "Failed to load player data",
+    "compare.noData": "No data",
+    "compare.achievements": "Achievements",
 
     // Block Index
     "blockIndex.title": "Block Index",
@@ -263,6 +266,30 @@ const translations = {
 
     // Achievements
     "achievements.unlocked": "unlocked",
+
+    // Heatmap
+    "heatmap.localTime": "Local time (browser) · tap or hover a cell",
+    "heatmap.less": "Less",
+    "heatmap.more": "More",
+    "heatmap.days": "Sun,Mon,Tue,Wed,Thu,Fri,Sat",
+
+    // Block Players Tooltip
+    "blockPlayers.top5": "Top 5 Players",
+    "blockPlayers.noData": "No player data",
+
+    // Fun Facts
+    "funFacts.title": "Fun Facts",
+
+    // Server Activity Glow
+    "serverActivity.title": "Server Activity",
+    "serverActivity.last30Days": "Last 30 days",
+    "serverActivity.flow": "Flow",
+
+    // Carousel
+    "carousel.dashboardSubtitle": "See your most active players and even statistics",
+    "carousel.compareSubtitle": "1v1 — who is the biggest block addict?",
+    "carousel.blockIndexSubtitle": "See the most loved blocks of your players",
+    "carousel.profilesSubtitle": "Track individual players and their stats",
   },
   de: {
     // Common
@@ -388,6 +415,9 @@ const translations = {
     "compare.uniqueBlocks": "Eindeutige Blöcke",
     "compare.activeHours": "Aktive Stunden",
     "compare.peakActivity": "Spitzen-Aktivität",
+    "compare.failedLoad": "Spielerdaten konnten nicht geladen werden",
+    "compare.noData": "Keine Daten",
+    "compare.achievements": "Achievements",
 
     // Block Index
     "blockIndex.title": "Block-Index",
@@ -524,6 +554,30 @@ const translations = {
 
     // Achievements
     "achievements.unlocked": "freigeschaltet",
+
+    // Heatmap
+    "heatmap.localTime": "Lokale Zeit (Browser) · tippe oder fahre über eine Zelle",
+    "heatmap.less": "Weniger",
+    "heatmap.more": "Mehr",
+    "heatmap.days": "So,Mo,Di,Mi,Do,Fr,Sa",
+
+    // Block Players Tooltip
+    "blockPlayers.top5": "Top 5 Spieler",
+    "blockPlayers.noData": "Keine Spielerdaten",
+
+    // Fun Facts
+    "funFacts.title": "Fun Facts",
+
+    // Server Activity Glow
+    "serverActivity.title": "Server-Aktivität",
+    "serverActivity.last30Days": "Letzte 30 Tage",
+    "serverActivity.flow": "Verlauf",
+
+    // Carousel
+    "carousel.dashboardSubtitle": "Sieh deine aktivsten Spieler und Statistiken",
+    "carousel.compareSubtitle": "1v1 — wer ist der größte Block-Süchtige?",
+    "carousel.blockIndexSubtitle": "Sieh die beliebtesten Blöcke deiner Spieler",
+    "carousel.profilesSubtitle": "Verfolge einzelne Spieler und ihre Stats",
   },
 };
 
