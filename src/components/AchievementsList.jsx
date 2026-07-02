@@ -2,8 +2,8 @@ function formatUnlockDate(dateStr) {
   if (!dateStr) return null;
   const d = new Date(dateStr);
   if (isNaN(d.getTime())) return null;
-  const dateStrFormatted = d.toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
-  const timeStrFormatted = d.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
+  const dateStrFormatted = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+  const timeStrFormatted = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
   return `${dateStrFormatted} · ${timeStrFormatted}`;
 }
 
@@ -14,7 +14,7 @@ export default function AchievementsList({ achievements }) {
   return (
     <div>
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-xs text-gray-500">{unlocked} / {achievements.length} freigeschaltet</span>
+        <span className="text-xs text-gray-500">{unlocked} / {achievements.length} unlocked</span>
         <div className="h-1.5 w-24 overflow-hidden rounded-full bg-[#1A1A24]">
           <div className="h-full rounded-full bg-[#00F5FF] transition-all" style={{ width: `${(unlocked / achievements.length) * 100}%`, boxShadow: "0 0 6px rgba(0,245,255,0.5)" }} />
         </div>

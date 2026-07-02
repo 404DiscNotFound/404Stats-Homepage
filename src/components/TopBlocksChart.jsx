@@ -1,24 +1,16 @@
 import BlockIcon from "./BlockIcon";
-
-const formatNumber = (n) => {
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return (n || 0).toLocaleString("de-DE");
-};
-
-const formatMaterial = (m) =>
-  m.split("_").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+import { formatNumber, formatMaterial } from "@/lib/format";
 
 export default function TopBlocksChart({ materials }) {
   if (!materials || materials.length === 0) {
-    return <p className="py-8 text-center text-sm text-gray-600">Noch keine Block-Daten verfügbar.</p>;
+    return <p className="py-8 text-center text-sm text-gray-600">No block data yet.</p>;
   }
   const maxTotal = Math.max(...materials.map(m => m.total), 1);
 
   return (
     <div className="space-y-2">
       {materials.map((m, i) => (
-        <div key={i} className="group flex items-center gap-2 sm:gap-3 rounded-lg px-1 py-0.5 transition-colors hover:bg-[#0F0F18]">
+        <div key={i} className="group flex items-center gap-2 rounded-lg px-1 py-0.5 transition-colors hover:bg-[#0F0F18] sm:gap-3">
           <BlockIcon material={m.material} size={20} className="sm:!w-6 sm:!h-6" />
           <span className="w-20 shrink-0 truncate text-xs text-gray-300 group-hover:text-white sm:w-32 sm:text-sm">
             {formatMaterial(m.material)}

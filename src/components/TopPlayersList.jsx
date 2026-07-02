@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
 import PlayerHead from "./PlayerHead";
-
-const formatNumber = (n) => {
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return (n || 0).toLocaleString("de-DE");
-};
+import { formatNumber } from "@/lib/format";
 
 export default function TopPlayersList({ players, slug, metric = "total", accent = "cyan" }) {
   if (!players || players.length === 0) {
-    return <p className="py-8 text-center text-sm text-gray-600">Noch keine Spieler-Daten verfügbar.</p>;
+    return <p className="py-8 text-center text-sm text-gray-600">No player data yet.</p>;
   }
 
   const accentColor = accent === "cyan" ? "#00F5FF" : "#FF0055";

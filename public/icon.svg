@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#000000"/>
+  <defs>
+    <filter id="g1" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="8" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <filter id="g2" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="10" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <g transform="translate(256, 256)">
+    <polygon points="0,-130 113,-65 0,0 -113,-65" fill="#00F5FF" filter="url(#g1)"/>
+    <polygon points="-113,-65 0,0 0,130 -113,65" fill="#FF0055" filter="url(#g2)" opacity="0.9"/>
+    <polygon points="113,-65 0,0 0,130 113,65" fill="#CC0044" opacity="0.85"/>
+  </g>
+</svg>

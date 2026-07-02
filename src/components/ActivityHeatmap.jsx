@@ -1,11 +1,9 @@
-const DAYS = ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'];
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
-// Mon-first order: 1=Mon, 2=Tue, ..., 6=Sat, 0=Sun
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 export default function ActivityHeatmap({ activity }) {
-  // Convert UTC hour/day (stored on backend) to browser local time
-  const tzOffset = -new Date().getTimezoneOffset() / 60; // e.g. +2 for Berlin summer
+  const tzOffset = -new Date().getTimezoneOffset() / 60;
 
   const grid = {};
   let maxVal = 0;
@@ -20,9 +18,9 @@ export default function ActivityHeatmap({ activity }) {
 
   return (
     <div className="overflow-x-auto">
-      <div className="min-w-[520px]">
+      <div className="min-w-[480px] sm:min-w-[520px]">
         <div className="flex items-center justify-between pl-8 pr-1">
-          <span className="text-[9px] text-gray-700">Lokale Zeit (Browser)</span>
+          <span className="text-[9px] text-gray-700">Local time (browser)</span>
         </div>
         <div className="flex pl-8">
           {HOURS.map(h => (
@@ -48,18 +46,18 @@ export default function ActivityHeatmap({ activity }) {
                       : 'rgba(255,255,255,0.02)',
                     boxShadow: val > 0 && intensity > 0.7 ? `0 0 4px rgba(0,245,255,${intensity * 0.4})` : undefined
                   }}
-                  title={`${DAYS[day]} ${String(hour).padStart(2,'0')}:00 — ${val} Blöcke`}
+                  title={`${DAYS[day]} ${String(hour).padStart(2,'0')}:00 — ${val} blocks`}
                 />
               );
             })}
           </div>
         ))}
         <div className="mt-2 flex items-center gap-2 pl-8 text-[9px] text-gray-700">
-          <span>Weniger</span>
+          <span>Less</span>
           {[0.05, 0.25, 0.5, 0.75, 1].map(op => (
             <div key={op} className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: `rgba(0, 245, 255, ${0.1 + op * 0.9})` }} />
           ))}
-          <span>Mehr</span>
+          <span>More</span>
         </div>
       </div>
     </div>

@@ -2,15 +2,11 @@ import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Swords } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
 import PlayerHead from "@/components/PlayerHead";
 import TopBlocksChart from "@/components/TopBlocksChart";
-
-const formatNumber = (n) => {
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return (n || 0).toLocaleString("de-DE");
-};
+import { formatNumber } from "@/lib/format";
 
 export default function ComparePlayers() {
   const { slug } = useParams();
@@ -69,8 +65,8 @@ export default function ComparePlayers() {
           type="text"
           value={value}
           onChange={e => set(e.target.value)}
-          placeholder="Spielername..."
-          className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none focus:border-[#00F5FF]/50"
+          placeholder="Player name..."
+          className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/50"
           style={{ boxShadow: value ? `0 0 10px ${accent}20` : undefined }}
         />
         {showDropdown && (
@@ -93,98 +89,112 @@ export default function ComparePlayers() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
-      <ServerHeader slug={slug} />
-      <div className="mx-auto max-w-5xl px-4 py-8 sm:px-6">
-        <Link to={`/server/${slug}`} className="mb-6 flex items-center gap-2 text-sm text-gray-500 hover:text-white">
-          <ArrowLeft className="h-4 w-4" /> Zurück zum Server
-        </Link>
+    <div className="min-h-screen bg-black text-white">
+      <Background />
+      <div className="relative z-10">
+        <ServerHeader slug={slug} />
+        <div className="mx-auto max-w-5xl px-4 py-5 sm:px-6 sm:py-8">
+          <Link to={`/server/${slug}`} className="mb-5 flex items-center gap-2 text-sm text-gray-500 hover:text-white sm:mb-6">
+            <ArrowLeft className="h-4 w-4" /> Back to server
+          </Link>
 
-        <h1 className="mb-6 flex items-center gap-2 text-lg font-black text-white">
-          <Swords className="h-5 w-5 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
-          Spieler vergleichen
-        </h1>
+          <h1 className="mb-5 flex items-center gap-2 text-lg font-black text-white sm:mb-6">
+            <Swords className="h-5 w-5 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
+            Compare Players
+          </h1>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          {renderPicker("Spieler 1", p1, setP1, "#00F5FF")}
-          {renderPicker("Spieler 2", p2, setP2, "#FF0055")}
+          <div className="grid gap-4 sm:grid-cols-2">
+            {renderPicker("Player 1", p1, setP1, "#00F5FF")}
+            {renderPicker("Player 2", p2, setP2, "#FF0055")}
+          </div>
+
+          {loading && (
+            <div className="mt-8 flex justify-center">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+            </div>
+          )}
+
+          {!loading && data1 && data2 && (
+            <div className="mt-6 sm:mt-8">
+              {/* Player Cards */}
+              <div className="grid grid-cols-2 gap-4">
+                {[data1, data2].map((d, i) => (
+                  <div key={i} className="flex flex-col items-center text-center">
+                    <PlayerHead uuid={d.player.uuid} name={d.player.player_name} size={56} className="sm:!w-16 sm:!h-16" />
+                    <p className="mt-2 text-sm font-bold text-white">{d.player.player_name}</p>
+                    <p className="text-xs text-gray-500">Rank #{d.player.rank} / {d.player.totalPlayers}</p>
+                  </div>
+                ))}
+              </div>
+
+              {/* VS Divider */}
+              <div className="my-6 flex items-center gap-3">
+                <div className="h-px flex-1 bg-[#1A1A24]" />
+                <span className="text-xs font-black text-gray-700">VS</span>
+                <div className="h-px flex-1 bg-[#1A1A24]" />
+              </div>
+
+              {/* Comparison Bars */}
+              <div className="space-y-4">
+                {[
+                  { label: 'Mined', p1Val: data1.player.mined, p2Val: data2.player.mined },
+                  { label: 'Placed', p1Val: data1.player.placed, p2Val: data2.player.placed },
+                  { label: 'Total', p1Val: data1.player.total, p2Val: data2.player.total },
+                ].map((stat, i) => {
+                  const p1Wins = stat.p1Val > stat.p2Val;
+                  const p2Wins = stat.p2Val > stat.p1Val;
+                  const max = Math.max(stat.p1Val, stat.p2Val, 1);
+                  return (
+                    <div key={i}>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className={p1Wins ? 'font-bold text-[#00F5FF]' : 'text-gray-500'}>{formatNumber(stat.p1Val)}</span>
+                        <span className="uppercase tracking-wider text-gray-600">{stat.label}</span>
+                        <span className={p2Wins ? 'font-bold text-[#FF0055]' : 'text-gray-500'}>{formatNumber(stat.p2Val)}</span>
+                      </div>
+                      <div className="mt-1.5 flex h-3 gap-0.5">
+                        <div className="flex justify-end overflow-hidden rounded-l bg-[#111118]" style={{ flex: 1 }}>
+                          <div className="h-full rounded-l bg-[#00F5FF] transition-all duration-500" style={{ width: `${(stat.p1Val / max) * 100}%`, boxShadow: p1Wins ? "0 0 8px rgba(0,245,255,0.5)" : undefined }} />
+                        </div>
+                        <div className="overflow-hidden rounded-r bg-[#111118]" style={{ flex: 1 }}>
+                          <div className="h-full rounded-r bg-[#FF0055] transition-all duration-500" style={{ width: `${(stat.p2Val / max) * 100}%`, boxShadow: p2Wins ? "0 0 8px rgba(255,0,85,0.5)" : undefined }} />
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Top Blocks */}
+              <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                {[data1, data2].map((d, i) => (
+                  <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
+                    <h3 className="mb-3 text-xs font-black uppercase tracking-wider text-white">⚡ Top Blocks</h3>
+                    <TopBlocksChart materials={d.topMaterials} />
+                  </div>
+                ))}
+              </div>
+
+              {/* Achievements */}
+              <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                {[data1, data2].map((d, i) => {
+                  const unlocked = (d.achievements || []).filter(a => a.unlocked).length;
+                  return (
+                    <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 text-center">
+                      <p className="text-xs uppercase tracking-wider text-gray-600">🏆 Achievements</p>
+                      <p className="mt-1 text-2xl font-black text-[#00F5FF]" style={{ textShadow: "0 0 10px rgba(0,245,255,0.3)" }}>{unlocked}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {!loading && (!data1 || !data2) && (
+            <div className="mt-6 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-6 text-center sm:mt-8 sm:p-8">
+              <p className="text-sm text-gray-600">Select two players to compare their stats.</p>
+            </div>
+          )}
         </div>
-
-        {loading && (
-          <div className="mt-8 flex justify-center">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]"></div>
-          </div>
-        )}
-
-        {!loading && data1 && data2 && (
-          <div className="mt-8">
-            <div className="grid grid-cols-2 gap-4">
-              {[data1, data2].map((d, i) => (
-                <div key={i} className="flex flex-col items-center text-center">
-                  <PlayerHead uuid={d.player.uuid} name={d.player.player_name} size={56} />
-                  <p className="mt-2 text-sm font-bold text-white">{d.player.player_name}</p>
-                  <p className="text-xs text-gray-500">Rang #{d.player.rank} / {d.player.totalPlayers}</p>
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 space-y-3">
-              {[
-                { label: 'Abgebaut', p1Val: data1.player.mined, p2Val: data2.player.mined },
-                { label: 'Gesetzt', p1Val: data1.player.placed, p2Val: data2.player.placed },
-                { label: 'Gesamt', p1Val: data1.player.total, p2Val: data2.player.total },
-              ].map((stat, i) => {
-                const p1Wins = stat.p1Val > stat.p2Val;
-                const p2Wins = stat.p2Val > stat.p1Val;
-                const max = Math.max(stat.p1Val, stat.p2Val, 1);
-                return (
-                  <div key={i}>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className={p1Wins ? 'font-bold text-[#00F5FF]' : 'text-gray-500'}>{formatNumber(stat.p1Val)}</span>
-                      <span className="uppercase tracking-wider text-gray-600">{stat.label}</span>
-                      <span className={p2Wins ? 'font-bold text-[#FF0055]' : 'text-gray-500'}>{formatNumber(stat.p2Val)}</span>
-                    </div>
-                    <div className="mt-1 flex h-2.5 gap-0.5">
-                      <div className="flex justify-end overflow-hidden rounded-l bg-[#111118]" style={{ flex: 1 }}>
-                        <div className="h-full rounded-l bg-[#00F5FF] transition-all duration-500" style={{ width: `${(stat.p1Val / max) * 100}%`, boxShadow: p1Wins ? "0 0 8px rgba(0,245,255,0.5)" : undefined }} />
-                      </div>
-                      <div className="overflow-hidden rounded-r bg-[#111118]" style={{ flex: 1 }}>
-                        <div className="h-full rounded-r bg-[#FF0055] transition-all duration-500" style={{ width: `${(stat.p2Val / max) * 100}%`, boxShadow: p2Wins ? "0 0 8px rgba(255,0,85,0.5)" : undefined }} />
-                      </div>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {[data1, data2].map((d, i) => (
-                <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4">
-                  <h3 className="mb-3 text-xs font-black uppercase tracking-wider text-white">⚡ Top Blöcke</h3>
-                  <TopBlocksChart materials={d.topMaterials} />
-                </div>
-              ))}
-            </div>
-
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              {[data1, data2].map((d, i) => {
-                const unlocked = (d.achievements || []).filter(a => a.unlocked).length;
-                return (
-                  <div key={i} className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 text-center">
-                    <p className="text-xs uppercase tracking-wider text-gray-600">🏆 Achievements</p>
-                    <p className="mt-1 text-2xl font-black text-[#00F5FF]" style={{ textShadow: "0 0 10px rgba(0,245,255,0.3)" }}>{unlocked}</p>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {!loading && (!data1 || !data2) && (
-          <div className="mt-8 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-8 text-center">
-            <p className="text-sm text-gray-600">Wähle zwei Spieler aus, um sie zu vergleichen.</p>
-          </div>
-        )}
       </div>
     </div>
   );

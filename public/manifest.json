@@ -1,0 +1,18 @@
+{
+  "name": "404Stats — Minecraft Block Analytics",
+  "short_name": "404Stats",
+  "description": "Live analytics platform for Minecraft server block activity with leaderboards, player profiles, and achievements.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

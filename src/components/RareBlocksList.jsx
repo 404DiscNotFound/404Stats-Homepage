@@ -1,16 +1,9 @@
 import BlockIcon from "./BlockIcon";
-
-const formatNumber = (n) => {
-  if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
-  if (n >= 1e3) return (n / 1e3).toFixed(1) + "K";
-  return (n || 0).toLocaleString("de-DE");
-};
-
-const formatMaterial = (m) => m.split("_").map(w => w.charAt(0) + w.slice(1).toLowerCase()).join(" ");
+import { formatNumber, formatMaterial } from "@/lib/format";
 
 export default function RareBlocksList({ blocks }) {
   if (!blocks || blocks.length === 0) {
-    return <p className="py-4 text-center text-sm text-gray-600">Noch keine seltenen Blöcke gefunden.</p>;
+    return <p className="py-4 text-center text-sm text-gray-600">No rare blocks found yet.</p>;
   }
 
   return (
