@@ -33,8 +33,11 @@ export default function TopBlocksChart({ materials }) {
               style={{ width: `${(m.placed / maxTotal) * 100}%`, boxShadow: "0 0 6px rgba(255,0,85,0.3)" }}
             />
           </div>
-          <span className="w-14 shrink-0 text-right text-xs font-bold text-white sm:w-16 sm:text-sm">
-            {formatNumber(m.total)}
+          <span className="flex shrink-0 items-center gap-1.5 text-xs tabular-nums sm:gap-2">
+            <span className="text-[#00F5FF]/70">{formatNumber(m.mined)}</span>
+            <span className="text-gray-700">/</span>
+            <span className="text-[#FF0055]/70">{formatNumber(m.placed)}</span>
+            <span className="ml-0.5 font-bold text-white sm:ml-1">{formatNumber(m.total)}</span>
           </span>
         </div>
       ))}
