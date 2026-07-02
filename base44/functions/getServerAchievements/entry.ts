@@ -25,15 +25,26 @@ Deno.serve(async (req) => {
     const materialSet = new Set();
     const playerSet = new Set();
     const matTotals = {};
+    const gameModeMap = {};
 
     for (const stat of allStats) {
-      totalMined += (stat.mined || 0);
-      totalPlaced += (stat.placed || 0);
+      const mined = stat.mined || 0;
+      const placed = stat.placed || 0;
+      const gm = stat.game_mode || 'SURVIVAL';
+
+      totalMined += mined;
+      totalPlaced += placed;
       materialSet.add(stat.material);
       playerSet.add(stat.uuid);
       if (!matTotals[stat.material]) matTotals[stat.material] = { mined: 0, placed: 0 };
-      matTotals[stat.material].mined += (stat.mined || 0);
-      matTotals[stat.material].placed += (stat.placed || 0);
+      matTotals[stat.material].mined += mined;
+      matTotals[stat.material].placed += placed;
+
+      // Game mode breakdown
+      if (!gameModeMap[gm]) gameModeMap[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      gameModeMap[gm].mined += mined;
+      gameModeMap[gm].placed += placed;
+      gameModeMap[gm].total += mined + placed;
     }
 
     const totalCombined = totalMined + totalPlaced;
@@ -95,7 +106,8 @@ Deno.serve(async (req) => {
       achievements,
       unlockedCount,
       totalCount: achievements.length,
-      stats: { totalMined, totalPlaced, totalCombined, uniqueMaterials, totalPlayers }
+      stats: { totalMined, totalPlaced, totalCombined, uniqueMaterials, totalPlayers },
+      gameModes: Object.values(gameModeMap).sort((a, b) => b.total - a.total)
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

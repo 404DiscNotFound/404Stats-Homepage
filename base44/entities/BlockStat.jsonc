@@ -18,6 +18,11 @@
       "type": "string",
       "description": "Block material type (e.g. STONE, DIRT)"
     },
+    "game_mode": {
+      "type": "string",
+      "default": "SURVIVAL",
+      "description": "Game mode when activity occurred (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)"
+    },
     "mined": {
       "type": "number",
       "default": 0,

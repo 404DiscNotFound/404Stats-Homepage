@@ -22,13 +22,31 @@ Deno.serve(async (req) => {
     );
 
     const playerMap = {};
+    const gameModeMap = {};
+
     for (const stat of allStats) {
+      const mined = stat.mined || 0;
+      const placed = stat.placed || 0;
+      const gm = stat.game_mode || 'SURVIVAL';
+
+      // Server-wide game mode breakdown
+      if (!gameModeMap[gm]) gameModeMap[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      gameModeMap[gm].mined += mined;
+      gameModeMap[gm].placed += placed;
+      gameModeMap[gm].total += mined + placed;
+
       if (!playerMap[stat.uuid]) {
-        playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0, materials: new Set() };
+        playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0, materials: new Set(), gameModes: {} };
       }
-      playerMap[stat.uuid].mined += (stat.mined || 0);
-      playerMap[stat.uuid].placed += (stat.placed || 0);
+      playerMap[stat.uuid].mined += mined;
+      playerMap[stat.uuid].placed += placed;
       playerMap[stat.uuid].materials.add(stat.material);
+
+      // Per-player game mode breakdown
+      if (!playerMap[stat.uuid].gameModes[gm]) playerMap[stat.uuid].gameModes[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      playerMap[stat.uuid].gameModes[gm].mined += mined;
+      playerMap[stat.uuid].gameModes[gm].placed += placed;
+      playerMap[stat.uuid].gameModes[gm].total += mined + placed;
     }
 
     const players = Object.values(playerMap)
@@ -38,7 +56,8 @@ Deno.serve(async (req) => {
         mined: p.mined,
         placed: p.placed,
         total: p.mined + p.placed,
-        blockVariety: p.materials.size
+        blockVariety: p.materials.size,
+        gameModes: Object.values(p.gameModes).sort((a, b) => b.total - a.total)
       }))
       .sort((a, b) => b.total - a.total);
 
@@ -46,6 +65,7 @@ Deno.serve(async (req) => {
       server: { slug: server.server_slug, display_name: server.display_name },
       players,
       totalPlayers: players.length,
+      gameModes: Object.values(gameModeMap).sort((a, b) => b.total - a.total),
       totals: {
         mined: players.reduce((s, p) => s + p.mined, 0),
         placed: players.reduce((s, p) => s + p.placed, 0),

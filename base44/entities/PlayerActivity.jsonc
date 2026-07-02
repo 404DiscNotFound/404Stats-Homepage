@@ -14,6 +14,11 @@
       "type": "string",
       "description": "Minecraft player name"
     },
+    "game_mode": {
+      "type": "string",
+      "default": "SURVIVAL",
+      "description": "Game mode when activity occurred (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)"
+    },
     "day_of_week": {
       "type": "number",
       "description": "Day of week (0=Sunday, 6=Saturday)"

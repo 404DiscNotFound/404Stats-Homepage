@@ -22,13 +22,23 @@ Deno.serve(async (req) => {
 
     const trendMap = {};
     for (const s of dailyStats) {
-      if (!trendMap[s.date]) trendMap[s.date] = { date: s.date, mined: 0, placed: 0 };
+      if (!trendMap[s.date]) trendMap[s.date] = { date: s.date, mined: 0, placed: 0, gameModes: {} };
       trendMap[s.date].mined += (s.mined || 0);
       trendMap[s.date].placed += (s.placed || 0);
+
+      const gm = s.game_mode || 'SURVIVAL';
+      if (!trendMap[s.date].gameModes[gm]) trendMap[s.date].gameModes[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      trendMap[s.date].gameModes[gm].mined += s.mined || 0;
+      trendMap[s.date].gameModes[gm].placed += s.placed || 0;
+      trendMap[s.date].gameModes[gm].total += (s.mined || 0) + (s.placed || 0);
     }
 
     const trends = Object.values(trendMap)
-      .map(t => ({ ...t, total: t.mined + t.placed }))
+      .map(t => ({
+        ...t,
+        total: t.mined + t.placed,
+        gameModes: Object.values(t.gameModes).sort((a, b) => b.total - a.total)
+      }))
       .sort((a, b) => a.date.localeCompare(b.date))
       .slice(-30);
 

@@ -23,22 +23,39 @@ Deno.serve(async (req) => {
 
     const materialMap = {};
     const uniquePlayers = new Set();
+    const gameModeMap = {};
+
     for (const stat of allStats) {
+      const mined = stat.mined || 0;
+      const placed = stat.placed || 0;
+      const gm = stat.game_mode || 'SURVIVAL';
+
       uniquePlayers.add(stat.uuid);
+
+      // Game mode breakdown
+      if (!gameModeMap[gm]) gameModeMap[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      gameModeMap[gm].mined += mined;
+      gameModeMap[gm].placed += placed;
+      gameModeMap[gm].total += mined + placed;
+
       if (!materialMap[stat.material]) {
         materialMap[stat.material] = {
           material: stat.material, mined: 0, placed: 0,
-          players: {}, topContributor: null
+          players: {}, topContributor: null, gameModes: {}
         };
       }
       const m = materialMap[stat.material];
-      m.mined += (stat.mined || 0);
-      m.placed += (stat.placed || 0);
+      m.mined += mined;
+      m.placed += placed;
+      if (!m.gameModes[gm]) m.gameModes[gm] = { mined: 0, placed: 0, total: 0 };
+      m.gameModes[gm].mined += mined;
+      m.gameModes[gm].placed += placed;
+      m.gameModes[gm].total += mined + placed;
       if (!m.players[stat.uuid]) {
         m.players[stat.uuid] = { name: stat.player_name, mined: 0, placed: 0 };
       }
-      m.players[stat.uuid].mined += (stat.mined || 0);
-      m.players[stat.uuid].placed += (stat.placed || 0);
+      m.players[stat.uuid].mined += mined;
+      m.players[stat.uuid].placed += placed;
     }
 
     const grandTotal = Object.values(materialMap).reduce((s, m) => s + m.mined + m.placed, 0);
@@ -59,6 +76,7 @@ Deno.serve(async (req) => {
           playerPct: uniquePlayers.size > 0 ? Math.round((playerList.length / uniquePlayers.size) * 100) : 0,
           topContributor: top ? { uuid: top.uuid, name: top.name, total: top.total, mined: top.mined, placed: top.placed } : null,
           topPlayers,
+          gameModes: Object.values(m.gameModes).sort((a, b) => b.total - a.total),
           sharePct: grandTotal > 0 ? Math.round(((m.mined + m.placed) / grandTotal) * 100) : 0
         };
       })
@@ -73,6 +91,7 @@ Deno.serve(async (req) => {
         placed: materials.reduce((s, m) => s + m.placed, 0),
         combined: materials.reduce((s, m) => s + m.total, 0)
       },
+      gameModes: Object.values(gameModeMap).sort((a, b) => b.total - a.total),
       totalPlayers: uniquePlayers.size
     });
   } catch (error) {

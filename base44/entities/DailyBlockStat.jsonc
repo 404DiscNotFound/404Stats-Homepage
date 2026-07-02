@@ -18,6 +18,11 @@
       "type": "string",
       "description": "Block material type (e.g. STONE, DIRT)"
     },
+    "game_mode": {
+      "type": "string",
+      "default": "SURVIVAL",
+      "description": "Game mode when activity occurred (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)"
+    },
     "date": {
       "type": "string",
       "description": "Date in YYYY-MM-DD format (UTC)"
@@ -46,7 +51,11 @@
         "role": "admin"
       }
     },
-    "read": true,
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
     "update": {
       "user_condition": {
         "role": "admin"

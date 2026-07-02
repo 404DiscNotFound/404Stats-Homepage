@@ -20,7 +20,8 @@ Deno.serve(async (req) => {
     let server;
     if (existing && existing.length > 0) {
       server = existing[0];
-      if (body.server_name && !server.display_name) {
+      // Always update display_name if provided and different — allows renaming after the fact
+      if (body.server_name && server.display_name !== body.server_name) {
         await base44.asServiceRole.entities.Server.update(server.id, { display_name: body.server_name });
         server.display_name = body.server_name;
       }
@@ -39,28 +40,35 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, server_slug: server.server_slug, processed: 0 });
     }
 
+    // Normalize game_mode — default SURVIVAL for backward compatibility
+    const normalizeGameMode = (gm) => {
+      if (typeof gm !== 'string' || gm.length === 0 || gm.length > 32) return 'SURVIVAL';
+      return gm.toUpperCase();
+    };
+
     // Fetch existing stats for this server in one query
     const existingStats = await base44.asServiceRole.entities.BlockStat.filter(
       { server_id: server.id }, '-created_date', 10000
     );
     const statMap = {};
     for (const s of existingStats) {
-      statMap[s.uuid + ':' + s.material] = s;
+      const gm = s.game_mode || 'SURVIVAL';
+      statMap[s.uuid + ':' + s.material + ':' + gm] = s;
     }
 
     // Accumulate all deltas into statMap first
     for (const stat of stats) {
       const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name || !material) continue;
-
-      const key = uuid + ':' + material;
+      const game_mode = normalizeGameMode(stat.game_mode);
+      const key = uuid + ':' + material + ':' + game_mode;
       if (statMap[key]) {
         statMap[key].mined = (statMap[key].mined || 0) + mined_delta;
         statMap[key].placed = (statMap[key].placed || 0) + placed_delta;
         statMap[key].player_name = player_name;
       } else {
         statMap[key] = {
-          server_id: server.id, uuid, player_name, material,
+          server_id: server.id, uuid, player_name, material, game_mode,
           mined: mined_delta, placed: placed_delta,
           _isNew: true
         };
@@ -76,7 +84,7 @@ Deno.serve(async (req) => {
         const { _isNew, ...createData } = s;
         toCreate.push(createData);
       } else {
-        toUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name });
+        toUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL' });
       }
     }
 
@@ -94,20 +102,22 @@ Deno.serve(async (req) => {
     );
     const dailyMap = {};
     for (const s of existingDaily) {
-      dailyMap[s.uuid + ':' + s.material] = s;
+      const gm = s.game_mode || 'SURVIVAL';
+      dailyMap[s.uuid + ':' + s.material + ':' + gm] = s;
     }
 
     for (const stat of stats) {
       const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name || !material) continue;
-      const key = uuid + ':' + material;
+      const game_mode = normalizeGameMode(stat.game_mode);
+      const key = uuid + ':' + material + ':' + game_mode;
       if (dailyMap[key]) {
         dailyMap[key].mined = (dailyMap[key].mined || 0) + mined_delta;
         dailyMap[key].placed = (dailyMap[key].placed || 0) + placed_delta;
         dailyMap[key].player_name = player_name;
       } else {
         dailyMap[key] = {
-          server_id: server.id, uuid, player_name, material, date: today,
+          server_id: server.id, uuid, player_name, material, game_mode, date: today,
           mined: mined_delta, placed: placed_delta,
           _isNew: true
         };
@@ -122,7 +132,7 @@ Deno.serve(async (req) => {
         const { _isNew, ...createData } = s;
         dailyToCreate.push(createData);
       } else {
-        dailyToUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name });
+        dailyToUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL' });
       }
     }
 
@@ -133,7 +143,7 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.DailyBlockStat.bulkCreate(dailyToCreate);
     }
 
-    // Process activity stats (for heatmap) — track by day-of-week + hour
+    // Process activity stats (for heatmap) — track by day-of-week + hour + game_mode
     const now = new Date();
     const dayOfWeek = now.getDay();
     const hour = now.getHours();
@@ -142,31 +152,34 @@ Deno.serve(async (req) => {
     );
     const activityMap = {};
     for (const a of existingActivity) {
-      activityMap[a.uuid] = a;
+      const gm = a.game_mode || 'SURVIVAL';
+      activityMap[a.uuid + ':' + gm] = a;
     }
     for (const stat of stats) {
       const { uuid, player_name, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name) continue;
-      if (activityMap[uuid]) {
-        activityMap[uuid].mined = (activityMap[uuid].mined || 0) + mined_delta;
-        activityMap[uuid].placed = (activityMap[uuid].placed || 0) + placed_delta;
-        activityMap[uuid].player_name = player_name;
+      const game_mode = normalizeGameMode(stat.game_mode);
+      const key = uuid + ':' + game_mode;
+      if (activityMap[key]) {
+        activityMap[key].mined = (activityMap[key].mined || 0) + mined_delta;
+        activityMap[key].placed = (activityMap[key].placed || 0) + placed_delta;
+        activityMap[key].player_name = player_name;
       } else {
-        activityMap[uuid] = {
-          server_id: server.id, uuid, player_name, day_of_week: dayOfWeek, hour: hour,
+        activityMap[key] = {
+          server_id: server.id, uuid, player_name, game_mode, day_of_week: dayOfWeek, hour: hour,
           mined: mined_delta, placed: placed_delta, _isNew: true
         };
       }
     }
     const activityToUpdate = [];
     const activityToCreate = [];
-    for (const uuid in activityMap) {
-      const a = activityMap[uuid];
+    for (const key in activityMap) {
+      const a = activityMap[key];
       if (a._isNew) {
         const { _isNew, ...createData } = a;
         activityToCreate.push(createData);
       } else {
-        activityToUpdate.push({ id: a.id, mined: a.mined, placed: a.placed, player_name: a.player_name });
+        activityToUpdate.push({ id: a.id, mined: a.mined, placed: a.placed, player_name: a.player_name, game_mode: a.game_mode || 'SURVIVAL' });
       }
     }
     if (activityToUpdate.length > 0) {

@@ -62,13 +62,22 @@ Deno.serve(async (req) => {
 
     // Build player maps for range data
     const playerMap = {};
+    const playerGameModeMap = {};
     for (const stat of rangeStats) {
+      const gm = stat.game_mode || 'SURVIVAL';
       if (!playerMap[stat.uuid]) {
         playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0, materials: [] };
       }
       playerMap[stat.uuid].mined += (stat.mined || 0);
       playerMap[stat.uuid].placed += (stat.placed || 0);
       playerMap[stat.uuid].materials.push({ material: stat.material, mined: stat.mined || 0, placed: stat.placed || 0 });
+
+      // Per-player game mode breakdown
+      if (!playerGameModeMap[stat.uuid]) playerGameModeMap[stat.uuid] = {};
+      if (!playerGameModeMap[stat.uuid][gm]) playerGameModeMap[stat.uuid][gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      playerGameModeMap[stat.uuid][gm].mined += stat.mined || 0;
+      playerGameModeMap[stat.uuid][gm].placed += stat.placed || 0;
+      playerGameModeMap[stat.uuid][gm].total += (stat.mined || 0) + (stat.placed || 0);
     }
 
     const allPlayers = Object.values(playerMap).map(p => ({ ...p, total: p.mined + p.placed }));
@@ -223,8 +232,12 @@ Deno.serve(async (req) => {
       hour: a.hour,
       mined: a.mined || 0,
       placed: a.placed || 0,
-      total: (a.mined || 0) + (a.placed || 0)
+      total: (a.mined || 0) + (a.placed || 0),
+      game_mode: a.game_mode || 'SURVIVAL'
     }));
+
+    // Compute player's game mode breakdown
+    const gameModes = Object.values(playerGameModeMap[targetPlayer.uuid] || {}).sort((a, b) => b.total - a.total);
 
     // Compute neighbors (above/below for each metric)
     const sortedByMined = [...allPlayers].sort((a, b) => b.mined - a.mined);
@@ -282,6 +295,7 @@ Deno.serve(async (req) => {
       achievements,
       rareBlocks,
       heatmap,
+      gameModes,
       neighbors,
       facts,
       range

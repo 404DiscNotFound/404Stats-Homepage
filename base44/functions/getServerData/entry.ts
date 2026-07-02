@@ -27,27 +27,38 @@ Deno.serve(async (req) => {
     let totalPlaced = 0;
     const materialMap = {};
     const playerMap = {};
+    const gameModeMap = {};
 
     for (const stat of allStats) {
-      totalMined += (stat.mined || 0);
-      totalPlaced += (stat.placed || 0);
+      const mined = stat.mined || 0;
+      const placed = stat.placed || 0;
+      const gm = stat.game_mode || 'SURVIVAL';
+
+      totalMined += mined;
+      totalPlaced += placed;
+
+      // Game mode breakdown
+      if (!gameModeMap[gm]) gameModeMap[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      gameModeMap[gm].mined += mined;
+      gameModeMap[gm].placed += placed;
+      gameModeMap[gm].total += mined + placed;
 
       if (!materialMap[stat.material]) {
         materialMap[stat.material] = { material: stat.material, mined: 0, placed: 0, players: {} };
       }
-      materialMap[stat.material].mined += (stat.mined || 0);
-      materialMap[stat.material].placed += (stat.placed || 0);
+      materialMap[stat.material].mined += mined;
+      materialMap[stat.material].placed += placed;
       if (!materialMap[stat.material].players[stat.uuid]) {
         materialMap[stat.material].players[stat.uuid] = { name: stat.player_name, mined: 0, placed: 0 };
       }
-      materialMap[stat.material].players[stat.uuid].mined += (stat.mined || 0);
-      materialMap[stat.material].players[stat.uuid].placed += (stat.placed || 0);
+      materialMap[stat.material].players[stat.uuid].mined += mined;
+      materialMap[stat.material].players[stat.uuid].placed += placed;
 
       if (!playerMap[stat.uuid]) {
         playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0 };
       }
-      playerMap[stat.uuid].mined += (stat.mined || 0);
-      playerMap[stat.uuid].placed += (stat.placed || 0);
+      playerMap[stat.uuid].mined += mined;
+      playerMap[stat.uuid].placed += placed;
     }
 
     const topMaterials = Object.values(materialMap)
@@ -108,6 +119,9 @@ Deno.serve(async (req) => {
       })
       .sort((a, b) => b.total - a.total);
 
+    // Game modes sorted by total
+    const gameModes = Object.values(gameModeMap).sort((a, b) => b.total - a.total);
+
     // Fun facts
     const fmt = (n) => n.toLocaleString('de-DE');
     const fmtMat = (m) => m.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
@@ -136,6 +150,7 @@ Deno.serve(async (req) => {
       rareBlocks,
       allPlayers,
       totalPlayers: allPlayers.length,
+      gameModes,
       facts
     });
   } catch (error) {
