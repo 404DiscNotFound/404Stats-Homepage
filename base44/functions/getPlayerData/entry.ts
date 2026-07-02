@@ -62,12 +62,13 @@ Deno.serve(async (req) => {
       rangeStats = allTimeStats;
     } else {
       const now = new Date();
+      const berlinFmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' });
       let startDate;
-      if (range === 'day') startDate = now.toISOString().split('T')[0];
-      else if (range === 'week') startDate = new Date(now.getTime() - 7 * 86400000).toISOString().split('T')[0];
-      else if (range === 'month') startDate = new Date(now.getTime() - 30 * 86400000).toISOString().split('T')[0];
-      else if (range === 'year') startDate = new Date(now.getTime() - 365 * 86400000).toISOString().split('T')[0];
-      else startDate = now.toISOString().split('T')[0];
+      if (range === 'day') startDate = berlinFmt.format(now);
+      else if (range === 'week') startDate = berlinFmt.format(new Date(now.getTime() - 7 * 86400000));
+      else if (range === 'month') startDate = berlinFmt.format(new Date(now.getTime() - 30 * 86400000));
+      else if (range === 'year') startDate = berlinFmt.format(new Date(now.getTime() - 365 * 86400000));
+      else startDate = berlinFmt.format(now);
 
       rangeStats = await base44.asServiceRole.entities.DailyBlockStat.filter(
         { server_id: server.id, date: { $gte: startDate } }, '-created_date', 10000

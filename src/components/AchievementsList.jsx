@@ -1,5 +1,6 @@
 import { useT, useLang } from "@/lib/i18n";
 
+
 function formatUnlockDate(dateStr, lang) {
   if (!dateStr) return null;
   let normalized = dateStr;
@@ -15,7 +16,8 @@ function formatUnlockDate(dateStr, lang) {
 }
 
 export default function AchievementsList({ achievements }) {
-  const { t, lang } = useLang();
+  const t = useT();
+  const { lang } = useLang();
   if (!achievements || achievements.length === 0) return null;
   const unlocked = achievements.filter(a => a.unlocked).length;
 

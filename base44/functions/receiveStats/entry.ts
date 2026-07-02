@@ -113,7 +113,7 @@ Deno.serve(async (req) => {
     if (toCreate.length > 0) await base44.asServiceRole.entities.BlockStat.bulkCreate(toCreate);
 
     // --- DailyBlockStat (time-filtered queries) ---
-    const today = new Date().toISOString().split('T')[0];
+    const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
     const existingDaily = await base44.asServiceRole.entities.DailyBlockStat.filter(
       { server_id: server.id, date: today }, '-created_date', 10000
     );

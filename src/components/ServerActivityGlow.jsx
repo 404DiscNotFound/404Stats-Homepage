@@ -20,7 +20,14 @@ export default function ServerActivityGlow({ trends }) {
 
     // Catmull-Rom -> bezier for smooth curves
     const smoothPath = (pts, closeBottom = false) => {
-      if (pts.length < 2) return "";
+      if (pts.length < 2) {
+        // Single point — draw a flat line
+        if (pts.length === 1) {
+          const y = pts[0].y;
+          return closeBottom ? `M 0,${y} L ${W},${y} L ${W},${H} L 0,${H} Z` : `M 0,${y} L ${W},${y}`;
+        }
+        return "";
+      }
       let d = `M ${pts[0].x},${pts[0].y}`;
       for (let i = 0; i < pts.length - 1; i++) {
         const p0 = pts[i - 1] || pts[i];
