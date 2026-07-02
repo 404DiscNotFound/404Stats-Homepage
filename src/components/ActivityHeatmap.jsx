@@ -4,10 +4,16 @@ const HOURS = Array.from({ length: 24 }, (_, i) => i);
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
 
 export default function ActivityHeatmap({ activity }) {
+  // Convert UTC hour/day (stored on backend) to browser local time
+  const tzOffset = -new Date().getTimezoneOffset() / 60; // e.g. +2 for Berlin summer
+
   const grid = {};
   let maxVal = 0;
   for (const a of (activity || [])) {
-    const key = `${a.day}-${a.hour}`;
+    const shifted = a.hour + tzOffset;
+    const localDay = (a.day + Math.floor(shifted / 24) + 7) % 7;
+    const localHour = ((shifted % 24) + 24) % 24;
+    const key = `${localDay}-${localHour}`;
     grid[key] = (grid[key] || 0) + a.total;
     if (grid[key] > maxVal) maxVal = grid[key];
   }
@@ -15,6 +21,9 @@ export default function ActivityHeatmap({ activity }) {
   return (
     <div className="overflow-x-auto">
       <div className="min-w-[520px]">
+        <div className="flex items-center justify-between pl-8 pr-1">
+          <span className="text-[9px] text-gray-700">Lokale Zeit (Browser)</span>
+        </div>
         <div className="flex pl-8">
           {HOURS.map(h => (
             <div key={h} className="flex-1 text-center text-[8px] text-gray-700">
