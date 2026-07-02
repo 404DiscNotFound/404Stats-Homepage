@@ -10,25 +10,34 @@ const RARE_MATERIALS = [
   'DRAGON_EGG', 'SPAWNER', 'SHULKER_BOX'
 ];
 
+const VALID_RANGES = ['all', 'day', 'week', 'month', 'year'];
+
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const { slug, playerName, range = 'all' } = body;
 
-    if (!slug || !playerName) {
-      return Response.json({ error: 'Missing slug or playerName' }, { status: 400 });
+    // Sanitize all inputs — must be strings with length limits
+    if (typeof slug !== 'string' || slug.length === 0 || slug.length > 32) {
+      return Response.json({ error: 'Invalid slug' }, { status: 400 });
+    }
+    if (typeof playerName !== 'string' || playerName.length === 0 || playerName.length > 32) {
+      return Response.json({ error: 'Invalid playerName' }, { status: 400 });
+    }
+    if (typeof range !== 'string' || !VALID_RANGES.includes(range)) {
+      return Response.json({ error: 'Invalid range' }, { status: 400 });
     }
 
     const base44 = createClientFromRequest(req);
 
-    const servers = await base44.asServiceRole.entities.Server.filter({ server_slug: slug });
+    const servers = await base44.entities.Server.filter({ server_slug: slug });
     if (!servers || servers.length === 0) {
       return Response.json({ error: 'Server nicht gefunden' }, { status: 404 });
     }
     const server = servers[0];
 
     // Always fetch all-time BlockStat for achievements + rare blocks
-    const allTimeStats = await base44.asServiceRole.entities.BlockStat.filter(
+    const allTimeStats = await base44.entities.BlockStat.filter(
       { server_id: server.id }, '-created_date', 10000
     );
 
@@ -45,7 +54,7 @@ Deno.serve(async (req) => {
       else if (range === 'year') startDate = new Date(now.getTime() - 365 * 86400000).toISOString().split('T')[0];
       else startDate = now.toISOString().split('T')[0];
 
-      rangeStats = await base44.asServiceRole.entities.DailyBlockStat.filter(
+      rangeStats = await base44.entities.DailyBlockStat.filter(
         { server_id: server.id, date: { $gte: startDate } }, '-created_date', 10000
       );
     }
@@ -100,7 +109,7 @@ Deno.serve(async (req) => {
     const hasMat = (names) => names.some(n => allTimePlayer.materials[n]);
 
     // Fetch daily stats for this player to compute achievement unlock dates
-    const playerDaily = await base44.asServiceRole.entities.DailyBlockStat.filter(
+    const playerDaily = await base44.entities.DailyBlockStat.filter(
       { server_id: server.id, uuid: targetPlayer.uuid }, 'date', 10000
     );
 
@@ -186,7 +195,7 @@ Deno.serve(async (req) => {
     rareBlocks.sort((a, b) => b.total - a.total);
 
     // Fetch heatmap data (all-time activity)
-    const activity = await base44.asServiceRole.entities.PlayerActivity.filter(
+    const activity = await base44.entities.PlayerActivity.filter(
       { server_id: server.id, uuid: targetPlayer.uuid }, '-created_date', 1000
     );
     const heatmap = activity.map(a => ({

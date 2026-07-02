@@ -4,14 +4,18 @@ Deno.serve(async (req) => {
   try {
     const body = await req.json();
     const { slug } = body;
-    if (!slug) return Response.json({ error: 'Missing slug' }, { status: 400 });
+
+    // Sanitize slug — must be a string, max 32 chars
+    if (typeof slug !== 'string' || slug.length === 0 || slug.length > 32) {
+      return Response.json({ error: 'Invalid slug' }, { status: 400 });
+    }
 
     const base44 = createClientFromRequest(req);
-    const servers = await base44.asServiceRole.entities.Server.filter({ server_slug: slug });
+    const servers = await base44.entities.Server.filter({ server_slug: slug });
     if (!servers || servers.length === 0) return Response.json({ error: 'Server nicht gefunden' }, { status: 404 });
     const server = servers[0];
 
-    const dailyStats = await base44.asServiceRole.entities.DailyBlockStat.filter(
+    const dailyStats = await base44.entities.DailyBlockStat.filter(
       { server_id: server.id }, '-created_date', 10000
     );
 
