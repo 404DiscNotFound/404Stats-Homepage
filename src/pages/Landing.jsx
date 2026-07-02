@@ -1,8 +1,40 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import GlitchLogo from "@/components/GlitchLogo";
+import { base44 } from "@/api/base44Client";
+import { formatNumber } from "@/lib/format";
 import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight, Globe } from "lucide-react";
 
 export default function Landing() {
+  const [totalBlocks, setTotalBlocks] = useState(null);
+
+  useEffect(() => {
+    const CACHE_KEY = "globalStats_cache";
+    const CACHE_TTL = 3 * 60 * 60 * 1000;
+
+    const load = async () => {
+      // Try cache first (reuse the global stats cache)
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (Date.now() - parsed.cachedAt < CACHE_TTL) {
+            setTotalBlocks(parsed.data.totals.combined);
+            return;
+          }
+        }
+      } catch { /* ignore */ }
+
+      // Fetch fresh — don't require unlock, the function is public
+      try {
+        const res = await base44.functions.invoke("getGlobalStats", {});
+        setTotalBlocks(res.data.totals.combined);
+        localStorage.setItem(CACHE_KEY, JSON.stringify({ data: res.data, cachedAt: Date.now() }));
+      } catch { /* silent fail — keep null */ }
+    };
+    load();
+  }, []);
+
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
       {/* Background grid + glow (static gradients — no blur for mobile perf) */}
@@ -60,9 +92,9 @@ export default function Landing() {
       <div className="relative z-10 mx-auto max-w-4xl px-6 pb-16">
         <div className="grid grid-cols-3 gap-4 rounded-2xl border border-[#1A1A24] bg-[#0A0A0F] p-6 md:gap-8 md:p-8">
           {[
-            { value: "∞", label: "Blocks tracked" },
+            { value: totalBlocks != null ? formatNumber(totalBlocks) : "…", label: "Blocks tracked" },
             { value: "24/7", label: "Live data" },
-            { value: "0", label: "Setup cost" },
+            { value: "$0", label: "Setup cost" },
           ].map((s, i) => (
             <div key={i} className="text-center">
               <p className="text-2xl font-black text-white md:text-4xl" style={{ textShadow: i === 0 ? "0 0 20px rgba(0,245,255,0.2)" : undefined }}>{s.value}</p>
