@@ -11,6 +11,7 @@ import ServerDashboard from './pages/ServerDashboard';
 import PlayerProfile from './pages/PlayerProfile';
 import NotFound from './pages/NotFound';
 import ComparePlayers from './pages/ComparePlayers';
+import BlockIndex from './pages/BlockIndex';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -42,6 +43,7 @@ const AuthenticatedApp = () => {
       <Route path="/server/:slug" element={<ServerDashboard />} />
       <Route path="/server/:slug/player/:playerName" element={<PlayerProfile />} />
       <Route path="/server/:slug/compare" element={<ComparePlayers />} />
+      <Route path="/server/:slug/blocks" element={<BlockIndex />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
