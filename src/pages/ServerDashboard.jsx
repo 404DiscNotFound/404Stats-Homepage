@@ -14,10 +14,14 @@ import ServerAchievements from "@/components/ServerAchievements";
 import GameModeFilter from "@/components/GameModeFilter";
 import ServerActivityGlow from "@/components/ServerActivityGlow";
 import FunFacts from "@/components/FunFacts";
+import PasswordPrompt from "@/components/PasswordPrompt";
+import { useServerPassword } from "@/hooks/useServerPassword";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
 
 export default function ServerDashboard() {
   const { slug } = useParams();
+  const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
   const [trends, setTrends] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -25,24 +29,38 @@ export default function ServerDashboard() {
   const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
+    if (status !== "ready") return;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
         const [serverRes, trendsRes] = await Promise.all([
-          base44.functions.invoke("getServerData", { slug, game_mode: gameMode }),
-          base44.functions.invoke("getServerTrends", { slug, game_mode: gameMode }).catch(() => ({ data: { trends: [] } }))
+          base44.functions.invoke("getServerData", withAccessToken(slug, { slug, game_mode: gameMode })),
+          base44.functions.invoke("getServerTrends", withAccessToken(slug, { slug, game_mode: gameMode })).catch(() => ({ data: { trends: [] } }))
         ]);
         setData(serverRes.data);
         setTrends(trendsRes.data.trends);
       } catch (err) {
+        if (handlePasswordError(err)) return;
         setError(err.response?.data?.error || "Server not found");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [slug, gameMode]);
+  }, [slug, gameMode, status]);
+
+  if (status === "checking") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+      </div>
+    );
+  }
+
+  if (status === "needsPassword") {
+    return <PasswordPrompt onSubmit={verifyPassword} />;
+  }
 
   if (loading) {
     return (
@@ -181,7 +199,7 @@ export default function ServerDashboard() {
 
           {/* Server Achievements */}
           <div className="mt-4 sm:mt-6">
-            <ServerAchievements slug={slug} gameMode={gameMode} />
+            <ServerAchievements slug={slug} gameMode={gameMode} accessToken={status === "ready"} />
           </div>
 
           {/* Legend */}

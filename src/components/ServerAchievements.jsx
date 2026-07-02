@@ -1,16 +1,18 @@
 import { useEffect, useState } from "react";
 import { Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
 
-export default function ServerAchievements({ slug, gameMode = "SURVIVAL" }) {
+export default function ServerAchievements({ slug, gameMode = "SURVIVAL", accessToken }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    if (accessToken === false) return;
     const fetch = async () => {
       try {
-        const res = await base44.functions.invoke("getServerAchievements", { slug, game_mode: gameMode });
+        const res = await base44.functions.invoke("getServerAchievements", withAccessToken(slug, { slug, game_mode: gameMode }));
         setData(res.data);
       } catch {
         setData(null);
@@ -19,7 +21,7 @@ export default function ServerAchievements({ slug, gameMode = "SURVIVAL" }) {
       }
     };
     fetch();
-  }, [slug, gameMode]);
+  }, [slug, gameMode, accessToken]);
 
   if (loading) {
     return (

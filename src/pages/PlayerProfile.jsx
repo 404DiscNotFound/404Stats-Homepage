@@ -14,10 +14,14 @@ import RareBlocksList from "@/components/RareBlocksList";
 import RankNeighbors from "@/components/RankNeighbors";
 import GameModeFilter from "@/components/GameModeFilter";
 import FunFacts from "@/components/FunFacts";
+import PasswordPrompt from "@/components/PasswordPrompt";
+import { useServerPassword } from "@/hooks/useServerPassword";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
 
 export default function PlayerProfile() {
   const { slug, playerName } = useParams();
+  const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -25,20 +29,34 @@ export default function PlayerProfile() {
   const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
+    if (status !== "ready") return;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getPlayerData", { slug, playerName, range, game_mode: gameMode });
+        const res = await base44.functions.invoke("getPlayerData", withAccessToken(slug, { slug, playerName, range, game_mode: gameMode }));
         setData(res.data);
       } catch (err) {
+        if (handlePasswordError(err)) return;
         setError(err.response?.data?.error || "Player not found");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [slug, playerName, range, gameMode]);
+  }, [slug, playerName, range, gameMode, status]);
+
+  if (status === "checking") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+      </div>
+    );
+  }
+
+  if (status === "needsPassword") {
+    return <PasswordPrompt onSubmit={verifyPassword} />;
+  }
 
   if (loading) {
     return (

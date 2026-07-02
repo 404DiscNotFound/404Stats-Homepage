@@ -11,6 +11,9 @@ import BlockIcon from "@/components/BlockIcon";
 import CompareStatBar from "@/components/CompareStatBar";
 import GameModeFilter from "@/components/GameModeFilter";
 import PlayerPicker from "@/components/PlayerPicker";
+import PasswordPrompt from "@/components/PasswordPrompt";
+import { useServerPassword } from "@/hooks/useServerPassword";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -18,6 +21,7 @@ const ACCENTS = ["#00F5FF", "#FF0055"];
 
 export default function ComparePlayers() {
   const { slug } = useParams();
+  const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [allPlayers, setAllPlayers] = useState([]);
   const [p1, setP1] = useState("");
   const [p2, setP2] = useState("");
@@ -30,19 +34,22 @@ export default function ComparePlayers() {
   const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
+    if (status !== "ready") return;
     const fetchPlayers = async () => {
       try {
-        const res = await base44.functions.invoke("getServerData", { slug, game_mode: gameMode });
+        const res = await base44.functions.invoke("getServerData", withAccessToken(slug, { slug, game_mode: gameMode }));
         setAllPlayers(res.data.allPlayers);
         setServerTotals(res.data.totals);
         setServerGameModes(res.data.gameModes);
-      } catch {}
+      } catch (err) {
+        if (handlePasswordError(err)) return;
+      }
     };
     fetchPlayers();
-  }, [slug, gameMode]);
+  }, [slug, gameMode, status]);
 
   useEffect(() => {
-    if (!p1 || !p2) {
+    if (status !== "ready" || !p1 || !p2) {
       setData1(null);
       setData2(null);
       setError(null);
@@ -53,12 +60,13 @@ export default function ComparePlayers() {
     const fetchBoth = async () => {
       try {
         const [r1, r2] = await Promise.all([
-          base44.functions.invoke("getPlayerData", { slug, playerName: p1, range: "all", game_mode: gameMode }),
-          base44.functions.invoke("getPlayerData", { slug, playerName: p2, range: "all", game_mode: gameMode })
+          base44.functions.invoke("getPlayerData", withAccessToken(slug, { slug, playerName: p1, range: "all", game_mode: gameMode })),
+          base44.functions.invoke("getPlayerData", withAccessToken(slug, { slug, playerName: p2, range: "all", game_mode: gameMode }))
         ]);
         setData1(r1.data);
         setData2(r2.data);
       } catch (err) {
+        if (handlePasswordError(err)) return;
         setData1(null);
         setData2(null);
         setError(err.response?.data?.error || "Failed to load player data");
@@ -67,7 +75,7 @@ export default function ComparePlayers() {
       }
     };
     fetchBoth();
-  }, [slug, p1, p2, gameMode]);
+  }, [slug, p1, p2, gameMode, status]);
 
   const heatmapStats = (heatmap) => {
     if (!heatmap || heatmap.length === 0) return { peakHour: null, peakDay: null, activeHours: 0, peakVal: 0 };
@@ -87,6 +95,18 @@ export default function ComparePlayers() {
     }
     return { p1Score, p2Score };
   };
+
+  if (status === "checking") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+      </div>
+    );
+  }
+
+  if (status === "needsPassword") {
+    return <PasswordPrompt onSubmit={verifyPassword} />;
+  }
 
   return (
     <div className="min-h-screen bg-black text-white">

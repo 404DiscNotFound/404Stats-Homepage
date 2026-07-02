@@ -7,6 +7,9 @@ import ServerHeader from "@/components/ServerHeader";
 import PlayerHead from "@/components/PlayerHead";
 import TopPlayersCard from "@/components/TopPlayersCard";
 import GameModeFilter from "@/components/GameModeFilter";
+import PasswordPrompt from "@/components/PasswordPrompt";
+import { useServerPassword } from "@/hooks/useServerPassword";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
 
 const SORT_TABS = [
@@ -20,6 +23,7 @@ const PER_PAGE = 50;
 
 export default function PlayerIndex() {
   const { slug } = useParams();
+  const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -29,20 +33,22 @@ export default function PlayerIndex() {
   const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
+    if (status !== "ready") return;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getPlayerIndex", { slug, game_mode: gameMode });
+        const res = await base44.functions.invoke("getPlayerIndex", withAccessToken(slug, { slug, game_mode: gameMode }));
         setData(res.data);
       } catch (err) {
+        if (handlePasswordError(err)) return;
         setError(err.response?.data?.error || "Server nicht gefunden");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [slug, gameMode]);
+  }, [slug, gameMode, status]);
 
   useEffect(() => {
     setPage(1);
@@ -64,6 +70,18 @@ export default function PlayerIndex() {
     () => players.slice((page - 1) * PER_PAGE, page * PER_PAGE),
     [players, page]
   );
+
+  if (status === "checking") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+      </div>
+    );
+  }
+
+  if (status === "needsPassword") {
+    return <PasswordPrompt onSubmit={verifyPassword} />;
+  }
 
   if (loading) {
     return (

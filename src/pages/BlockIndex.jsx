@@ -8,6 +8,9 @@ import BlockIcon from "@/components/BlockIcon";
 import TopBlocksCard from "@/components/TopBlocksCard";
 import BlockPlayersTooltip from "@/components/BlockPlayersTooltip";
 import GameModeFilter from "@/components/GameModeFilter";
+import PasswordPrompt from "@/components/PasswordPrompt";
+import { useServerPassword } from "@/hooks/useServerPassword";
+import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const SORT_TABS = [
@@ -18,6 +21,7 @@ const SORT_TABS = [
 
 export default function BlockIndex() {
   const { slug } = useParams();
+  const { status, verifyPassword, handlePasswordError } = useServerPassword(slug);
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -45,20 +49,34 @@ export default function BlockIndex() {
   };
 
   useEffect(() => {
+    if (status !== "ready") return;
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getBlockIndex", { slug, game_mode: gameMode });
+        const res = await base44.functions.invoke("getBlockIndex", withAccessToken(slug, { slug, game_mode: gameMode }));
         setData(res.data);
       } catch (err) {
+        if (handlePasswordError(err)) return;
         setError(err.response?.data?.error || "Server nicht gefunden");
       } finally {
         setLoading(false);
       }
     };
     fetchData();
-  }, [slug, gameMode]);
+  }, [slug, gameMode, status]);
+
+  if (status === "checking") {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]" />
+      </div>
+    );
+  }
+
+  if (status === "needsPassword") {
+    return <PasswordPrompt onSubmit={verifyPassword} />;
+  }
 
   if (loading) {
     return (
