@@ -1,0 +1,95 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
+
+Deno.serve(async (req) => {
+  try {
+    const authHeader = req.headers.get('Authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return Response.json({ error: 'Missing Authorization header' }, { status: 401 });
+    }
+    const apiKey = authHeader.replace('Bearer ', '');
+
+    const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(apiKey));
+    const apiKeyHash = Array.from(new Uint8Array(hashBuffer))
+      .map(b => b.toString(16).padStart(2, '0')).join('');
+
+    const body = await req.json();
+    const base44 = createClientFromRequest(req);
+
+    // Find or create server by API key hash
+    const existing = await base44.asServiceRole.entities.Server.filter({ api_key_hash: apiKeyHash });
+    let server;
+    if (existing && existing.length > 0) {
+      server = existing[0];
+      if (body.server_name && !server.display_name) {
+        await base44.asServiceRole.entities.Server.update(server.id, { display_name: body.server_name });
+        server.display_name = body.server_name;
+      }
+    } else {
+      const serverSlug = apiKeyHash.substring(0, 8);
+      server = await base44.asServiceRole.entities.Server.create({
+        api_key_hash: apiKeyHash,
+        server_slug: serverSlug,
+        display_name: body.server_name || null
+      });
+    }
+
+    // Process stats
+    const stats = body.stats || [];
+    if (stats.length === 0) {
+      return Response.json({ success: true, server_slug: server.server_slug, processed: 0 });
+    }
+
+    // Fetch existing stats for this server in one query
+    const existingStats = await base44.asServiceRole.entities.BlockStat.filter(
+      { server_id: server.id }, '-created_date', 10000
+    );
+    const statMap = {};
+    for (const s of existingStats) {
+      statMap[s.uuid + ':' + s.material] = s;
+    }
+
+    const toUpdate = [];
+    const toCreate = [];
+
+    for (const stat of stats) {
+      const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
+      if (!uuid || !player_name || !material) continue;
+
+      const key = uuid + ':' + material;
+      if (statMap[key]) {
+        statMap[key].mined = (statMap[key].mined || 0) + mined_delta;
+        statMap[key].placed = (statMap[key].placed || 0) + placed_delta;
+        statMap[key].player_name = player_name;
+        if (!statMap[key]._queued) {
+          statMap[key]._queued = true;
+          toUpdate.push(statMap[key]);
+        }
+      } else {
+        const newStat = {
+          server_id: server.id, uuid, player_name, material,
+          mined: mined_delta, placed: placed_delta
+        };
+        statMap[key] = { ...newStat, _queued: true };
+        toCreate.push(newStat);
+      }
+    }
+
+    if (toUpdate.length > 0) {
+      const payload = toUpdate.map(s => ({
+        id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name
+      }));
+      await base44.asServiceRole.entities.BlockStat.bulkUpdate(payload);
+    }
+    if (toCreate.length > 0) {
+      await base44.asServiceRole.entities.BlockStat.bulkCreate(toCreate);
+    }
+
+    return Response.json({
+      success: true,
+      server_slug: server.server_slug,
+      processed: toUpdate.length + toCreate.length
+    });
+  } catch (error) {
+    return Response.json({ error: error.message }, { status: 500 });
+  }
+});

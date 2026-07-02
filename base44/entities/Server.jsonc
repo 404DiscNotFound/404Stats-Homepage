@@ -1,0 +1,22 @@
+{
+  "name": "Server",
+  "type": "object",
+  "properties": {
+    "api_key_hash": {
+      "type": "string",
+      "description": "SHA-256 hash of the plugin API key"
+    },
+    "server_slug": {
+      "type": "string",
+      "description": "8-char unique slug derived from hash, used in URLs"
+    },
+    "display_name": {
+      "type": "string",
+      "description": "Optional server display name set by plugin"
+    }
+  },
+  "required": [
+    "api_key_hash",
+    "server_slug"
+  ]
+}

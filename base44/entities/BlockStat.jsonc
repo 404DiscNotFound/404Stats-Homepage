@@ -1,0 +1,38 @@
+{
+  "name": "BlockStat",
+  "type": "object",
+  "properties": {
+    "server_id": {
+      "type": "string",
+      "description": "Reference to Server entity ID"
+    },
+    "uuid": {
+      "type": "string",
+      "description": "Minecraft player UUID"
+    },
+    "player_name": {
+      "type": "string",
+      "description": "Minecraft player name"
+    },
+    "material": {
+      "type": "string",
+      "description": "Block material type (e.g. STONE, DIRT)"
+    },
+    "mined": {
+      "type": "number",
+      "default": 0,
+      "description": "Total blocks mined of this material"
+    },
+    "placed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total blocks placed of this material"
+    }
+  },
+  "required": [
+    "server_id",
+    "uuid",
+    "player_name",
+    "material"
+  ]
+}
