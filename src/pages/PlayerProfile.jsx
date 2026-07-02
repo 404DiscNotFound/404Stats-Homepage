@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import ServerHeader from "@/components/ServerHeader";
 import StatCard from "@/components/StatCard";
 import TopBlocksChart from "@/components/TopBlocksChart";
+import PlayerHead from "@/components/PlayerHead";
 
 const formatNumber = (n) => {
   if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
@@ -37,7 +38,7 @@ export default function PlayerProfile() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF]"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]"></div>
       </div>
     );
   }
@@ -73,15 +74,13 @@ export default function PlayerProfile() {
 
         {/* Player Header */}
         <div className="flex items-center gap-4">
-          <img
-            src={`https://crafatar.com/avatars/${p.uuid}?size=100&overlay`}
-            alt={p.player_name}
-            className="h-14 w-14 rounded-lg sm:h-16 sm:w-16"
-          />
+          <PlayerHead uuid={p.uuid} name={p.player_name} size={64} />
           <div>
-            <h1 className="text-xl font-black text-white sm:text-2xl">{p.player_name}</h1>
+            <h1 className="text-xl font-black text-white sm:text-2xl" style={{ textShadow: "0 0 15px rgba(0,245,255,0.2)" }}>
+              {p.player_name}
+            </h1>
             <p className="text-sm text-gray-500">
-              Rang <span className="font-bold text-[#00F5FF]">#{p.rank}</span> von {p.totalPlayers} Spielern
+              Rang <span className="font-bold text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.4)" }}>#{p.rank}</span> von {p.totalPlayers} Spielern
             </p>
           </div>
         </div>
@@ -96,13 +95,13 @@ export default function PlayerProfile() {
         {/* Top Blocks */}
         <div className="mt-8 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-bold text-white">Top Blöcke</h2>
+            <h2 className="text-sm font-black uppercase tracking-wider text-white">⚡ Top Blöcke</h2>
             <div className="flex gap-4 text-xs text-gray-600">
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-[#00F5FF]"></span>Abgebaut
+                <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]"></span>Abgebaut
               </span>
               <span className="flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-[#FF0055]"></span>Gesetzt
+                <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]"></span>Gesetzt
               </span>
             </div>
           </div>

@@ -38,7 +38,7 @@ export default function ServerDashboard() {
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF]"></div>
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#1A1A24] border-t-[#00F5FF] shadow-[0_0_15px_rgba(0,245,255,0.3)]"></div>
       </div>
     );
   }
@@ -66,33 +66,46 @@ export default function ServerDashboard() {
             label="Gesamt"
             value={formatNumber(data.totals.combined)}
             sublabel={`${data.totalPlayers} Spieler`}
+            accent="cyan"
           />
         </div>
 
         {/* Search */}
-        <div className="mt-8">
+        <div className="mt-6">
           <PlayerSearch players={data.allPlayers} slug={slug} />
         </div>
 
-        {/* Two columns */}
-        <div className="mt-8 grid gap-6 lg:grid-cols-2">
+        {/* Top Blocks */}
+        <div className="mt-6 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
+          <h2 className="mb-4 text-sm font-black uppercase tracking-wider text-white">⚡ Top 25 Blöcke</h2>
+          <TopBlocksChart materials={data.topMaterials} />
+        </div>
+
+        {/* Two player leaderboards */}
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
-            <h2 className="mb-4 text-sm font-bold text-white">Top 25 Blöcke</h2>
-            <TopBlocksChart materials={data.topMaterials} />
+            <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white">
+              <span className="text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.5)" }}>⛏</span>
+              Top 25 Abgebaut
+            </h2>
+            <TopPlayersList players={data.topMiners} slug={slug} metric="mined" accent="cyan" />
           </div>
           <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
-            <h2 className="mb-4 text-sm font-bold text-white">Top 25 Spieler</h2>
-            <TopPlayersList players={data.topPlayers} slug={slug} />
+            <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-wider text-white">
+              <span className="text-[#FF0055]" style={{ textShadow: "0 0 8px rgba(255,0,85,0.5)" }}>🧱</span>
+              Top 25 Gesetzt
+            </h2>
+            <TopPlayersList players={data.topBuilders} slug={slug} metric="placed" accent="pink" />
           </div>
         </div>
 
         {/* Legend */}
         <div className="mt-4 flex gap-6 text-xs text-gray-600">
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#00F5FF]"></span>Abgebaut
+            <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]"></span>Abgebaut
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-[#FF0055]"></span>Gesetzt
+            <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]"></span>Gesetzt
           </span>
         </div>
       </div>

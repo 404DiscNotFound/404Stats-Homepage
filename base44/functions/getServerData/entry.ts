@@ -53,6 +53,16 @@ Deno.serve(async (req) => {
       .sort((a, b) => b.total - a.total)
       .slice(0, 25);
 
+    const topMiners = Object.values(playerMap)
+      .map(p => ({ uuid: p.uuid, player_name: p.player_name, mined: p.mined, placed: p.placed, total: p.mined + p.placed }))
+      .sort((a, b) => b.mined - a.mined)
+      .slice(0, 25);
+
+    const topBuilders = Object.values(playerMap)
+      .map(p => ({ uuid: p.uuid, player_name: p.player_name, mined: p.mined, placed: p.placed, total: p.mined + p.placed }))
+      .sort((a, b) => b.placed - a.placed)
+      .slice(0, 25);
+
     const allPlayers = Object.values(playerMap)
       .map(p => ({ uuid: p.uuid, player_name: p.player_name, total: p.mined + p.placed }))
       .sort((a, b) => b.total - a.total);
@@ -62,6 +72,8 @@ Deno.serve(async (req) => {
       totals: { mined: totalMined, placed: totalPlaced, combined: totalMined + totalPlaced },
       topMaterials,
       topPlayers,
+      topMiners,
+      topBuilders,
       allPlayers,
       totalPlayers: allPlayers.length
     });
