@@ -1,6 +1,12 @@
 function formatUnlockDate(dateStr) {
   if (!dateStr) return null;
-  const d = new Date(dateStr);
+  // DB returns UTC timestamps without Z suffix (e.g. "2026-07-02T06:27:50.459000")
+  // new Date() would interpret those as local time — normalize to UTC first
+  let normalized = dateStr;
+  if (typeof dateStr === 'string' && dateStr.includes('T') && !dateStr.endsWith('Z') && !/[+-]\d{2}:?\d{2}$/.test(dateStr)) {
+    normalized = dateStr + 'Z';
+  }
+  const d = new Date(normalized);
   if (isNaN(d.getTime())) return null;
   const dateStrFormatted = d.toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
   const timeStrFormatted = d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
