@@ -1,5 +1,5 @@
 import { useParams, Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
@@ -46,6 +46,23 @@ export default function PlayerIndex() {
     setPage(1);
   }, [search, sort]);
 
+  const allPlayers = data?.players || [];
+
+  const players = useMemo(() => {
+    return [...allPlayers]
+      .filter(p => p.player_name.toLowerCase().includes(search.toLowerCase()))
+      .sort((a, b) => {
+        if (sort === "name") return a.player_name.localeCompare(b.player_name);
+        return (b[sort] || 0) - (a[sort] || 0);
+      });
+  }, [allPlayers, search, sort]);
+
+  const totalPages = Math.ceil(players.length / PER_PAGE);
+  const paginated = useMemo(
+    () => players.slice((page - 1) * PER_PAGE, page * PER_PAGE),
+    [players, page]
+  );
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
@@ -66,18 +83,6 @@ export default function PlayerIndex() {
       </div>
     );
   }
-
-  const allPlayers = data?.players || [];
-
-  const players = allPlayers
-    .filter(p => p.player_name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (sort === "name") return a.player_name.localeCompare(b.player_name);
-      return (b[sort] || 0) - (a[sort] || 0);
-    });
-
-  const totalPages = Math.ceil(players.length / PER_PAGE);
-  const paginated = players.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <div className="min-h-screen bg-black text-white">
