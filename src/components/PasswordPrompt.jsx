@@ -29,6 +29,11 @@ export default function PasswordPrompt({ onSubmit }) {
           <div className="mt-6 flex h-12 w-12 items-center justify-center rounded-xl border border-[#00F5FF]/30 bg-[#00F5FF]/5">
             <Lock className="h-6 w-6 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
           </div>
+          <h1 className="mt-4 text-center text-lg font-bold text-white">Geschützte Server-Statistiken</h1>
+          <p className="mt-2 text-center text-xs leading-relaxed text-gray-500">
+            Diese Seite zeigt detaillierte Block-Statistiken und Aktivitätsdaten eines Minecraft-Servers.
+            Der Server-Administrator hat diese Daten mit einem Passwort geschützt.
+          </p>
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
@@ -50,6 +55,9 @@ export default function PasswordPrompt({ onSubmit }) {
             {loading ? "Prüfe..." : "Entsperren"}
           </button>
         </form>
+        <p className="mt-6 text-center text-xs leading-relaxed text-gray-600">
+          Das Passwort erhältst du vom Administrator des Minecraft-Servers.
+        </p>
       </div>
     </div>
   );

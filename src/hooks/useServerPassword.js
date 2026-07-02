@@ -41,7 +41,8 @@ export function useServerPassword(slug) {
   };
 
   const handlePasswordError = (err) => {
-    if (err?.response?.data?.password_required) {
+    const errMsg = (err?.response?.data?.error || err?.data?.error || "").toLowerCase();
+    if (err?.response?.data?.password_required || errMsg.includes("password")) {
       clearServerToken(slug);
       setStatus("needsPassword");
       return true;
