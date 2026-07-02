@@ -1,50 +1,91 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 const SLIDES = [
-  { title: "Live Dashboard", subtitle: "Real-time stats at a glance" },
-  { title: "Player Compare", subtitle: "Side-by-side deep stats" },
-  { title: "Activity Heatmap", subtitle: "See when players are active" },
+  {
+    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/b740d0fce_Seeyourmostactiveplayersandevenstatistics.png",
+    title: "Live Dashboard",
+    subtitle: "See your most active players and even statistics",
+  },
+  {
+    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/242a50b92_1vs1-whoisthebiggestblockaddict.png",
+    title: "Player Compare",
+    subtitle: "1v1 — who is the biggest block addict?",
+  },
+  {
+    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/4d595df1e_Seethemostlovedblocksofyourplayers.png",
+    title: "Block Index",
+    subtitle: "See the most loved blocks of your players",
+  },
+  {
+    image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/45b6e64d5_Trackindividualplayersandtheirstats.png",
+    title: "Player Profiles",
+    subtitle: "Track individual players and their stats",
+  },
 ];
+
+const DURATION = 5000;
 
 export default function ImageCarousel() {
   const [current, setCurrent] = useState(0);
+  const [progress, setProgress] = useState(0);
+  const rafRef = useRef(null);
+  const startRef = useRef(null);
+  const pausedRef = useRef(false);
 
   const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
   const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
 
+  // Reset progress when slide changes
   useEffect(() => {
-    const timer = setInterval(next, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    setProgress(0);
+    startRef.current = null;
+
+    const tick = (ts) => {
+      if (pausedRef.current) {
+        startRef.current = ts - (progress * DURATION);
+        rafRef.current = requestAnimationFrame(tick);
+        return;
+      }
+      if (startRef.current === null) startRef.current = ts;
+      const elapsed = ts - startRef.current;
+      const pct = Math.min(elapsed / DURATION, 1);
+      setProgress(pct);
+      if (pct >= 1) {
+        setCurrent((c) => (c + 1) % SLIDES.length);
+        return;
+      }
+      rafRef.current = requestAnimationFrame(tick);
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(rafRef.current);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current]);
+
+  const handleMouseEnter = () => { pausedRef.current = true; };
+  const handleMouseLeave = () => { pausedRef.current = false; };
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border border-[#1A1A24] bg-[#0A0A0F]">
+    <div
+      className="relative overflow-hidden rounded-2xl border border-[#1A1A24] bg-[#0A0A0F]"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       {/* Slides */}
       <div className="relative aspect-[4/3] w-full">
         {SLIDES.map((slide, i) => (
           <div
             key={i}
-            className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-500"
+            className="absolute inset-0 transition-opacity duration-500"
             style={{ opacity: i === current ? 1 : 0 }}
           >
-            {/* Placeholder gradient background */}
-            <div
-              className="absolute inset-0"
-              style={{
-                background: i === 0
-                  ? 'radial-gradient(circle at 30% 40%, rgba(0,245,255,0.12) 0%, transparent 60%), radial-gradient(circle at 70% 60%, rgba(0,245,255,0.06) 0%, transparent 50%)'
-                  : i === 1
-                  ? 'radial-gradient(circle at 50% 50%, rgba(255,0,85,0.10) 0%, transparent 60%), radial-gradient(circle at 30% 70%, rgba(0,245,255,0.06) 0%, transparent 50%)'
-                  : 'radial-gradient(circle at 60% 30%, rgba(0,245,255,0.08) 0%, transparent 60%), radial-gradient(circle at 40% 80%, rgba(255,0,85,0.08) 0%, transparent 50%)'
-              }}
+            <img
+              src={slide.image}
+              alt={slide.title}
+              className="h-full w-full object-cover"
+              draggable={false}
             />
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:30px_30px]" />
-            <div className="relative z-10 px-6 text-center">
-              <span className="text-[10px] uppercase tracking-widest text-gray-600">Screenshot</span>
-              <h3 className="mt-2 text-xl font-black text-white sm:text-2xl">{slide.title}</h3>
-              <p className="mt-1 text-xs text-gray-500 sm:text-sm">{slide.subtitle}</p>
-            </div>
           </div>
         ))}
       </div>
@@ -65,16 +106,20 @@ export default function ImageCarousel() {
         <ChevronRight className="h-4 w-4" />
       </button>
 
-      {/* Dots */}
-      <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5">
-        {SLIDES.map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrent(i)}
-            className={`h-1.5 rounded-full transition-all ${i === current ? "w-5 bg-[#00F5FF]" : "w-1.5 bg-gray-700"}`}
-            style={i === current ? { boxShadow: "0 0 6px rgba(0,245,255,0.5)" } : undefined}
-            aria-label={`Slide ${i + 1}`}
-          />
+      {/* Progress line indicators */}
+      <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-1.5 p-3">
+        {SLIDES.map((slide, i) => (
+          <div key={i} className="flex-1">
+            <div className="h-0.5 overflow-hidden rounded-full bg-white/10">
+              <div
+                className="h-full rounded-full bg-[#00F5FF]"
+                style={{
+                  width: i < current ? "100%" : i === current ? `${progress * 100}%` : "0%",
+                  boxShadow: i === current ? "0 0 6px rgba(0,245,255,0.6)" : undefined,
+                }}
+              />
+            </div>
+          </div>
         ))}
       </div>
     </div>
