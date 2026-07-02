@@ -12,7 +12,7 @@ import ServerTrends from "@/components/ServerTrends";
 import RareBlocksList from "@/components/RareBlocksList";
 import ServerAchievements from "@/components/ServerAchievements";
 import GameModeFilter from "@/components/GameModeFilter";
-import ServerActivityGlow from "@/components/ServerActivityGlow";
+import ServerDonuts from "@/components/ServerDonuts";
 import FunFacts from "@/components/FunFacts";
 import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
@@ -104,9 +104,9 @@ export default function ServerDashboard() {
             <StatCard label={t("common.total")} value={formatNumber(data.totals.combined)} sublabel={`${data.totalPlayers} ${t("dashboard.players")}`} accent="cyan" />
           </div>
 
-          {/* Activity Glow */}
+          {/* Donut Charts */}
           <div className="mt-4 sm:mt-6">
-            <ServerActivityGlow trends={trends} />
+            <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} />
           </div>
 
           {/* Fun Facts */}

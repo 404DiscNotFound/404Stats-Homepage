@@ -12,6 +12,7 @@ import ActivityHeatmap from "@/components/ActivityHeatmap";
 import AchievementsList from "@/components/AchievementsList";
 import RareBlocksList from "@/components/RareBlocksList";
 import RankNeighbors from "@/components/RankNeighbors";
+import ServerDonuts from "@/components/ServerDonuts";
 import GameModeFilter from "@/components/GameModeFilter";
 import FunFacts from "@/components/FunFacts";
 import PasswordPrompt from "@/components/PasswordPrompt";
@@ -131,6 +132,11 @@ export default function PlayerProfile() {
               <RankNeighbors title={t("common.total")} neighbors={data.neighbors.total} accent="cyan" currentValue={p.total} />
             </div>
           )}
+
+          {/* Donut Charts */}
+          <div className="mt-4 sm:mt-6">
+            <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} />
+          </div>
 
           {/* Fun Facts */}
           {data.facts && data.facts.length > 0 && (

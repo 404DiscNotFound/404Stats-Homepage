@@ -17,6 +17,43 @@ const RARE_MATERIALS = [
 
 const VALID_RANGES = ['all', 'day', 'week', 'month', 'year'];
 
+function getMaterialCategory(material) {
+  const m = (material || '').toUpperCase();
+  if (!m) return 'nature';
+  if (m.startsWith('NETHER_') || m.startsWith('CRIMSON_') || m.startsWith('WARPED_') || m.startsWith('SOUL_') ||
+      ['NETHERRACK', 'GLOWSTONE', 'BASALT', 'SMOOTH_BASALT', 'POLISHED_BASALT', 'BLACKSTONE', 'GILDED_BLACKSTONE',
+       'MAGMA_BLOCK', 'ANCIENT_DEBRIS', 'NETHERITE_BLOCK', 'RESPAWN_ANCHOR', 'LODESTONE', 'CRYING_OBSIDIAN',
+       'SHROOMLIGHT'].includes(m)) return 'nether';
+  if (m.startsWith('END_') || m.startsWith('PURPUR_') || m.startsWith('CHORUS_') ||
+      ['DRAGON_EGG', 'ENDER_CHEST'].includes(m)) return 'end';
+  if (m.startsWith('REDSTONE_') ||
+      ['REPEATER', 'COMPARATOR', 'PISTON', 'STICKY_PISTON', 'OBSERVER', 'DISPENSER', 'DROPPER', 'HOPPER',
+       'DAYLIGHT_DETECTOR', 'TARGET', 'LEVER', 'NOTE_BLOCK', 'JUKEBOX', 'CRAFTING_TABLE', 'FURNACE',
+       'BLAST_FURNACE', 'SMOKER', 'ANVIL', 'CHIPPED_ANVIL', 'DAMAGED_ANVIL', 'GRINDSTONE', 'STONECUTTER',
+       'LOOM', 'SMITHING_TABLE', 'CARTOGRAPHY_TABLE', 'FLETCHING_TABLE', 'BREWING_STAND', 'CAULDRON',
+       'COMPOSTER', 'BARREL', 'LECTERN', 'BELL', 'LIGHTNING_ROD', 'TRAPPED_CHEST', 'CHEST', 'SHULKER_BOX',
+       'ENCHANTING_TABLE', 'BEACON', 'CONDUIT', 'SPAWNER', 'SCAFFOLDING', 'HONEY_BLOCK', 'SLIME_BLOCK',
+       'TNT', 'TRIPWIRE_HOOK', 'TRIPWIRE'].includes(m) ||
+      m.endsWith('_BUTTON') || m.endsWith('_PRESSURE_PLATE') || m.endsWith('_FENCE_GATE')) return 'tech';
+  if (['GLASS', 'TINTED_GLASS', 'GLASS_PANE', 'STONE_BRICKS', 'MOSSY_STONE_BRICKS', 'CRACKED_STONE_BRICKS',
+       'CHISELED_STONE_BRICKS', 'BRICKS', 'QUARTZ_BLOCK', 'SANDSTONE', 'RED_SANDSTONE', 'SMOOTH_SANDSTONE',
+       'CUT_SANDSTONE', 'CHISELED_SANDSTONE', 'CUT_RED_SANDSTONE', 'SMOOTH_RED_SANDSTONE', 'TERRACOTTA',
+       'IRON_BLOCK', 'GOLD_BLOCK', 'DIAMOND_BLOCK', 'EMERALD_BLOCK', 'LAPIS_BLOCK', 'COAL_BLOCK',
+       'SMOOTH_STONE', 'PRISMARINE', 'PRISMARINE_BRICKS', 'DARK_PRISMARINE', 'SEA_LANTERN',
+       'BONE_BLOCK', 'OBSIDIAN'].includes(m) ||
+      m.endsWith('_STAINED_GLASS') || m.endsWith('_STAINED_GLASS_PANE') ||
+      m.endsWith('_CONCRETE') || m.endsWith('_CONCRETE_POWDER') ||
+      m.endsWith('_WOOL') || m.endsWith('_CARPET') ||
+      m.endsWith('_GLAZED_TERRACOTTA') ||
+      m.endsWith('_PLANKS') || m.endsWith('_SLAB') || m.endsWith('_STAIRS') || m.endsWith('_FENCE') ||
+      m.endsWith('_WALL') || m.endsWith('_DOOR') || m.endsWith('_TRAPDOOR') || m.endsWith('_SIGN') ||
+      m.endsWith('_BANNER') || m.endsWith('_BED') ||
+      m.startsWith('QUARTZ_') ||
+      (m.includes('COPPER') && !m.includes('ORE')) ||
+      m.startsWith('WAXED_')) return 'building';
+  return 'nature';
+}
+
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
@@ -78,6 +115,9 @@ Deno.serve(async (req) => {
     // Build player maps for range data
     const playerMap = {};
     const playerGameModeMap = {};
+    const targetLower = playerName.toLowerCase();
+    const targetCategoryMap = {};
+    const targetWorldMap = {};
     for (const stat of rangeStats) {
       const gm = stat.game_mode || 'SURVIVAL';
 
@@ -97,6 +137,20 @@ Deno.serve(async (req) => {
       playerMap[stat.uuid].mined += (stat.mined || 0);
       playerMap[stat.uuid].placed += (stat.placed || 0);
       playerMap[stat.uuid].materials.push({ material: stat.material, mined: stat.mined || 0, placed: stat.placed || 0 });
+
+      if (stat.player_name.toLowerCase() === targetLower) {
+        const cat = getMaterialCategory(stat.material);
+        if (!targetCategoryMap[cat]) targetCategoryMap[cat] = { mined: 0, placed: 0, total: 0 };
+        targetCategoryMap[cat].mined += stat.mined || 0;
+        targetCategoryMap[cat].placed += stat.placed || 0;
+        targetCategoryMap[cat].total += (stat.mined || 0) + (stat.placed || 0);
+
+        const wn = stat.world_name || 'world';
+        if (!targetWorldMap[wn]) targetWorldMap[wn] = { mined: 0, placed: 0, total: 0 };
+        targetWorldMap[wn].mined += stat.mined || 0;
+        targetWorldMap[wn].placed += stat.placed || 0;
+        targetWorldMap[wn].total += (stat.mined || 0) + (stat.placed || 0);
+      }
     }
 
     const allPlayers = Object.values(playerMap).map(p => ({ ...p, total: p.mined + p.placed }));
@@ -362,6 +416,14 @@ Deno.serve(async (req) => {
     // Compute player's game mode breakdown
     const gameModes = Object.values(playerGameModeMap[targetPlayer.uuid] || {}).sort((a, b) => b.total - a.total);
 
+    // Material categories + world distribution
+    const materialCategories = Object.entries(targetCategoryMap)
+      .map(([cat, data]) => ({ category: cat, ...data }))
+      .sort((a, b) => b.total - a.total);
+    const worldDistribution = Object.entries(targetWorldMap)
+      .map(([world, data]) => ({ world, ...data }))
+      .sort((a, b) => b.total - a.total);
+
     // Compute neighbors (above/below for each metric)
     const sortedByMined = [...allPlayers].sort((a, b) => b.mined - a.mined);
     const sortedByPlaced = [...allPlayers].sort((a, b) => b.placed - a.placed);
@@ -421,7 +483,9 @@ Deno.serve(async (req) => {
       gameModes,
       neighbors,
       facts,
-      range
+      range,
+      materialCategories,
+      worldDistribution
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

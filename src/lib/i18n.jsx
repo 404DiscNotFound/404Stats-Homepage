@@ -280,16 +280,23 @@ const translations = {
     // Fun Facts
     "funFacts.title": "Fun Facts",
 
-    // Server Activity Glow
-    "serverActivity.title": "Server Activity",
-    "serverActivity.last30Days": "Last 30 days",
-    "serverActivity.flow": "Flow",
-
     // Carousel
     "carousel.dashboardSubtitle": "See your most active players and even statistics",
     "carousel.compareSubtitle": "1v1 — who is the biggest block addict?",
     "carousel.blockIndexSubtitle": "See the most loved blocks of your players",
     "carousel.profilesSubtitle": "Track individual players and their stats",
+
+    // Donut Charts
+    "donuts.materialCategories": "Material Categories",
+    "donuts.worldDistribution": "World Distribution",
+    "donuts.nature": "Nature",
+    "donuts.building": "Building",
+    "donuts.tech": "Tech",
+    "donuts.nether": "Nether",
+    "donuts.end": "End",
+    "donuts.overworld": "Overworld",
+    "donuts.other": "Other",
+    "donuts.noData": "No data available",
   },
   de: {
     // Common
@@ -568,16 +575,23 @@ const translations = {
     // Fun Facts
     "funFacts.title": "Fun Facts",
 
-    // Server Activity Glow
-    "serverActivity.title": "Server-Aktivität",
-    "serverActivity.last30Days": "Letzte 30 Tage",
-    "serverActivity.flow": "Verlauf",
-
     // Carousel
     "carousel.dashboardSubtitle": "Sieh deine aktivsten Spieler und Statistiken",
     "carousel.compareSubtitle": "1v1 — wer ist der größte Block-Süchtige?",
     "carousel.blockIndexSubtitle": "Sieh die beliebtesten Blöcke deiner Spieler",
     "carousel.profilesSubtitle": "Verfolge einzelne Spieler und ihre Stats",
+
+    // Donut Charts
+    "donuts.materialCategories": "Material-Kategorien",
+    "donuts.worldDistribution": "Welt-Verteilung",
+    "donuts.nature": "Natur",
+    "donuts.building": "Bau",
+    "donuts.tech": "Technik",
+    "donuts.nether": "Nether",
+    "donuts.end": "End",
+    "donuts.overworld": "Oberwelt",
+    "donuts.other": "Sonstige",
+    "donuts.noData": "Keine Daten verfügbar",
   },
 };
 

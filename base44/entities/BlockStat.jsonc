@@ -23,6 +23,11 @@
       "default": "SURVIVAL",
       "description": "Game mode when activity occurred (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)"
     },
+    "world_name": {
+      "type": "string",
+      "default": "world",
+      "description": "Minecraft world name where the activity occurred"
+    },
     "mined": {
       "type": "number",
       "default": 0,

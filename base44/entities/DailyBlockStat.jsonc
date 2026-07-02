@@ -23,9 +23,14 @@
       "default": "SURVIVAL",
       "description": "Game mode when activity occurred (SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR)"
     },
+    "world_name": {
+      "type": "string",
+      "default": "world",
+      "description": "Minecraft world name where the activity occurred"
+    },
     "date": {
       "type": "string",
-      "description": "Date in YYYY-MM-DD format (UTC)"
+      "description": "Date in YYYY-MM-DD format"
     },
     "mined": {
       "type": "number",
