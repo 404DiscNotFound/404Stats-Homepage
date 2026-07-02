@@ -12,7 +12,11 @@
     },
     "display_name": {
       "type": "string",
-      "description": "Optional server display name set by plugin"
+      "description": "Server display name sent by plugin via receiveStats"
+    },
+    "last_seen_at": {
+      "type": "string",
+      "description": "ISO timestamp of the last receiveStats call from this server"
     }
   },
   "required": [

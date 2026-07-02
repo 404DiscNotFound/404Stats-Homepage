@@ -1,29 +1,40 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+const API_KEY_REGEX = /^f0f_live_[A-Za-z0-9_-]{43}$/;
+
+async function hashApiKey(apiKey) {
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(apiKey));
+  return Array.from(new Uint8Array(hashBuffer))
+    .map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 Deno.serve(async (req) => {
   try {
-    // Auth via API key (same as receiveStats)
+    // 1. Extract Bearer token
     const authHeader = req.headers.get('Authorization');
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
       return Response.json({ error: 'Missing Authorization header' }, { status: 401 });
     }
-    const apiKey = authHeader.replace('Bearer ', '');
+    const apiKey = authHeader.slice(7);
 
-    // Hash API key and validate server BEFORE parsing body (fail fast on invalid auth)
-    const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(apiKey));
-    const apiKeyHash = Array.from(new Uint8Array(hashBuffer))
-      .map(b => b.toString(16).padStart(2, '0')).join('');
+    // 2. Validate API key format
+    if (!API_KEY_REGEX.test(apiKey)) {
+      return Response.json({ error: 'Invalid API key format' }, { status: 401 });
+    }
+
+    // 3-4. Hash API key
+    const apiKeyHash = await hashApiKey(apiKey);
 
     const base44 = createClientFromRequest(req);
 
-    // Find the server by API key hash — auth validation FIRST
+    // 5. Find server by key hash — auth validation BEFORE parsing body
     const servers = await base44.asServiceRole.entities.Server.filter({ api_key_hash: apiKeyHash });
     if (!servers || servers.length === 0) {
       return Response.json({ error: 'Server nicht gefunden – API-Key ungültig' }, { status: 401 });
     }
     const server = servers[0];
 
-    // Only parse body after auth is confirmed valid
+    // Parse body after auth confirmed
     const body = await req.json();
     const { player_name } = body;
 
@@ -31,7 +42,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Invalid player_name' }, { status: 400 });
     }
 
-    // Find all BlockStat records for this player on this server
+    // 6. Delete only within this server — never global by player_name
     const playerStats = await base44.asServiceRole.entities.BlockStat.filter(
       { server_id: server.id, player_name: player_name }, '-created_date', 10000
     );
@@ -40,7 +51,6 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, deleted: 0, message: `Keine Stats für '${player_name}' gefunden` });
     }
 
-    // Delete all records for this player (BlockStat + DailyBlockStat + PlayerActivity)
     await base44.asServiceRole.entities.BlockStat.deleteMany({
       server_id: server.id,
       player_name: player_name
