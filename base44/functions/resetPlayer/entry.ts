@@ -38,8 +38,16 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, deleted: 0, message: `Keine Stats für '${player_name}' gefunden` });
     }
 
-    // Delete all records for this player
+    // Delete all records for this player (BlockStat + DailyBlockStat + PlayerActivity)
     await base44.asServiceRole.entities.BlockStat.deleteMany({
+      server_id: server.id,
+      player_name: player_name
+    });
+    await base44.asServiceRole.entities.DailyBlockStat.deleteMany({
+      server_id: server.id,
+      player_name: player_name
+    });
+    await base44.asServiceRole.entities.PlayerActivity.deleteMany({
       server_id: server.id,
       player_name: player_name
     });

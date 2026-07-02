@@ -10,6 +10,7 @@ import Landing from './pages/Landing';
 import ServerDashboard from './pages/ServerDashboard';
 import PlayerProfile from './pages/PlayerProfile';
 import NotFound from './pages/NotFound';
+import ComparePlayers from './pages/ComparePlayers';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -40,6 +41,7 @@ const AuthenticatedApp = () => {
       <Route path="/" element={<Landing />} />
       <Route path="/server/:slug" element={<ServerDashboard />} />
       <Route path="/server/:slug/player/:playerName" element={<PlayerProfile />} />
+      <Route path="/server/:slug/compare" element={<ComparePlayers />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );

@@ -1,0 +1,43 @@
+{
+  "name": "PlayerActivity",
+  "type": "object",
+  "properties": {
+    "server_id": {
+      "type": "string",
+      "description": "Reference to Server entity ID"
+    },
+    "uuid": {
+      "type": "string",
+      "description": "Minecraft player UUID"
+    },
+    "player_name": {
+      "type": "string",
+      "description": "Minecraft player name"
+    },
+    "day_of_week": {
+      "type": "number",
+      "description": "Day of week (0=Sunday, 6=Saturday)"
+    },
+    "hour": {
+      "type": "number",
+      "description": "Hour of day (0-23)"
+    },
+    "mined": {
+      "type": "number",
+      "default": 0,
+      "description": "Total blocks mined in this hour slot"
+    },
+    "placed": {
+      "type": "number",
+      "default": 0,
+      "description": "Total blocks placed in this hour slot"
+    }
+  },
+  "required": [
+    "server_id",
+    "uuid",
+    "player_name",
+    "day_of_week",
+    "hour"
+  ]
+}

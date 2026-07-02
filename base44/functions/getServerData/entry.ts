@@ -67,6 +67,31 @@ Deno.serve(async (req) => {
       .map(p => ({ uuid: p.uuid, player_name: p.player_name, total: p.mined + p.placed }))
       .sort((a, b) => b.total - a.total);
 
+    // Compute rare blocks
+    const RARE_MATERIALS = ['DIAMOND_ORE', 'DEEPSLATE_DIAMOND_ORE', 'EMERALD_ORE', 'DEEPSLATE_EMERALD_ORE', 'ANCIENT_DEBRIS', 'GOLD_ORE', 'DEEPSLATE_GOLD_ORE', 'NETHERITE_BLOCK', 'BEACON', 'CONDUIT', 'ENDER_CHEST', 'END_PORTAL_FRAME', 'DRAGON_EGG', 'SPAWNER', 'SHULKER_BOX'];
+    const rareMap = {};
+    for (const stat of allStats) {
+      if (!RARE_MATERIALS.includes(stat.material)) continue;
+      if (!rareMap[stat.material]) {
+        rareMap[stat.material] = { material: stat.material, mined: 0, placed: 0, players: {} };
+      }
+      rareMap[stat.material].mined += (stat.mined || 0);
+      rareMap[stat.material].placed += (stat.placed || 0);
+      if (!rareMap[stat.material].players[stat.uuid]) {
+        rareMap[stat.material].players[stat.uuid] = { name: stat.player_name, total: 0 };
+      }
+      rareMap[stat.material].players[stat.uuid].total += (stat.mined || 0) + (stat.placed || 0);
+    }
+    const rareBlocks = Object.values(rareMap)
+      .map(r => {
+        const top = Object.values(r.players).sort((a, b) => b.total - a.total)[0];
+        return {
+          material: r.material, mined: r.mined, placed: r.placed, total: r.mined + r.placed,
+          topPlayer: top ? top.name : null, topPlayerTotal: top ? top.total : 0
+        };
+      })
+      .sort((a, b) => b.total - a.total);
+
     return Response.json({
       server: { slug: server.server_slug, display_name: server.display_name },
       totals: { mined: totalMined, placed: totalPlaced, combined: totalMined + totalPlaced },
@@ -74,6 +99,7 @@ Deno.serve(async (req) => {
       topPlayers,
       topMiners,
       topBuilders,
+      rareBlocks,
       allPlayers,
       totalPlayers: allPlayers.length
     });

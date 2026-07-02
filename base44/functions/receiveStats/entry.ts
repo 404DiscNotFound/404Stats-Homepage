@@ -133,6 +133,49 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.DailyBlockStat.bulkCreate(dailyToCreate);
     }
 
+    // Process activity stats (for heatmap) — track by day-of-week + hour
+    const now = new Date();
+    const dayOfWeek = now.getDay();
+    const hour = now.getHours();
+    const existingActivity = await base44.asServiceRole.entities.PlayerActivity.filter(
+      { server_id: server.id, day_of_week: dayOfWeek, hour: hour }, '-created_date', 10000
+    );
+    const activityMap = {};
+    for (const a of existingActivity) {
+      activityMap[a.uuid] = a;
+    }
+    for (const stat of stats) {
+      const { uuid, player_name, mined_delta = 0, placed_delta = 0 } = stat;
+      if (!uuid || !player_name) continue;
+      if (activityMap[uuid]) {
+        activityMap[uuid].mined = (activityMap[uuid].mined || 0) + mined_delta;
+        activityMap[uuid].placed = (activityMap[uuid].placed || 0) + placed_delta;
+        activityMap[uuid].player_name = player_name;
+      } else {
+        activityMap[uuid] = {
+          server_id: server.id, uuid, player_name, day_of_week: dayOfWeek, hour: hour,
+          mined: mined_delta, placed: placed_delta, _isNew: true
+        };
+      }
+    }
+    const activityToUpdate = [];
+    const activityToCreate = [];
+    for (const uuid in activityMap) {
+      const a = activityMap[uuid];
+      if (a._isNew) {
+        const { _isNew, ...createData } = a;
+        activityToCreate.push(createData);
+      } else {
+        activityToUpdate.push({ id: a.id, mined: a.mined, placed: a.placed, player_name: a.player_name });
+      }
+    }
+    if (activityToUpdate.length > 0) {
+      await base44.asServiceRole.entities.PlayerActivity.bulkUpdate(activityToUpdate);
+    }
+    if (activityToCreate.length > 0) {
+      await base44.asServiceRole.entities.PlayerActivity.bulkCreate(activityToCreate);
+    }
+
     return Response.json({
       success: true,
       server_slug: server.server_slug,

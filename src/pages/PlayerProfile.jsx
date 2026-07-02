@@ -7,6 +7,9 @@ import StatCard from "@/components/StatCard";
 import TopBlocksChart from "@/components/TopBlocksChart";
 import PlayerHead from "@/components/PlayerHead";
 import TimeRangeTabs from "@/components/TimeRangeTabs";
+import ActivityHeatmap from "@/components/ActivityHeatmap";
+import AchievementsList from "@/components/AchievementsList";
+import RareBlocksList from "@/components/RareBlocksList";
 
 const formatNumber = (n) => {
   if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
@@ -52,9 +55,7 @@ export default function PlayerProfile() {
         <div className="flex flex-col items-center pt-20 text-center">
           <p className="text-5xl font-black text-white">404</p>
           <p className="mt-2 text-sm text-gray-500">{error}</p>
-          <Link to={`/server/${slug}`} className="mt-6 text-sm text-[#00F5FF] hover:underline">
-            ← Zurück zum Server
-          </Link>
+          <Link to={`/server/${slug}`} className="mt-6 text-sm text-[#00F5FF] hover:underline">← Zurück zum Server</Link>
         </div>
       </div>
     );
@@ -67,14 +68,11 @@ export default function PlayerProfile() {
       <ServerHeader slug={slug} />
 
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6">
-        <Link
-          to={`/server/${slug}`}
-          className="mb-6 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-white"
-        >
+        <Link to={`/server/${slug}`} className="mb-6 flex items-center gap-2 text-sm text-gray-500 transition-colors hover:text-white">
           <ArrowLeft className="h-4 w-4" /> Zurück zum Server
         </Link>
 
-        {/* Player Header */}
+        {/* Player Header + Time Range */}
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
             <PlayerHead uuid={p.uuid} name={p.player_name} size={64} />
@@ -112,6 +110,26 @@ export default function PlayerProfile() {
           </div>
           <TopBlocksChart materials={data.topMaterials} />
         </div>
+
+        {/* Achievements */}
+        <div className="mt-8 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
+          <h2 className="mb-4 text-sm font-black uppercase tracking-wider text-white">🏆 Achievements</h2>
+          <AchievementsList achievements={data.achievements} />
+        </div>
+
+        {/* Activity Heatmap */}
+        <div className="mt-8 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
+          <h2 className="mb-4 text-sm font-black uppercase tracking-wider text-white">🕐 Aktivitäts-Heatmap</h2>
+          <ActivityHeatmap activity={data.heatmap} />
+        </div>
+
+        {/* Rare Blocks */}
+        {data.rareBlocks && data.rareBlocks.length > 0 && (
+          <div className="mt-8 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5 sm:p-6">
+            <h2 className="mb-4 text-sm font-black uppercase tracking-wider text-white">💎 Seltene Blöcke</h2>
+            <RareBlocksList blocks={data.rareBlocks} />
+          </div>
+        )}
       </div>
     </div>
   );
