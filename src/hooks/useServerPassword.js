@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
 import { base44 } from "@/api/base44Client";
 import { getServerToken, setServerToken, clearServerToken } from "@/lib/serverAuth";
+import { useT } from "@/lib/i18n";
 
 export function useServerPassword(slug) {
+  const t = useT();
   const [status, setStatus] = useState("checking");
 
   useEffect(() => {
@@ -34,9 +36,9 @@ export function useServerPassword(slug) {
         setStatus("ready");
         return { success: true };
       }
-      return { success: false, error: "Falsches Passwort" };
+      return { success: false, error: t("password.wrongPassword") };
     } catch (err) {
-      return { success: false, error: err.response?.data?.error || "Fehler beim Verifizieren" };
+      return { success: false, error: t("password.error") };
     }
   };
 

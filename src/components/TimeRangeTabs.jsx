@@ -1,12 +1,15 @@
+import { useT } from "@/lib/i18n";
+
 const RANGES = [
-  { value: "day", label: "Tag" },
-  { value: "week", label: "Woche" },
-  { value: "month", label: "Monat" },
-  { value: "year", label: "Jahr" },
-  { value: "all", label: "Gesamt" },
+  { value: "day", key: "time.day" },
+  { value: "week", key: "time.week" },
+  { value: "month", key: "time.month" },
+  { value: "year", key: "time.year" },
+  { value: "all", key: "time.all" },
 ];
 
 export default function TimeRangeTabs({ active, onChange }) {
+  const t = useT();
   return (
     <div className="inline-flex rounded-lg border border-[#1A1A24] bg-[#0A0A0F] p-0.5">
       {RANGES.map(r => {
@@ -21,7 +24,7 @@ export default function TimeRangeTabs({ active, onChange }) {
                 : "text-gray-500 hover:text-white"
             }`}
           >
-            {r.label}
+            {t(r.key)}
           </button>
         );
       })}

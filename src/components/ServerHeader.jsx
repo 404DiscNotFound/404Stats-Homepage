@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { Home } from "lucide-react";
 import GlitchLogo from "./GlitchLogo";
 import ShareButtons from "./ShareButtons";
+import LanguageToggle from "./LanguageToggle";
 
 export default function ServerHeader({ slug, displayName }) {
   return (
@@ -15,6 +16,7 @@ export default function ServerHeader({ slug, displayName }) {
           </div>
         </Link>
         <div className="flex items-center gap-2">
+          <LanguageToggle compact />
           <ShareButtons
             compact
             url={typeof window !== "undefined" ? `${window.location.origin}/server/${slug}` : ""}

@@ -3,8 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
 import PlayerHead from "./PlayerHead";
 import { formatNumber } from "@/lib/format";
+import { useT } from "@/lib/i18n";
 
 export default function PlayerSearch({ players, slug }) {
+  const t = useT();
   const [query, setQuery] = useState("");
   const [focused, setFocused] = useState(false);
   const navigate = useNavigate();
