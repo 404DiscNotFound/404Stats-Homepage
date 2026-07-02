@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Swords, TrendingUp, Gem, Boxes } from "lucide-react";
+import { Swords, TrendingUp, Gem, Boxes, Users } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
@@ -11,6 +11,8 @@ import PlayerSearch from "@/components/PlayerSearch";
 import ServerTrends from "@/components/ServerTrends";
 import RareBlocksList from "@/components/RareBlocksList";
 import ServerAchievements from "@/components/ServerAchievements";
+import ServerActivityGlow from "@/components/ServerActivityGlow";
+import FunFacts from "@/components/FunFacts";
 import { formatNumber } from "@/lib/format";
 
 export default function ServerDashboard() {
@@ -75,12 +77,30 @@ export default function ServerDashboard() {
             <StatCard label="Total" value={formatNumber(data.totals.combined)} sublabel={`${data.totalPlayers} players`} accent="cyan" />
           </div>
 
+          {/* Activity Glow */}
+          <div className="mt-4 sm:mt-6">
+            <ServerActivityGlow trends={trends} />
+          </div>
+
+          {/* Fun Facts */}
+          {data.facts && data.facts.length > 0 && (
+            <div className="mt-4 sm:mt-6">
+              <FunFacts facts={data.facts} />
+            </div>
+          )}
+
           {/* Search + Compare + Block Index */}
           <div className="mt-4 flex flex-col gap-3 sm:mt-6 sm:flex-row">
             <div className="flex-1">
               <PlayerSearch players={data.allPlayers} slug={slug} />
             </div>
             <div className="flex gap-3">
+              <Link
+                to={`/server/${slug}/players`}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2.5 text-sm font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]"
+              >
+                <Users className="h-4 w-4" /> Players
+              </Link>
               <Link
                 to={`/server/${slug}/blocks`}
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#FF0055]/30 bg-[#FF0055]/5 px-4 py-2.5 text-sm font-bold text-[#FF0055] transition-all hover:bg-[#FF0055]/10 hover:shadow-[0_0_15px_rgba(255,0,85,0.15)]"

@@ -11,6 +11,8 @@ import TimeRangeTabs from "@/components/TimeRangeTabs";
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import AchievementsList from "@/components/AchievementsList";
 import RareBlocksList from "@/components/RareBlocksList";
+import RankNeighbors from "@/components/RankNeighbors";
+import FunFacts from "@/components/FunFacts";
 import { formatNumber } from "@/lib/format";
 
 export default function PlayerProfile() {
@@ -95,6 +97,22 @@ export default function PlayerProfile() {
             <StatCard label="Blocks Placed" value={formatNumber(p.placed)} accent="pink" />
             <StatCard label="Total" value={formatNumber(p.total)} accent="cyan" />
           </div>
+
+          {/* Rank Neighbors */}
+          {data.neighbors && (
+            <div className="mt-4 grid gap-3 sm:grid-cols-3 sm:gap-4">
+              <RankNeighbors title="Mined" neighbors={data.neighbors.mined} accent="cyan" currentValue={p.mined} />
+              <RankNeighbors title="Placed" neighbors={data.neighbors.placed} accent="pink" currentValue={p.placed} />
+              <RankNeighbors title="Total" neighbors={data.neighbors.total} accent="cyan" currentValue={p.total} />
+            </div>
+          )}
+
+          {/* Fun Facts */}
+          {data.facts && data.facts.length > 0 && (
+            <div className="mt-4 sm:mt-6">
+              <FunFacts facts={data.facts} />
+            </div>
+          )}
 
           {/* Top Blocks */}
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">

@@ -94,6 +94,24 @@ Deno.serve(async (req) => {
       })
       .sort((a, b) => b.total - a.total);
 
+    // Fun facts
+    const fmt = (n) => n.toLocaleString('de-DE');
+    const fmtMat = (m) => m.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const combined = totalMined + totalPlaced;
+    const minerPct = combined > 0 ? Math.round((totalMined / combined) * 100) : 0;
+    const builderPct = 100 - minerPct;
+    const avgPerPlayer = allPlayers.length > 0 ? Math.round(combined / allPlayers.length) : 0;
+    const topPlayer = allPlayers[0] || null;
+    const blockDiversity = Object.keys(materialMap).length;
+    const mostLovedBlock = topMaterials[0] || null;
+    const facts = [
+      { icon: '⚖️', text: `Dein Server ist ${minerPct}% Miner und ${builderPct}% Builder` },
+      { icon: '🥇', text: topPlayer ? `${topPlayer.player_name} ist mit ${fmt(topPlayer.total)} Blöcken der aktivste Spieler` : null },
+      { icon: '📊', text: `Pro Spieler werden durchschnittlich ${fmt(avgPerPlayer)} Blöcke interagiert` },
+      { icon: '🎨', text: `${blockDiversity} verschiedene Blockarten wurden auf dem Server berührt` },
+      { icon: '❤️', text: mostLovedBlock ? `${fmtMat(mostLovedBlock.material)} ist mit ${fmt(mostLovedBlock.total)} Aktionen der beliebteste Block` : null },
+    ].filter(f => f.text !== null);
+
     return Response.json({
       server: { slug: server.server_slug, display_name: server.display_name },
       totals: { mined: totalMined, placed: totalPlaced, combined: totalMined + totalPlaced },
@@ -103,7 +121,8 @@ Deno.serve(async (req) => {
       topBuilders,
       rareBlocks,
       allPlayers,
-      totalPlayers: allPlayers.length
+      totalPlayers: allPlayers.length,
+      facts
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

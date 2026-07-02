@@ -207,6 +207,48 @@ Deno.serve(async (req) => {
       total: (a.mined || 0) + (a.placed || 0)
     }));
 
+    // Compute neighbors (above/below for each metric)
+    const sortedByMined = [...allPlayers].sort((a, b) => b.mined - a.mined);
+    const sortedByPlaced = [...allPlayers].sort((a, b) => b.placed - a.placed);
+
+    const computeNeighbors = (sorted, metric) => {
+      const idx = sorted.findIndex(p => p.uuid === targetPlayer.uuid);
+      const targetVal = sorted[idx][metric];
+      const above = idx > 0 ? { name: sorted[idx - 1].player_name, value: sorted[idx - 1][metric], gap: sorted[idx - 1][metric] - targetVal } : null;
+      const below = idx < sorted.length - 1 ? { name: sorted[idx + 1].player_name, value: sorted[idx + 1][metric], gap: targetVal - sorted[idx + 1][metric] } : null;
+      return { above, below, rank: idx + 1 };
+    };
+
+    const neighbors = {
+      mined: computeNeighbors(sortedByMined, 'mined'),
+      placed: computeNeighbors(sortedByPlaced, 'placed'),
+      total: computeNeighbors(sortedPlayers, 'total')
+    };
+
+    // Fun facts
+    const fmt = (n) => n.toLocaleString('de-DE');
+    const fmtMat = (m) => m.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    const betterThanPct = sortedPlayers.length > 1 ? Math.round(((sortedPlayers.length - rank) / sortedPlayers.length) * 100) : 100;
+    const playerMinerPct = targetPlayer.total > 0 ? Math.round((targetPlayer.mined / targetPlayer.total) * 100) : 0;
+    const playerBuilderPct = 100 - playerMinerPct;
+    const topBlock = topMaterials[0];
+    const topBlockPct = targetPlayer.total > 0 && topBlock ? Math.round((topBlock.total / targetPlayer.total) * 100) : 0;
+
+    const hourMap = {};
+    for (const h of heatmap) {
+      if (!hourMap[h.hour]) hourMap[h.hour] = 0;
+      hourMap[h.hour] += h.total;
+    }
+    const peakHourEntry = Object.entries(hourMap).sort((a, b) => b[1] - a[1])[0];
+    const peakHourStr = peakHourEntry ? `${String(peakHourEntry[0]).padStart(2, '0')}:00` : null;
+
+    const facts = [
+      { icon: '📈', text: `Du bist besser als ${betterThanPct}% der Spieler auf diesem Server` },
+      { icon: '⚖️', text: `Du bist ${playerMinerPct}% Miner und ${playerBuilderPct}% Builder` },
+      { icon: topBlock ? '❤️' : null, text: topBlock ? `Dein Lieblingsblock ist ${fmtMat(topBlock.material)} — er macht ${topBlockPct}% deiner Aktivität aus` : null },
+      { icon: peakHourStr ? '🕐' : null, text: peakHourStr ? `Du bist am aktivsten um ${peakHourStr} Uhr` : null },
+    ].filter(f => f.icon !== null);
+
     return Response.json({
       player: {
         uuid: targetPlayer.uuid,
@@ -221,6 +263,8 @@ Deno.serve(async (req) => {
       achievements,
       rareBlocks,
       heatmap,
+      neighbors,
+      facts,
       range
     });
   } catch (error) {

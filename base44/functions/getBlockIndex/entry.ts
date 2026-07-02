@@ -22,7 +22,9 @@ Deno.serve(async (req) => {
     );
 
     const materialMap = {};
+    const uniquePlayers = new Set();
     for (const stat of allStats) {
+      uniquePlayers.add(stat.uuid);
       if (!materialMap[stat.material]) {
         materialMap[stat.material] = {
           material: stat.material, mined: 0, placed: 0,
@@ -53,6 +55,7 @@ Deno.serve(async (req) => {
           placed: m.placed,
           total: m.mined + m.placed,
           playerCount: playerList.length,
+          playerPct: uniquePlayers.size > 0 ? Math.round((playerList.length / uniquePlayers.size) * 100) : 0,
           topContributor: top ? { uuid: top.uuid, name: top.name, total: top.total, mined: top.mined, placed: top.placed } : null,
           sharePct: grandTotal > 0 ? Math.round(((m.mined + m.placed) / grandTotal) * 100) : 0
         };
@@ -67,7 +70,8 @@ Deno.serve(async (req) => {
         mined: materials.reduce((s, m) => s + m.mined, 0),
         placed: materials.reduce((s, m) => s + m.placed, 0),
         combined: materials.reduce((s, m) => s + m.total, 0)
-      }
+      },
+      totalPlayers: uniquePlayers.size
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });
