@@ -6,6 +6,7 @@ import ServerHeader from "@/components/ServerHeader";
 import StatCard from "@/components/StatCard";
 import TopBlocksChart from "@/components/TopBlocksChart";
 import PlayerHead from "@/components/PlayerHead";
+import TimeRangeTabs from "@/components/TimeRangeTabs";
 
 const formatNumber = (n) => {
   if (n >= 1e6) return (n / 1e6).toFixed(1) + "M";
@@ -18,13 +19,14 @@ export default function PlayerProfile() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [range, setRange] = useState("all");
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getPlayerData", { slug, playerName });
+        const res = await base44.functions.invoke("getPlayerData", { slug, playerName, range });
         setData(res.data);
       } catch (err) {
         setError(err.response?.data?.error || "Spieler nicht gefunden");
@@ -33,7 +35,7 @@ export default function PlayerProfile() {
       }
     };
     fetchData();
-  }, [slug, playerName]);
+  }, [slug, playerName, range]);
 
   if (loading) {
     return (
@@ -73,16 +75,19 @@ export default function PlayerProfile() {
         </Link>
 
         {/* Player Header */}
-        <div className="flex items-center gap-4">
-          <PlayerHead uuid={p.uuid} name={p.player_name} size={64} />
-          <div>
-            <h1 className="text-xl font-black text-white sm:text-2xl" style={{ textShadow: "0 0 15px rgba(0,245,255,0.2)" }}>
-              {p.player_name}
-            </h1>
-            <p className="text-sm text-gray-500">
-              Rang <span className="font-bold text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.4)" }}>#{p.rank}</span> von {p.totalPlayers} Spielern
-            </p>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-4">
+            <PlayerHead uuid={p.uuid} name={p.player_name} size={64} />
+            <div>
+              <h1 className="text-xl font-black text-white sm:text-2xl" style={{ textShadow: "0 0 15px rgba(0,245,255,0.2)" }}>
+                {p.player_name}
+              </h1>
+              <p className="text-sm text-gray-500">
+                Rang <span className="font-bold text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.4)" }}>#{p.rank}</span> von {p.totalPlayers} Spielern
+              </p>
+            </div>
           </div>
+          <TimeRangeTabs active={range} onChange={setRange} />
         </div>
 
         {/* Stats */}

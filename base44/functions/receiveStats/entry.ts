@@ -87,6 +87,52 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.BlockStat.bulkCreate(toCreate);
     }
 
+    // Process daily stats (for time-based filtering)
+    const today = new Date().toISOString().split('T')[0];
+    const existingDaily = await base44.asServiceRole.entities.DailyBlockStat.filter(
+      { server_id: server.id, date: today }, '-created_date', 10000
+    );
+    const dailyMap = {};
+    for (const s of existingDaily) {
+      dailyMap[s.uuid + ':' + s.material] = s;
+    }
+
+    for (const stat of stats) {
+      const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
+      if (!uuid || !player_name || !material) continue;
+      const key = uuid + ':' + material;
+      if (dailyMap[key]) {
+        dailyMap[key].mined = (dailyMap[key].mined || 0) + mined_delta;
+        dailyMap[key].placed = (dailyMap[key].placed || 0) + placed_delta;
+        dailyMap[key].player_name = player_name;
+      } else {
+        dailyMap[key] = {
+          server_id: server.id, uuid, player_name, material, date: today,
+          mined: mined_delta, placed: placed_delta,
+          _isNew: true
+        };
+      }
+    }
+
+    const dailyToUpdate = [];
+    const dailyToCreate = [];
+    for (const key in dailyMap) {
+      const s = dailyMap[key];
+      if (s._isNew) {
+        const { _isNew, ...createData } = s;
+        dailyToCreate.push(createData);
+      } else {
+        dailyToUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name });
+      }
+    }
+
+    if (dailyToUpdate.length > 0) {
+      await base44.asServiceRole.entities.DailyBlockStat.bulkUpdate(dailyToUpdate);
+    }
+    if (dailyToCreate.length > 0) {
+      await base44.asServiceRole.entities.DailyBlockStat.bulkCreate(dailyToCreate);
+    }
+
     return Response.json({
       success: true,
       server_slug: server.server_slug,
