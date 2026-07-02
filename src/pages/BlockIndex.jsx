@@ -5,6 +5,7 @@ import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
 import BlockIcon from "@/components/BlockIcon";
+import TopBlocksCard from "@/components/TopBlocksCard";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const SORT_TABS = [
@@ -87,6 +88,13 @@ export default function BlockIndex() {
               <span className="hidden sm:inline">Dashboard</span>
             </Link>
           </div>
+
+          {/* Top 10 Hall of Fame */}
+          {data?.materials && data.materials.length > 0 && !search && (
+            <div className="mb-4 sm:mb-6">
+              <TopBlocksCard materials={data.materials} />
+            </div>
+          )}
 
           {/* Search + Sort */}
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">

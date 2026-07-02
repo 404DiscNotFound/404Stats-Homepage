@@ -96,11 +96,6 @@ export default function ServerDashboard() {
             </div>
           </div>
 
-          {/* Server Achievements */}
-          <div className="mt-4 sm:mt-6">
-            <ServerAchievements slug={slug} />
-          </div>
-
           {/* Server Trends */}
           <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
             <div className="mb-4 flex items-center justify-between">
@@ -156,6 +151,11 @@ export default function ServerDashboard() {
               <RareBlocksList blocks={data.rareBlocks} />
             </div>
           )}
+
+          {/* Server Achievements */}
+          <div className="mt-4 sm:mt-6">
+            <ServerAchievements slug={slug} />
+          </div>
 
           {/* Legend */}
           <div className="mt-4 flex gap-6 text-xs text-gray-600">
