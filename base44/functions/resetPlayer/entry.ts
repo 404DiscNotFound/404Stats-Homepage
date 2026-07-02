@@ -38,6 +38,19 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { player_name } = body;
 
+    // Update webpanel password config if provided
+    if (body.webpanel_password_enabled === true) {
+      await base44.asServiceRole.entities.Server.update(server.id, {
+        webpanel_password_enabled: true,
+        webpanel_password_hash: body.webpanel_password_hash || server.webpanel_password_hash
+      });
+    } else if (body.webpanel_password_enabled === false) {
+      await base44.asServiceRole.entities.Server.update(server.id, {
+        webpanel_password_enabled: false,
+        webpanel_password_hash: null
+      });
+    }
+
     if (!player_name || typeof player_name !== 'string' || player_name.length > 32) {
       return Response.json({ error: 'Invalid player_name' }, { status: 400 });
     }

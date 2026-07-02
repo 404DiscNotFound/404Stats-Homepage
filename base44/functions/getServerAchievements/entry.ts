@@ -1,5 +1,10 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 
+async function sha256(text) {
+  const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text));
+  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
@@ -18,6 +23,13 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Server nicht gefunden' }, { status: 404 });
     }
     const server = servers[0];
+
+    if (server.webpanel_password_enabled) {
+      const token = body.access_token;
+      if (!token) return Response.json({ error: 'Password required', password_required: true }, { status: 403 });
+      const expectedToken = await sha256(server.server_slug + ':' + (server.webpanel_password_hash || '') + ':' + server.id);
+      if (token !== expectedToken) return Response.json({ error: 'Invalid token', password_required: true }, { status: 403 });
+    }
 
     const allStats = await base44.asServiceRole.entities.BlockStat.filter(
       { server_id: server.id }, '-created_date', 10000

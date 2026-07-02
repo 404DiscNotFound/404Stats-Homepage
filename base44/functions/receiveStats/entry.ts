@@ -34,12 +34,20 @@ Deno.serve(async (req) => {
     let server;
     if (existing && existing.length > 0) {
       server = existing[0];
-      // 7. Update display_name + last_seen_at on every call
-      await base44.asServiceRole.entities.Server.update(server.id, {
+      // 7. Update display_name + last_seen_at + password config on every call
+      const updateData = {
         display_name: body.server_name || server.display_name,
         last_seen_at: nowIso
-      });
-      server.display_name = body.server_name || server.display_name;
+      };
+      if (body.webpanel_password_enabled === true) {
+        updateData.webpanel_password_enabled = true;
+        updateData.webpanel_password_hash = body.webpanel_password_hash || server.webpanel_password_hash;
+      } else if (body.webpanel_password_enabled === false) {
+        updateData.webpanel_password_enabled = false;
+        updateData.webpanel_password_hash = null;
+      }
+      await base44.asServiceRole.entities.Server.update(server.id, updateData);
+      server.display_name = updateData.display_name;
       server.last_seen_at = nowIso;
     } else {
       // 6. Auto-register new server
@@ -48,7 +56,9 @@ Deno.serve(async (req) => {
         api_key_hash: apiKeyHash,
         server_slug: serverSlug,
         display_name: body.server_name || null,
-        last_seen_at: nowIso
+        last_seen_at: nowIso,
+        webpanel_password_enabled: body.webpanel_password_enabled === true,
+        webpanel_password_hash: body.webpanel_password_enabled === true ? (body.webpanel_password_hash || null) : null
       });
     }
 
