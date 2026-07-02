@@ -9,25 +9,27 @@ Deno.serve(async (req) => {
     }
     const apiKey = authHeader.replace('Bearer ', '');
 
+    // Hash API key and validate server BEFORE parsing body (fail fast on invalid auth)
     const hashBuffer = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(apiKey));
     const apiKeyHash = Array.from(new Uint8Array(hashBuffer))
       .map(b => b.toString(16).padStart(2, '0')).join('');
 
+    const base44 = createClientFromRequest(req);
+
+    // Find the server by API key hash — auth validation FIRST
+    const servers = await base44.asServiceRole.entities.Server.filter({ api_key_hash: apiKeyHash });
+    if (!servers || servers.length === 0) {
+      return Response.json({ error: 'Server nicht gefunden – API-Key ungültig' }, { status: 401 });
+    }
+    const server = servers[0];
+
+    // Only parse body after auth is confirmed valid
     const body = await req.json();
     const { player_name } = body;
 
-    if (!player_name) {
-      return Response.json({ error: 'Missing player_name' }, { status: 400 });
+    if (!player_name || typeof player_name !== 'string' || player_name.length > 32) {
+      return Response.json({ error: 'Invalid player_name' }, { status: 400 });
     }
-
-    const base44 = createClientFromRequest(req);
-
-    // Find the server by API key hash
-    const servers = await base44.asServiceRole.entities.Server.filter({ api_key_hash: apiKeyHash });
-    if (!servers || servers.length === 0) {
-      return Response.json({ error: 'Server nicht gefunden – API-Key ungültig' }, { status: 404 });
-    }
-    const server = servers[0];
 
     // Find all BlockStat records for this player on this server
     const playerStats = await base44.asServiceRole.entities.BlockStat.filter(
