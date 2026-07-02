@@ -48,9 +48,7 @@ Deno.serve(async (req) => {
       statMap[s.uuid + ':' + s.material] = s;
     }
 
-    const toUpdate = [];
-    const toCreate = [];
-
+    // Accumulate all deltas into statMap first
     for (const stat of stats) {
       const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name || !material) continue;
@@ -60,25 +58,30 @@ Deno.serve(async (req) => {
         statMap[key].mined = (statMap[key].mined || 0) + mined_delta;
         statMap[key].placed = (statMap[key].placed || 0) + placed_delta;
         statMap[key].player_name = player_name;
-        if (!statMap[key]._queued) {
-          statMap[key]._queued = true;
-          toUpdate.push(statMap[key]);
-        }
       } else {
-        const newStat = {
+        statMap[key] = {
           server_id: server.id, uuid, player_name, material,
-          mined: mined_delta, placed: placed_delta
+          mined: mined_delta, placed: placed_delta,
+          _isNew: true
         };
-        statMap[key] = { ...newStat, _queued: true };
-        toCreate.push(newStat);
+      }
+    }
+
+    // Build update/create payloads from accumulated values
+    const toUpdate = [];
+    const toCreate = [];
+    for (const key in statMap) {
+      const s = statMap[key];
+      if (s._isNew) {
+        const { _isNew, ...createData } = s;
+        toCreate.push(createData);
+      } else {
+        toUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name });
       }
     }
 
     if (toUpdate.length > 0) {
-      const payload = toUpdate.map(s => ({
-        id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name
-      }));
-      await base44.asServiceRole.entities.BlockStat.bulkUpdate(payload);
+      await base44.asServiceRole.entities.BlockStat.bulkUpdate(toUpdate);
     }
     if (toCreate.length > 0) {
       await base44.asServiceRole.entities.BlockStat.bulkCreate(toCreate);
