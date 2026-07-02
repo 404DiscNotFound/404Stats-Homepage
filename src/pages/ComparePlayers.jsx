@@ -9,6 +9,7 @@ import TopBlocksChart from "@/components/TopBlocksChart";
 import ActivityHeatmap from "@/components/ActivityHeatmap";
 import BlockIcon from "@/components/BlockIcon";
 import CompareStatBar from "@/components/CompareStatBar";
+import GameModeFilter from "@/components/GameModeFilter";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -22,18 +23,21 @@ export default function ComparePlayers() {
   const [data1, setData1] = useState(null);
   const [data2, setData2] = useState(null);
   const [serverTotals, setServerTotals] = useState(null);
+  const [serverGameModes, setServerGameModes] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
     const fetchPlayers = async () => {
       try {
-        const res = await base44.functions.invoke("getServerData", { slug });
+        const res = await base44.functions.invoke("getServerData", { slug, game_mode: gameMode });
         setAllPlayers(res.data.allPlayers);
         setServerTotals(res.data.totals);
+        setServerGameModes(res.data.gameModes);
       } catch {}
     };
     fetchPlayers();
-  }, [slug]);
+  }, [slug, gameMode]);
 
   useEffect(() => {
     if (!p1 || !p2) {
@@ -45,8 +49,8 @@ export default function ComparePlayers() {
     const fetchBoth = async () => {
       try {
         const [r1, r2] = await Promise.all([
-          base44.functions.invoke("getPlayerData", { slug, playerName: p1, range: "all" }),
-          base44.functions.invoke("getPlayerData", { slug, playerName: p2, range: "all" })
+          base44.functions.invoke("getPlayerData", { slug, playerName: p1, range: "all", game_mode: gameMode }),
+          base44.functions.invoke("getPlayerData", { slug, playerName: p2, range: "all", game_mode: gameMode })
         ]);
         setData1(r1.data);
         setData2(r2.data);
@@ -58,7 +62,7 @@ export default function ComparePlayers() {
       }
     };
     fetchBoth();
-  }, [slug, p1, p2]);
+  }, [slug, p1, p2, gameMode]);
 
   const filtered = (query) =>
     query.trim() ? allPlayers.filter(p => p.player_name.toLowerCase().includes(query.toLowerCase())).slice(0, 8) : [];
@@ -127,10 +131,13 @@ export default function ComparePlayers() {
             <ArrowLeft className="h-4 w-4" /> Back to server
           </Link>
 
-          <h1 className="mb-5 flex items-center gap-2 text-lg font-black text-white sm:mb-6">
-            <Swords className="h-5 w-5 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
-            Compare Players
-          </h1>
+          <div className="mb-5 flex items-center justify-between sm:mb-6">
+            <h1 className="flex items-center gap-2 text-lg font-black text-white">
+              <Swords className="h-5 w-5 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 6px rgba(0,245,255,0.5))" }} />
+              Compare Players
+            </h1>
+            <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={serverGameModes} />
+          </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             {renderPicker("Player 1", p1, setP1, "#00F5FF")}

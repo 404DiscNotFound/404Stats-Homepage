@@ -7,6 +7,7 @@ import ServerHeader from "@/components/ServerHeader";
 import BlockIcon from "@/components/BlockIcon";
 import TopBlocksCard from "@/components/TopBlocksCard";
 import BlockPlayersTooltip from "@/components/BlockPlayersTooltip";
+import GameModeFilter from "@/components/GameModeFilter";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const SORT_TABS = [
@@ -22,6 +23,7 @@ export default function BlockIndex() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("total");
+  const [gameMode, setGameMode] = useState("SURVIVAL");
   const tooltipRef = useRef(null);
   const [hoverBlock, setHoverBlock] = useState(null);
 
@@ -47,7 +49,7 @@ export default function BlockIndex() {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getBlockIndex", { slug });
+        const res = await base44.functions.invoke("getBlockIndex", { slug, game_mode: gameMode });
         setData(res.data);
       } catch (err) {
         setError(err.response?.data?.error || "Server nicht gefunden");
@@ -56,7 +58,7 @@ export default function BlockIndex() {
       }
     };
     fetchData();
-  }, [slug]);
+  }, [slug, gameMode]);
 
   if (loading) {
     return (
@@ -107,6 +109,11 @@ export default function BlockIndex() {
               <ArrowLeft className="h-3.5 w-3.5" />
               <span className="hidden sm:inline">Dashboard</span>
             </Link>
+          </div>
+
+          {/* Game Mode Filter */}
+          <div className="mb-4 flex justify-end sm:mb-6">
+            <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={data?.gameModes} />
           </div>
 
           {/* Top 10 Hall of Fame */}

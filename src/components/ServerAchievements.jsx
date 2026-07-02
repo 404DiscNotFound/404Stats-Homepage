@@ -3,14 +3,14 @@ import { Trophy } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { formatNumber } from "@/lib/format";
 
-export default function ServerAchievements({ slug }) {
+export default function ServerAchievements({ slug, gameMode = "SURVIVAL" }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetch = async () => {
       try {
-        const res = await base44.functions.invoke("getServerAchievements", { slug });
+        const res = await base44.functions.invoke("getServerAchievements", { slug, game_mode: gameMode });
         setData(res.data);
       } catch {
         setData(null);
@@ -19,7 +19,7 @@ export default function ServerAchievements({ slug }) {
       }
     };
     fetch();
-  }, [slug]);
+  }, [slug, gameMode]);
 
   if (loading) {
     return (

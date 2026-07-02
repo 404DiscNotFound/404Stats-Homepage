@@ -15,7 +15,7 @@ const VALID_RANGES = ['all', 'day', 'week', 'month', 'year'];
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-    const { slug, playerName, range = 'all' } = body;
+    const { slug, playerName, range = 'all', game_mode } = body;
 
     // Sanitize all inputs — must be strings with length limits
     if (typeof slug !== 'string' || slug.length === 0 || slug.length > 32) {
@@ -27,6 +27,8 @@ Deno.serve(async (req) => {
     if (typeof range !== 'string' || !VALID_RANGES.includes(range)) {
       return Response.json({ error: 'Invalid range' }, { status: 400 });
     }
+
+    const gameMode = (typeof game_mode === 'string' && game_mode.length > 0) ? game_mode.toUpperCase() : 'SURVIVAL';
 
     const base44 = createClientFromRequest(req);
 
@@ -65,19 +67,23 @@ Deno.serve(async (req) => {
     const playerGameModeMap = {};
     for (const stat of rangeStats) {
       const gm = stat.game_mode || 'SURVIVAL';
+
+      // Per-player game mode breakdown (always from all data)
+      if (!playerGameModeMap[stat.uuid]) playerGameModeMap[stat.uuid] = {};
+      if (!playerGameModeMap[stat.uuid][gm]) playerGameModeMap[stat.uuid][gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
+      playerGameModeMap[stat.uuid][gm].mined += stat.mined || 0;
+      playerGameModeMap[stat.uuid][gm].placed += stat.placed || 0;
+      playerGameModeMap[stat.uuid][gm].total += (stat.mined || 0) + (stat.placed || 0);
+
+      // Skip stats not matching the game mode filter
+      if (gameMode !== 'ALL' && gm !== gameMode) continue;
+
       if (!playerMap[stat.uuid]) {
         playerMap[stat.uuid] = { uuid: stat.uuid, player_name: stat.player_name, mined: 0, placed: 0, materials: [] };
       }
       playerMap[stat.uuid].mined += (stat.mined || 0);
       playerMap[stat.uuid].placed += (stat.placed || 0);
       playerMap[stat.uuid].materials.push({ material: stat.material, mined: stat.mined || 0, placed: stat.placed || 0 });
-
-      // Per-player game mode breakdown
-      if (!playerGameModeMap[stat.uuid]) playerGameModeMap[stat.uuid] = {};
-      if (!playerGameModeMap[stat.uuid][gm]) playerGameModeMap[stat.uuid][gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
-      playerGameModeMap[stat.uuid][gm].mined += stat.mined || 0;
-      playerGameModeMap[stat.uuid][gm].placed += stat.placed || 0;
-      playerGameModeMap[stat.uuid][gm].total += (stat.mined || 0) + (stat.placed || 0);
     }
 
     const allPlayers = Object.values(playerMap).map(p => ({ ...p, total: p.mined + p.placed }));
@@ -126,6 +132,8 @@ Deno.serve(async (req) => {
     const materialSet = new Set();
     for (const stat of allTimeStats) {
       if (stat.player_name.toLowerCase() !== playerName.toLowerCase()) continue;
+      const gm = stat.game_mode || 'SURVIVAL';
+      if (gameMode !== 'ALL' && gm !== gameMode) continue;
       allTimePlayer.mined += (stat.mined || 0);
       allTimePlayer.placed += (stat.placed || 0);
       materialSet.add(stat.material);
@@ -149,6 +157,8 @@ Deno.serve(async (req) => {
     const seenMats = new Set();
 
     for (const ds of playerDaily) {
+      const dsGm = ds.game_mode || 'SURVIVAL';
+      if (gameMode !== 'ALL' && dsGm !== gameMode) continue;
       cumMined += ds.mined || 0;
       cumPlaced += ds.placed || 0;
       cumTotal = cumMined + cumPlaced;
@@ -227,14 +237,16 @@ Deno.serve(async (req) => {
     const activity = await base44.asServiceRole.entities.PlayerActivity.filter(
       { server_id: server.id, uuid: targetPlayer.uuid }, '-created_date', 1000
     );
-    const heatmap = activity.map(a => ({
-      day: a.day_of_week,
-      hour: a.hour,
-      mined: a.mined || 0,
-      placed: a.placed || 0,
-      total: (a.mined || 0) + (a.placed || 0),
-      game_mode: a.game_mode || 'SURVIVAL'
-    }));
+    const heatmap = activity
+      .filter(a => gameMode === 'ALL' || (a.game_mode || 'SURVIVAL') === gameMode)
+      .map(a => ({
+        day: a.day_of_week,
+        hour: a.hour,
+        mined: a.mined || 0,
+        placed: a.placed || 0,
+        total: (a.mined || 0) + (a.placed || 0),
+        game_mode: a.game_mode || 'SURVIVAL'
+      }));
 
     // Compute player's game mode breakdown
     const gameModes = Object.values(playerGameModeMap[targetPlayer.uuid] || {}).sort((a, b) => b.total - a.total);

@@ -11,6 +11,7 @@ import PlayerSearch from "@/components/PlayerSearch";
 import ServerTrends from "@/components/ServerTrends";
 import RareBlocksList from "@/components/RareBlocksList";
 import ServerAchievements from "@/components/ServerAchievements";
+import GameModeFilter from "@/components/GameModeFilter";
 import ServerActivityGlow from "@/components/ServerActivityGlow";
 import FunFacts from "@/components/FunFacts";
 import { formatNumber } from "@/lib/format";
@@ -21,6 +22,7 @@ export default function ServerDashboard() {
   const [trends, setTrends] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
     const fetchData = async () => {
@@ -28,8 +30,8 @@ export default function ServerDashboard() {
       setError(null);
       try {
         const [serverRes, trendsRes] = await Promise.all([
-          base44.functions.invoke("getServerData", { slug }),
-          base44.functions.invoke("getServerTrends", { slug }).catch(() => ({ data: { trends: [] } }))
+          base44.functions.invoke("getServerData", { slug, game_mode: gameMode }),
+          base44.functions.invoke("getServerTrends", { slug, game_mode: gameMode }).catch(() => ({ data: { trends: [] } }))
         ]);
         setData(serverRes.data);
         setTrends(trendsRes.data.trends);
@@ -40,7 +42,7 @@ export default function ServerDashboard() {
       }
     };
     fetchData();
-  }, [slug]);
+  }, [slug, gameMode]);
 
   if (loading) {
     return (
@@ -70,7 +72,12 @@ export default function ServerDashboard() {
         <ServerHeader slug={slug} displayName={data?.server?.display_name} />
 
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-          {/* Hero Stats */}
+            {/* Game Mode Filter */}
+            <div className="mb-4 flex justify-end sm:mb-6">
+              <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={data?.gameModes} />
+            </div>
+
+            {/* Hero Stats */}
           <div className="grid gap-3 sm:grid-cols-3 sm:gap-4">
             <StatCard label="Blocks Mined" value={formatNumber(data.totals.mined)} accent="cyan" />
             <StatCard label="Blocks Placed" value={formatNumber(data.totals.placed)} accent="pink" />
@@ -174,7 +181,7 @@ export default function ServerDashboard() {
 
           {/* Server Achievements */}
           <div className="mt-4 sm:mt-6">
-            <ServerAchievements slug={slug} />
+            <ServerAchievements slug={slug} gameMode={gameMode} />
           </div>
 
           {/* Legend */}

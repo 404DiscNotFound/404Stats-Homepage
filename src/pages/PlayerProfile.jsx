@@ -12,6 +12,7 @@ import ActivityHeatmap from "@/components/ActivityHeatmap";
 import AchievementsList from "@/components/AchievementsList";
 import RareBlocksList from "@/components/RareBlocksList";
 import RankNeighbors from "@/components/RankNeighbors";
+import GameModeFilter from "@/components/GameModeFilter";
 import FunFacts from "@/components/FunFacts";
 import { formatNumber } from "@/lib/format";
 
@@ -21,13 +22,14 @@ export default function PlayerProfile() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [range, setRange] = useState("all");
+  const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
       setError(null);
       try {
-        const res = await base44.functions.invoke("getPlayerData", { slug, playerName, range });
+        const res = await base44.functions.invoke("getPlayerData", { slug, playerName, range, game_mode: gameMode });
         setData(res.data);
       } catch (err) {
         setError(err.response?.data?.error || "Player not found");
@@ -36,7 +38,7 @@ export default function PlayerProfile() {
       }
     };
     fetchData();
-  }, [slug, playerName, range]);
+  }, [slug, playerName, range, gameMode]);
 
   if (loading) {
     return (
@@ -88,7 +90,10 @@ export default function PlayerProfile() {
                 </p>
               </div>
             </div>
-            <TimeRangeTabs active={range} onChange={setRange} />
+            <div className="flex items-center gap-3">
+              <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={data?.gameModes} />
+              <TimeRangeTabs active={range} onChange={setRange} />
+            </div>
           </div>
 
           {/* Stats */}

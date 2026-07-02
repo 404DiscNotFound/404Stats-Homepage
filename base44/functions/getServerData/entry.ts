@@ -3,12 +3,14 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.31';
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-    const { slug } = body;
+    const { slug, game_mode } = body;
 
     // Sanitize slug — must be a string, max 32 chars
     if (typeof slug !== 'string' || slug.length === 0 || slug.length > 32) {
       return Response.json({ error: 'Invalid slug' }, { status: 400 });
     }
+
+    const gameMode = (typeof game_mode === 'string' && game_mode.length > 0) ? game_mode.toUpperCase() : 'SURVIVAL';
 
     const base44 = createClientFromRequest(req);
 
@@ -34,14 +36,17 @@ Deno.serve(async (req) => {
       const placed = stat.placed || 0;
       const gm = stat.game_mode || 'SURVIVAL';
 
-      totalMined += mined;
-      totalPlaced += placed;
-
-      // Game mode breakdown
+      // Game mode breakdown (always from all data)
       if (!gameModeMap[gm]) gameModeMap[gm] = { game_mode: gm, mined: 0, placed: 0, total: 0 };
       gameModeMap[gm].mined += mined;
       gameModeMap[gm].placed += placed;
       gameModeMap[gm].total += mined + placed;
+
+      // Skip stats not matching the game mode filter
+      if (gameMode !== 'ALL' && gm !== gameMode) continue;
+
+      totalMined += mined;
+      totalPlaced += placed;
 
       if (!materialMap[stat.material]) {
         materialMap[stat.material] = { material: stat.material, mined: 0, placed: 0, players: {} };
