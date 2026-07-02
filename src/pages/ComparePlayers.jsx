@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft, Swords, Trophy, Clock, Gem, Layers, TrendingUp, Activity, Zap, Percent } from "lucide-react";
+import { ArrowLeft, Swords, Trophy, Gem, Layers, TrendingUp, Activity, Zap, Percent } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
@@ -10,6 +10,7 @@ import ActivityHeatmap from "@/components/ActivityHeatmap";
 import BlockIcon from "@/components/BlockIcon";
 import CompareStatBar from "@/components/CompareStatBar";
 import GameModeFilter from "@/components/GameModeFilter";
+import PlayerPicker from "@/components/PlayerPicker";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -25,6 +26,7 @@ export default function ComparePlayers() {
   const [serverTotals, setServerTotals] = useState(null);
   const [serverGameModes, setServerGameModes] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [gameMode, setGameMode] = useState("SURVIVAL");
 
   useEffect(() => {
@@ -43,9 +45,11 @@ export default function ComparePlayers() {
     if (!p1 || !p2) {
       setData1(null);
       setData2(null);
+      setError(null);
       return;
     }
     setLoading(true);
+    setError(null);
     const fetchBoth = async () => {
       try {
         const [r1, r2] = await Promise.all([
@@ -54,9 +58,10 @@ export default function ComparePlayers() {
         ]);
         setData1(r1.data);
         setData2(r2.data);
-      } catch {
+      } catch (err) {
         setData1(null);
         setData2(null);
+        setError(err.response?.data?.error || "Failed to load player data");
       } finally {
         setLoading(false);
       }
@@ -64,43 +69,6 @@ export default function ComparePlayers() {
     fetchBoth();
   }, [slug, p1, p2, gameMode]);
 
-  const filtered = (query) =>
-    query.trim() ? allPlayers.filter(p => p.player_name.toLowerCase().includes(query.toLowerCase())).slice(0, 8) : [];
-
-  const renderPicker = (label, value, set, accent) => {
-    const results = filtered(value);
-    const showDropdown = value.trim() && results.length > 0;
-    return (
-      <div className="relative">
-        <label className="mb-1 block text-xs uppercase tracking-wider text-gray-600">{label}</label>
-        <input
-          type="text"
-          value={value}
-          onChange={e => set(e.target.value)}
-          placeholder="Player name..."
-          className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-2.5 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/50"
-          style={{ boxShadow: value ? `0 0 10px ${accent}20` : undefined }}
-        />
-        {showDropdown && (
-          <div className="absolute z-50 mt-1 w-full overflow-hidden rounded-lg border border-[#1A1A24] bg-[#0F0F14] shadow-[0_0_20px_rgba(0,0,0,0.8)]">
-            {results.map(p => (
-              <button
-                key={p.uuid}
-                onClick={() => set(p.player_name)}
-                className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-[#1A1A24]"
-              >
-                <PlayerHead uuid={p.uuid} name={p.player_name} size={24} />
-                <span className="flex-1 text-sm text-white">{p.player_name}</span>
-                <span className="text-xs text-gray-600">{formatNumber(p.total)}</span>
-              </button>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
-
-  // Derived stats from heatmap data
   const heatmapStats = (heatmap) => {
     if (!heatmap || heatmap.length === 0) return { peakHour: null, peakDay: null, activeHours: 0, peakVal: 0 };
     let peakHour = 0, peakDay = 0, peakVal = 0, activeHours = 0;
@@ -111,7 +79,6 @@ export default function ComparePlayers() {
     return { peakHour, peakDay, activeHours, peakVal };
   };
 
-  // Count wins across all stat categories
   const countWins = (stats) => {
     let p1Score = 0, p2Score = 0;
     for (const s of stats) {
@@ -140,8 +107,8 @@ export default function ComparePlayers() {
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            {renderPicker("Player 1", p1, setP1, "#00F5FF")}
-            {renderPicker("Player 2", p2, setP2, "#FF0055")}
+            <PlayerPicker label="Player 1" players={allPlayers} value={p1} onSelect={setP1} accent="#00F5FF" />
+            <PlayerPicker label="Player 2" players={allPlayers} value={p2} onSelect={setP2} accent="#FF0055" />
           </div>
 
           {loading && (
@@ -150,7 +117,13 @@ export default function ComparePlayers() {
             </div>
           )}
 
-          {!loading && data1 && data2 && (() => {
+          {error && (
+            <div className="mt-6 rounded-xl border border-[#FF0055]/30 bg-[#FF0055]/5 p-4 text-center">
+              <p className="text-sm text-[#FF0055]">{error}</p>
+            </div>
+          )}
+
+          {!loading && !error && data1 && data2 && (() => {
             const h1 = heatmapStats(data1.heatmap);
             const h2 = heatmapStats(data2.heatmap);
             const a1 = (data1.achievements || []).filter(a => a.unlocked);
@@ -184,7 +157,6 @@ export default function ComparePlayers() {
                     ))}
                   </div>
 
-                  {/* Win Tally */}
                   <div className="mt-4 flex items-center justify-center gap-6 border-t border-[#1A1A24] pt-4">
                     <div className="text-center">
                       <p className="text-2xl font-black text-[#00F5FF]" style={{ textShadow: "0 0 10px rgba(0,245,255,0.3)" }}>{p1Score}</p>
@@ -207,7 +179,7 @@ export default function ComparePlayers() {
                   )}
                 </div>
 
-                {/* Core Stats Bars */}
+                {/* Core Stats */}
                 <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
                   <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white">
                     <TrendingUp className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
@@ -377,7 +349,6 @@ export default function ComparePlayers() {
                           </h3>
                           <span className="text-xs font-black" style={{ color: ACCENTS[i] }}>{unlocked.length}/{achTotal}</span>
                         </div>
-                        {/* Progress bar */}
                         <div className="mb-3 h-2 overflow-hidden rounded-full bg-[#111118]">
                           <div
                             className="h-full rounded-full transition-all duration-500"
@@ -407,7 +378,7 @@ export default function ComparePlayers() {
             );
           })()}
 
-          {!loading && (!data1 || !data2) && (
+          {!loading && !error && (!data1 || !data2) && (
             <div className="mt-6 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-6 text-center sm:mt-8 sm:p-8">
               <p className="text-sm text-gray-600">Select two players to compare their stats.</p>
             </div>
