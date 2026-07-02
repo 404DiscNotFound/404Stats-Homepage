@@ -1,17 +1,21 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Search, ArrowLeft, Users } from "lucide-react";
+import { Search, ArrowLeft, Users, ChevronLeft, ChevronRight } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
 import PlayerHead from "@/components/PlayerHead";
+import TopPlayersCard from "@/components/TopPlayersCard";
 import { formatNumber } from "@/lib/format";
 
 const SORT_TABS = [
-  { key: "total", label: "Gesamt", accent: "text-white" },
-  { key: "mined", label: "Abgebaut", accent: "text-[#00F5FF]" },
-  { key: "placed", label: "Gebaut", accent: "text-[#FF0055]" },
+  { key: "total", label: "Total" },
+  { key: "mined", label: "Mined" },
+  { key: "placed", label: "Placed" },
+  { key: "name", label: "Name" },
 ];
+
+const PER_PAGE = 50;
 
 export default function PlayerIndex() {
   const { slug } = useParams();
@@ -20,6 +24,7 @@ export default function PlayerIndex() {
   const [error, setError] = useState(null);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("total");
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -36,6 +41,10 @@ export default function PlayerIndex() {
     };
     fetchData();
   }, [slug]);
+
+  useEffect(() => {
+    setPage(1);
+  }, [search, sort]);
 
   if (loading) {
     return (
@@ -58,11 +67,17 @@ export default function PlayerIndex() {
     );
   }
 
-  const players = (data?.players || [])
-    .filter(p => p.player_name.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => (b[sort] || 0) - (a[sort] || 0));
+  const allPlayers = data?.players || [];
 
-  const maxValue = Math.max(...players.map(p => p[sort] || 0), 1);
+  const players = allPlayers
+    .filter(p => p.player_name.toLowerCase().includes(search.toLowerCase()))
+    .sort((a, b) => {
+      if (sort === "name") return a.player_name.localeCompare(b.player_name);
+      return (b[sort] || 0) - (a[sort] || 0);
+    });
+
+  const totalPages = Math.ceil(players.length / PER_PAGE);
+  const paginated = players.slice((page - 1) * PER_PAGE, page * PER_PAGE);
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -88,6 +103,13 @@ export default function PlayerIndex() {
             </Link>
           </div>
 
+          {/* Top 10 Hall of Fame */}
+          {allPlayers.length > 0 && !search && (
+            <div className="mb-4 sm:mb-6">
+              <TopPlayersCard players={allPlayers} />
+            </div>
+          )}
+
           {/* Search + Sort */}
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="relative flex-1">
@@ -96,7 +118,7 @@ export default function PlayerIndex() {
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Spieler durchsuchen..."
+                placeholder="Search players..."
                 className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] py-2.5 pl-10 pr-4 text-sm text-white placeholder-gray-600 outline-none transition-all focus:border-[#00F5FF]/40"
               />
             </div>
@@ -117,7 +139,7 @@ export default function PlayerIndex() {
             </div>
           </div>
 
-          {/* Player List */}
+          {/* Player Cards Grid */}
           {players.length === 0 ? (
             <div className="py-16 text-center">
               <Users className="mx-auto mb-3 h-8 w-8 text-gray-700" />
@@ -126,62 +148,73 @@ export default function PlayerIndex() {
               </p>
             </div>
           ) : (
-            <div className="space-y-1.5">
-              {players.map((p, i) => {
-                const val = p[sort] || 0;
-                const pct = (val / maxValue) * 100;
-
-                return (
-                  <Link
-                    key={p.uuid}
-                    to={`/server/${slug}/player/${p.player_name}`}
-                    className="group flex items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-[#0F0F18] sm:gap-3 sm:px-3 sm:py-2"
-                  >
-                    <span className="w-5 shrink-0 text-right text-[10px] font-bold text-gray-700 sm:w-8 sm:text-xs">
-                      {i + 1}
-                    </span>
-                    <PlayerHead uuid={p.uuid} name={p.player_name} size={20} className="sm:!w-6 sm:!h-6" />
-                    <div className="w-20 shrink-0 sm:w-40">
-                      <div className="truncate text-xs text-gray-300 group-hover:text-white sm:text-sm">
-                        {p.player_name}
-                      </div>
-                      <div className="text-[9px] text-gray-600 sm:text-[10px]">
-                        {p.blockVariety} blocks
-                      </div>
-                    </div>
-                    <div className="flex h-5 min-w-[40px] flex-1 overflow-hidden rounded bg-[#111118] sm:h-6">
-                      <div
-                        className={`transition-all duration-500 ${
-                          sort === "mined" ? "bg-[#00F5FF]/70" : sort === "placed" ? "bg-[#FF0055]/70" : "bg-white/40"
-                        }`}
-                        style={{
-                          width: `${pct}%`,
-                          boxShadow: sort === "mined"
-                            ? "0 0 6px rgba(0,245,255,0.3)"
-                            : sort === "placed"
-                            ? "0 0 6px rgba(255,0,85,0.3)"
-                            : "0 0 6px rgba(255,255,255,0.1)"
-                        }}
-                      />
-                    </div>
-                    <span className="flex shrink-0 items-center gap-1.5 text-xs tabular-nums sm:gap-2 sm:text-sm">
-                      {sort === "total" ? (
-                        <>
+            <>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 sm:gap-3 lg:grid-cols-3">
+                {paginated.map((p, i) => {
+                  const rankNum = (page - 1) * PER_PAGE + i + 1;
+                  return (
+                    <Link
+                      key={p.uuid}
+                      to={`/server/${slug}/player/${p.player_name}`}
+                      className="group flex items-center gap-3 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] p-3 transition-all hover:border-[#00F5FF]/30 hover:bg-[#0F0F18]"
+                    >
+                      <span className="w-5 shrink-0 text-right text-[10px] font-bold text-gray-700">
+                        {rankNum}
+                      </span>
+                      <PlayerHead uuid={p.uuid} name={p.player_name} size={32} className="shrink-0" />
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-xs font-bold text-gray-300 group-hover:text-white sm:text-sm">
+                          {p.player_name}
+                        </p>
+                        <div className="mt-1 flex h-1.5 overflow-hidden rounded-full bg-[#111118]">
+                          <div
+                            className="bg-[#00F5FF]/70"
+                            style={{ width: `${(p.mined / Math.max(p.total, 1)) * 100}%` }}
+                          />
+                          <div
+                            className="bg-[#FF0055]/70"
+                            style={{ width: `${(p.placed / Math.max(p.total, 1)) * 100}%` }}
+                          />
+                        </div>
+                        <div className="mt-1.5 flex items-center gap-2 text-[10px] text-gray-600">
                           <span className="text-[#00F5FF]/70">{formatNumber(p.mined)}</span>
                           <span className="text-gray-700">/</span>
                           <span className="text-[#FF0055]/70">{formatNumber(p.placed)}</span>
-                          <span className="ml-0.5 font-bold text-white sm:ml-1">{formatNumber(p.total)}</span>
-                        </>
-                      ) : (
-                        <span className={`font-bold ${sort === "mined" ? "text-[#00F5FF]" : "text-[#FF0055]"}`}>
-                          {formatNumber(val)}
-                        </span>
-                      )}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
+                          <span className="text-gray-700">·</span>
+                          <span>{p.blockVariety} blocks</span>
+                        </div>
+                      </div>
+                      <span className="shrink-0 text-sm font-black text-white">
+                        {formatNumber(p.total)}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="mt-6 flex items-center justify-center gap-4">
+                  <button
+                    onClick={() => setPage(Math.max(1, page - 1))}
+                    disabled={page === 1}
+                    className="inline-flex items-center gap-1 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF] disabled:opacity-30 disabled:hover:border-[#1A1A24] disabled:hover:text-gray-400"
+                  >
+                    <ChevronLeft className="h-3.5 w-3.5" /> Prev
+                  </button>
+                  <span className="text-xs text-gray-500">
+                    Page {page} of {totalPages}
+                  </span>
+                  <button
+                    onClick={() => setPage(Math.min(totalPages, page + 1))}
+                    disabled={page === totalPages}
+                    className="inline-flex items-center gap-1 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF] disabled:opacity-30 disabled:hover:border-[#1A1A24] disabled:hover:text-gray-400"
+                  >
+                    Next <ChevronRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>

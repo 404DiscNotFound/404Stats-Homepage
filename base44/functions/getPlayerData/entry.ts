@@ -88,8 +88,27 @@ Deno.serve(async (req) => {
       materialMap[m.material].mined += m.mined;
       materialMap[m.material].placed += m.placed;
     }
+    // Compute server-wide totals per material (for player share %)
+    const serverMaterialTotals = {};
+    for (const stat of rangeStats) {
+      if (!serverMaterialTotals[stat.material]) serverMaterialTotals[stat.material] = { mined: 0, placed: 0, total: 0 };
+      serverMaterialTotals[stat.material].mined += stat.mined || 0;
+      serverMaterialTotals[stat.material].placed += stat.placed || 0;
+      serverMaterialTotals[stat.material].total += (stat.mined || 0) + (stat.placed || 0);
+    }
+
     const topMaterials = Object.values(materialMap)
-      .map(m => ({ ...m, total: m.mined + m.placed }))
+      .map(m => {
+        const svTotal = serverMaterialTotals[m.material] || { total: m.total };
+        return {
+          ...m,
+          total: m.mined + m.placed,
+          serverTotal: svTotal.total,
+          serverMined: svTotal.mined,
+          serverPlaced: svTotal.placed,
+          sharePct: svTotal.total > 0 ? Math.round(((m.mined + m.placed) / svTotal.total) * 100) : 100
+        };
+      })
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
 
