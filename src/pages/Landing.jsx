@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import GlitchLogo from "@/components/GlitchLogo";
 import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight } from "lucide-react";
 
@@ -114,7 +115,10 @@ export default function Landing() {
             <GlitchLogo size="sm" />
             <span className="text-xs text-gray-600">Block analytics for Minecraft servers</span>
           </div>
-          <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
+          <div className="flex items-center gap-4">
+            <Link to="/global-stats" className="text-xs text-gray-700 transition-colors hover:text-[#00F5FF]">Stats</Link>
+            <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
+          </div>
         </div>
       </footer>
     </div>
