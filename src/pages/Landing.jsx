@@ -4,11 +4,11 @@ import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, 
 export default function Landing() {
   return (
     <div className="min-h-screen bg-black text-white overflow-hidden">
-      {/* Background grid + glow */}
-      <div className="pointer-events-none fixed inset-0 z-0">
+      {/* Background grid + glow (static gradients — no blur for mobile perf) */}
+      <div className="pointer-events-none fixed inset-0 z-0" style={{ contain: 'strict' }}>
         <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px]" />
-        <div className="absolute left-1/4 top-0 h-[400px] w-[400px] rounded-full bg-[#00F5FF]/10 blur-[120px]" />
-        <div className="absolute right-1/4 bottom-0 h-[400px] w-[400px] rounded-full bg-[#FF0055]/10 blur-[120px]" />
+        <div className="absolute left-1/4 top-0 h-[400px] w-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)' }} />
+        <div className="absolute right-1/4 bottom-0 h-[400px] w-[400px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(255,0,85,0.08) 0%, transparent 70%)' }} />
       </div>
 
       {/* Nav */}
@@ -98,7 +98,7 @@ export default function Landing() {
       {/* CTA */}
       <div className="relative z-10 mx-auto max-w-3xl px-6 py-20">
         <div className="relative overflow-hidden rounded-2xl border border-[#1A1A24] bg-[#0A0A0F] p-10 text-center">
-          <div className="pointer-events-none absolute left-1/2 top-0 h-[200px] w-[400px] -translate-x-1/2 rounded-full bg-[#00F5FF]/10 blur-[80px]" />
+          <div className="pointer-events-none absolute left-1/2 top-0 h-[200px] w-[400px] -translate-x-1/2 rounded-full" style={{ background: 'radial-gradient(circle, rgba(0,245,255,0.08) 0%, transparent 70%)' }} />
           <h2 className="relative text-3xl font-black tracking-tight md:text-4xl">Ready to level up?</h2>
           <p className="relative mt-3 text-sm text-gray-500">The plugin is coming soon. Be the first to know.</p>
           <button className="relative mt-8 inline-flex items-center gap-2 rounded-lg bg-[#00F5FF] px-6 py-3 text-sm font-black text-black transition-all hover:shadow-[0_0_25px_rgba(0,245,255,0.4)]">
