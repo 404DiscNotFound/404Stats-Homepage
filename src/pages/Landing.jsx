@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import GlitchLogo from "@/components/GlitchLogo";
-import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight } from "lucide-react";
+import { BarChart3, Users, Search, Swords, Trophy, Clock, Download, ArrowRight, ChevronRight, Globe } from "lucide-react";
 
 export default function Landing() {
   return (
@@ -18,9 +18,14 @@ export default function Landing() {
         <div className="flex items-center gap-6">
           <a href="#features" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">Features</a>
           <a href="#how" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">How it works</a>
-          <button className="inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
-            <Download className="h-3.5 w-3.5" /> Plugin <span className="text-[#00F5FF]/50">Soon</span>
-          </button>
+          <div className="flex items-center gap-3">
+            <Link to="/global-stats" className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]">
+              <Globe className="h-3.5 w-3.5" /> Global Stats
+            </Link>
+            <button className="inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
+              <Download className="h-3.5 w-3.5" /> Plugin <span className="text-[#00F5FF]/50">Soon</span>
+            </button>
+          </div>
         </div>
       </nav>
 
@@ -115,10 +120,7 @@ export default function Landing() {
             <GlitchLogo size="sm" />
             <span className="text-xs text-gray-600">Block analytics for Minecraft servers</span>
           </div>
-          <div className="flex items-center gap-4">
-            <Link to="/global-stats" className="text-xs text-gray-700 transition-colors hover:text-[#00F5FF]">Stats</Link>
-            <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
-          </div>
+          <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
         </div>
       </footer>
     </div>

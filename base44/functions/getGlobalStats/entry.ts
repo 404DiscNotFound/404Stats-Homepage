@@ -14,7 +14,6 @@ Deno.serve(async (req) => {
     let totalPlaced = 0;
     const materialMap = {};
     const playerMap = {};
-    const serverMap = {};
 
     for (const stat of allStats) {
       totalMined += (stat.mined || 0);
@@ -27,22 +26,11 @@ Deno.serve(async (req) => {
       materialMap[stat.material].mined += (stat.mined || 0);
       materialMap[stat.material].placed += (stat.placed || 0);
 
-      // Player aggregation (UUID + server combo for uniqueness)
+      // Player aggregation (UUID + server combo for uniqueness — count only, no names exposed)
       const playerKey = `${stat.server_id}:${stat.uuid}`;
       if (!playerMap[playerKey]) {
-        playerMap[playerKey] = { uuid: stat.uuid, name: stat.player_name, server_id: stat.server_id, mined: 0, placed: 0 };
+        playerMap[playerKey] = true;
       }
-      playerMap[playerKey].mined += (stat.mined || 0);
-      playerMap[playerKey].placed += (stat.placed || 0);
-
-      // Per-server aggregation
-      if (!serverMap[stat.server_id]) {
-        serverMap[stat.server_id] = { server_id: stat.server_id, mined: 0, placed: 0, materials: new Set(), players: new Set() };
-      }
-      serverMap[stat.server_id].mined += (stat.mined || 0);
-      serverMap[stat.server_id].placed += (stat.placed || 0);
-      serverMap[stat.server_id].materials.add(stat.material);
-      serverMap[stat.server_id].players.add(stat.uuid);
     }
 
     const totalCombined = totalMined + totalPlaced;
@@ -52,29 +40,6 @@ Deno.serve(async (req) => {
     // Top 10 blocks globally
     const topBlocks = Object.values(materialMap)
       .map(m => ({ ...m, total: m.mined + m.placed }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
-
-    // Top 10 players globally
-    const topPlayers = Object.values(playerMap)
-      .map(p => ({ ...p, total: p.mined + p.placed }))
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
-
-    // Top 10 servers globally
-    const serverSlugs = {};
-    for (const s of servers) {
-      serverSlugs[s.id] = { slug: s.server_slug, display_name: s.display_name };
-    }
-    const topServers = Object.values(serverMap)
-      .map(s => ({
-        ...s,
-        total: s.mined + s.placed,
-        uniqueMaterials: s.materials.size,
-        uniquePlayers: s.players.size,
-        slug: serverSlugs[s.server_id]?.slug || null,
-        display_name: serverSlugs[s.server_id]?.display_name || null
-      }))
       .sort((a, b) => b.total - a.total)
       .slice(0, 10);
 
@@ -98,10 +63,7 @@ Deno.serve(async (req) => {
 
     const uniqueMaterials = Object.keys(materialMap).length;
 
-    // Most active server
-    const busiestServer = topServers[0] || null;
-    // Most diverse server
-    const mostDiverseServer = [...topServers].sort((a, b) => b.uniqueMaterials - a.uniqueMaterials)[0] || null;
+
 
     return Response.json({
       totals: {
@@ -121,12 +83,8 @@ Deno.serve(async (req) => {
         ancientDebrisMined,
         mostMinedBlock: mostMinedBlock ? { material: mostMinedBlock.material, count: mostMinedBlock.mined } : null,
         mostPlacedBlock: mostPlacedBlock ? { material: mostPlacedBlock.material, count: mostPlacedBlock.placed } : null,
-        busiestServer: busiestServer ? { slug: busiestServer.slug, display_name: busiestServer.display_name, total: busiestServer.total } : null,
-        mostDiverseServer: mostDiverseServer ? { slug: mostDiverseServer.slug, display_name: mostDiverseServer.display_name, uniqueMaterials: mostDiverseServer.uniqueMaterials } : null,
       },
       topBlocks,
-      topPlayers,
-      topServers,
       fetchedAt: new Date().toISOString()
     });
   } catch (error) {

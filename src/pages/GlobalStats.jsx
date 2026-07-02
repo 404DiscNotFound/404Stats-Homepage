@@ -5,7 +5,6 @@ import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import GlitchLogo from "@/components/GlitchLogo";
 import BlockIcon from "@/components/BlockIcon";
-import PlayerHead from "@/components/PlayerHead";
 import { formatNumber, formatMaterial } from "@/lib/format";
 
 const SECRET = "Pelle";
@@ -224,44 +223,6 @@ export default function GlobalStats() {
             </div>
           </div>
 
-          {/* Top servers */}
-          {data.topServers.length > 0 && (
-            <div className="mt-4 sm:mt-6">
-              <h2 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-                <Server className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                Top Servers
-              </h2>
-              <div className="space-y-1.5">
-                {data.topServers.map((s, i) => (
-                  <div key={i} className="flex items-center gap-3 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2.5 sm:px-4">
-                    <span className={`w-5 shrink-0 text-right text-xs font-black sm:w-8 ${
-                      i === 0 ? "text-yellow-400" : i === 1 ? "text-gray-300" : i === 2 ? "text-amber-500" : "text-gray-700"
-                    }`}>{i + 1}</span>
-                    <div className="min-w-0 flex-1">
-                      <p className="truncate text-xs font-bold text-white sm:text-sm">
-                        {s.display_name || "Unnamed Server"}
-                      </p>
-                      <div className="flex items-center gap-2 text-[10px] text-gray-600 sm:text-xs">
-                        <span className="text-[#00F5FF]/70">{formatNumber(s.mined)} mined</span>
-                        <span>·</span>
-                        <span className="text-[#FF0055]/70">{formatNumber(s.placed)} placed</span>
-                        <span>·</span>
-                        <span>{s.uniquePlayers} players</span>
-                        <span>·</span>
-                        <span>{s.uniqueMaterials} blocks</span>
-                      </div>
-                    </div>
-                    {s.slug && (
-                      <Link to={`/server/${s.slug}`} className="shrink-0 text-xs font-bold text-[#00F5FF] hover:underline">
-                        View →
-                      </Link>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
           {/* Top 10 Blocks */}
           <div className="mt-4 sm:mt-6">
             <h2 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
@@ -293,31 +254,6 @@ export default function GlobalStats() {
                   </div>
                 );
               })}
-            </div>
-          </div>
-
-          {/* Top 10 Players */}
-          <div className="mt-4 sm:mt-6">
-            <h2 className="mb-3 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-              <Users className="h-4 w-4 text-[#FF0055]" style={{ filter: "drop-shadow(0 0 4px rgba(255,0,85,0.5))" }} />
-              Top 10 Players Globally
-            </h2>
-            <div className="space-y-1.5">
-              {data.topPlayers.map((p, i) => (
-                <div key={i} className="flex items-center gap-3 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-3 py-2.5 sm:px-4">
-                  <span className={`w-5 shrink-0 text-right text-xs font-black sm:w-8 ${
-                    i === 0 ? "text-yellow-400" : i === 1 ? "text-gray-300" : i === 2 ? "text-amber-500" : "text-gray-700"
-                  }`}>{i + 1}</span>
-                  <PlayerHead uuid={p.uuid} name={p.name} size={28} />
-                  <span className="min-w-0 flex-1 truncate text-xs font-bold text-white sm:text-sm">{p.name}</span>
-                  <div className="flex shrink-0 items-center gap-2 text-xs tabular-nums sm:text-sm">
-                    <span className="text-[#00F5FF]/70">{formatNumber(p.mined)}</span>
-                    <span className="text-gray-700">/</span>
-                    <span className="text-[#FF0055]/70">{formatNumber(p.placed)}</span>
-                    <span className="ml-1 font-black text-white">{formatNumber(p.total)}</span>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
 
