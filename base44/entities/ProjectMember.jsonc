@@ -1,0 +1,59 @@
+{
+  "name": "ProjectMember",
+  "type": "object",
+  "properties": {
+    "server_id": {
+      "type": "string",
+      "description": "Reference to Server entity ID"
+    },
+    "server_slug": {
+      "type": "string",
+      "description": "Server slug"
+    },
+    "project_slug": {
+      "type": "string",
+      "description": "Project slug within server"
+    },
+    "uuid": {
+      "type": "string",
+      "description": "Minecraft player UUID"
+    },
+    "player_name": {
+      "type": "string",
+      "description": "Minecraft player name"
+    },
+    "joined_at": {
+      "type": "string",
+      "description": "ISO timestamp when player joined the project"
+    },
+    "left_at": {
+      "type": "string",
+      "description": "ISO timestamp when player left the project (null = still member)"
+    }
+  },
+  "required": [
+    "server_id",
+    "server_slug",
+    "project_slug",
+    "uuid",
+    "player_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

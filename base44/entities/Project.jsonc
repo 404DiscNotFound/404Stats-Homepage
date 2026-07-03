@@ -1,0 +1,63 @@
+{
+  "name": "Project",
+  "type": "object",
+  "properties": {
+    "server_id": {
+      "type": "string",
+      "description": "Reference to Server entity ID"
+    },
+    "server_slug": {
+      "type": "string",
+      "description": "Server slug for URL routing"
+    },
+    "project_slug": {
+      "type": "string",
+      "description": "Unique project slug within server, derived from project_name"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Display name of the project"
+    },
+    "created_by_uuid": {
+      "type": "string",
+      "description": "UUID of the player who created the project"
+    },
+    "created_by_name": {
+      "type": "string",
+      "description": "Name of the player who created the project"
+    },
+    "archived": {
+      "type": "boolean",
+      "default": false,
+      "description": "Soft-delete flag \u2014 archived projects are hidden but stats are preserved"
+    },
+    "last_activity_at": {
+      "type": "string",
+      "description": "ISO timestamp of last block activity in this project"
+    }
+  },
+  "required": [
+    "server_id",
+    "server_slug",
+    "project_slug",
+    "project_name"
+  ],
+  "rls": {
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "read": true,
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
