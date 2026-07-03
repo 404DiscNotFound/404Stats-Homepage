@@ -14,8 +14,10 @@ import ServerAchievements from "@/components/ServerAchievements";
 import GameModeFilter from "@/components/GameModeFilter";
 import ServerDonuts from "@/components/ServerDonuts";
 import FunFacts from "@/components/FunFacts";
+import DashboardCustomizer from "@/components/DashboardCustomizer";
 import PasswordPrompt from "@/components/PasswordPrompt";
 import { useServerPassword } from "@/hooks/useServerPassword";
+import { useDashboardLayout } from "@/hooks/useDashboardLayout";
 import { withAccessToken } from "@/lib/serverAuth";
 import { formatNumber } from "@/lib/format";
 import { useT } from "@/lib/i18n";
@@ -29,6 +31,7 @@ export default function ServerDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [gameMode, setGameMode] = useState("SURVIVAL");
+  const { layout, toggleVisible, reorder, reset, isVisible } = useDashboardLayout(slug);
 
   useEffect(() => {
     if (status !== "ready") return;
@@ -92,8 +95,9 @@ export default function ServerDashboard() {
         <ServerHeader slug={slug} displayName={data?.server?.display_name} />
 
         <div className="mx-auto max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
-            {/* Game Mode Filter */}
-            <div className="mb-4 flex justify-end sm:mb-6">
+            {/* Game Mode Filter + Customizer */}
+            <div className="mb-4 flex items-center justify-end gap-2 sm:mb-6">
+              <DashboardCustomizer layout={layout} onToggle={toggleVisible} onReorder={reorder} onReset={reset} />
               <GameModeFilter value={gameMode} onChange={setGameMode} gameModes={data?.gameModes} />
             </div>
 
@@ -105,12 +109,14 @@ export default function ServerDashboard() {
           </div>
 
           {/* Donut Charts */}
-          <div className="mt-4 sm:mt-6">
-            <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} mode="server" />
-          </div>
+          {isVisible("donuts") && (
+            <div className="mt-4 sm:mt-6">
+              <ServerDonuts materialCategories={data?.materialCategories} worldDistribution={data?.worldDistribution} mode="server" />
+            </div>
+          )}
 
           {/* Fun Facts */}
-          {data.facts && data.facts.length > 0 && (
+          {isVisible("funFacts") && data.facts && data.facts.length > 0 && (
             <div className="mt-4 sm:mt-6">
               <FunFacts facts={data.facts} />
             </div>
@@ -144,53 +150,59 @@ export default function ServerDashboard() {
           </div>
 
           {/* Server Trends */}
-          <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-                <TrendingUp className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-                {t("dashboard.serverTrend")}
-              </h2>
-              <div className="flex gap-3 text-[10px] text-gray-600 sm:gap-4 sm:text-xs">
-                <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />{t("common.mined")}
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />{t("common.placed")}
-                </span>
+          {isVisible("trends") && (
+            <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
+                  <TrendingUp className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
+                  {t("dashboard.serverTrend")}
+                </h2>
+                <div className="flex gap-3 text-[10px] text-gray-600 sm:gap-4 sm:text-xs">
+                  <span className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-[#00F5FF] shadow-[0_0_6px_rgba(0,245,255,0.5)]" />{t("common.mined")}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-[#FF0055] shadow-[0_0_6px_rgba(255,0,85,0.5)]" />{t("common.placed")}
+                  </span>
+                </div>
               </div>
+              <ServerTrends trends={trends} />
             </div>
-            <ServerTrends trends={trends} />
-          </div>
+          )}
 
           {/* Top Blocks */}
-          <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
-            <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-              <Gem className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
-              {t("dashboard.topBlocks")}
-            </h2>
-            <TopBlocksChart materials={data.topMaterials} mode="server" />
-          </div>
+          {isVisible("topBlocks") && (
+            <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
+              <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
+                <Gem className="h-4 w-4 text-[#00F5FF]" style={{ filter: "drop-shadow(0 0 4px rgba(0,245,255,0.5))" }} />
+                {t("dashboard.topBlocks")}
+              </h2>
+              <TopBlocksChart materials={data.topMaterials} mode="server" />
+            </div>
+          )}
 
           {/* Leaderboards */}
-          <div className="mt-4 grid gap-4 lg:grid-cols-2 sm:mt-6">
-            <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-                <span className="text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.5)" }}>⛏</span>
-                {t("dashboard.topMiners")}
-              </h2>
-              <TopPlayersList players={data.topMiners} slug={slug} metric="mined" accent="cyan" />
+          {isVisible("leaderboards") && (
+            <div className="mt-4 grid gap-4 lg:grid-cols-2 sm:mt-6">
+              <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
+                <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
+                  <span className="text-[#00F5FF]" style={{ textShadow: "0 0 8px rgba(0,245,255,0.5)" }}>⛏</span>
+                  {t("dashboard.topMiners")}
+                </h2>
+                <TopPlayersList players={data.topMiners} slug={slug} metric="mined" accent="cyan" />
+              </div>
+              <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
+                <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
+                  <span className="text-[#FF0055]" style={{ textShadow: "0 0 8px rgba(255,0,85,0.5)" }}>🧱</span>
+                  {t("dashboard.topBuilders")}
+                </h2>
+                <TopPlayersList players={data.topBuilders} slug={slug} metric="placed" accent="pink" />
+              </div>
             </div>
-            <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:p-6">
-              <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
-                <span className="text-[#FF0055]" style={{ textShadow: "0 0 8px rgba(255,0,85,0.5)" }}>🧱</span>
-                {t("dashboard.topBuilders")}
-              </h2>
-              <TopPlayersList players={data.topBuilders} slug={slug} metric="placed" accent="pink" />
-            </div>
-          </div>
+          )}
 
           {/* Rare Blocks */}
-          {data.rareBlocks && data.rareBlocks.length > 0 && (
+          {isVisible("rareBlocks") && data.rareBlocks && data.rareBlocks.length > 0 && (
             <div className="mt-4 rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-4 sm:mt-6 sm:p-6">
               <h2 className="mb-4 flex items-center gap-2 text-xs font-black uppercase tracking-wider text-white sm:text-sm">
                 <span>💎</span> {t("dashboard.rareBlocks")}
@@ -200,9 +212,11 @@ export default function ServerDashboard() {
           )}
 
           {/* Server Achievements */}
-          <div className="mt-4 sm:mt-6">
-            <ServerAchievements slug={slug} gameMode={gameMode} accessToken={status === "ready"} />
-          </div>
+          {isVisible("achievements") && (
+            <div className="mt-4 sm:mt-6">
+              <ServerAchievements slug={slug} gameMode={gameMode} accessToken={status === "ready"} />
+            </div>
+          )}
 
           {/* Legend */}
           <div className="mt-4 flex gap-6 text-xs text-gray-600">
