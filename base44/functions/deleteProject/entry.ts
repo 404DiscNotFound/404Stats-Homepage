@@ -40,16 +40,28 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
-    // Delete project-scoped stats so a new project with the same slug starts fresh.
-    // Player overall stats (no project_slug) are NOT affected.
-    await base44.asServiceRole.entities.BlockStat.deleteMany({
-      server_id: server.id, project_slug: projectSlug
-    });
-    await base44.asServiceRole.entities.DailyBlockStat.deleteMany({
-      server_id: server.id, project_slug: projectSlug
-    });
+    // Detach stats from the project: unset project_slug and project_name so the
+    // block counts stay in the database and keep contributing to player overall
+    // stats, but are no longer linked to this (now-deleted) project.
+    // A new project with the same slug will start with fresh stats.
+    let hasMore = true;
+    while (hasMore) {
+      const res = await base44.asServiceRole.entities.BlockStat.updateMany(
+        { server_id: server.id, project_slug: projectSlug },
+        { $unset: { project_slug: "", project_name: "" } }
+      );
+      hasMore = res && res.has_more === true;
+    }
+    hasMore = true;
+    while (hasMore) {
+      const res = await base44.asServiceRole.entities.DailyBlockStat.updateMany(
+        { server_id: server.id, project_slug: projectSlug },
+        { $unset: { project_slug: "", project_name: "" } }
+      );
+      hasMore = res && res.has_more === true;
+    }
 
-    // Delete the project record entirely (no soft-archive needed since stats are gone)
+    // Delete the project record entirely
     await base44.asServiceRole.entities.Project.delete(projects[0].id);
 
     // Remove all member records for this project
