@@ -82,7 +82,7 @@ Deno.serve(async (req) => {
       return {
         project_slug: p.project_slug,
         project_name: p.project_name,
-        members: memberCounts[p.project_slug] || 0,
+        members: memberCounts[p.project_slug] || Object.keys(projContributors[p.project_slug] || {}).length || 0,
         total: st.total,
         mined: st.mined,
         placed: st.placed,
