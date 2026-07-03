@@ -14,6 +14,8 @@ import NotFound from './pages/NotFound';
 import ComparePlayers from './pages/ComparePlayers';
 import BlockIndex from './pages/BlockIndex';
 import PlayerIndex from './pages/PlayerIndex';
+import Projects from './pages/Projects';
+import ProjectDetail from './pages/ProjectDetail';
 import GlobalStats from './pages/GlobalStats';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
@@ -50,6 +52,8 @@ const AuthenticatedApp = () => {
       <Route path="/server/:slug/compare" element={<ComparePlayers />} />
       <Route path="/server/:slug/blocks" element={<BlockIndex />} />
       <Route path="/server/:slug/players" element={<PlayerIndex />} />
+      <Route path="/server/:slug/projects" element={<Projects />} />
+      <Route path="/server/:slug/project/:projectSlug" element={<ProjectDetail />} />
       <Route path="/global-stats" element={<GlobalStats />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />

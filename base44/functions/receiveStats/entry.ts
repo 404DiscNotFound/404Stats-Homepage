@@ -73,7 +73,19 @@ Deno.serve(async (req) => {
       return gm.toUpperCase();
     };
 
+    const normalizeProjectSlug = (ps) => {
+      if (typeof ps !== 'string' || ps.length === 0 || ps.length > 64) return null;
+      return ps;
+    };
+    const normalizeProjectName = (pn) => {
+      if (typeof pn !== 'string' || pn.length === 0 || pn.length > 128) return null;
+      return pn;
+    };
+
     // --- BlockStat (aggregated totals) ---
+    // When project_slug is set, we store an additional project-scoped record alongside the normal server record.
+    // Normal (non-project) records are keyed without project_slug; project records include it.
+    // To keep existing behavior intact, non-project stats use key without project prefix.
     const existingStats = await base44.asServiceRole.entities.BlockStat.filter(
       { server_id: server.id }, '-created_date', 10000
     );
@@ -81,38 +93,83 @@ Deno.serve(async (req) => {
     for (const s of existingStats) {
       const gm = s.game_mode || 'SURVIVAL';
       const wn = s.world_name || 'world';
-      statMap[s.uuid + ':' + s.material + ':' + gm + ':' + wn] = s;
+      const ps = s.project_slug || '';
+      statMap[s.uuid + ':' + s.material + ':' + gm + ':' + wn + ':' + ps] = s;
     }
     for (const stat of stats) {
       const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name || !material) continue;
       const game_mode = normalizeGameMode(stat.game_mode);
       const world_name = (typeof stat.world_name === 'string' && stat.world_name.length > 0 && stat.world_name.length <= 64) ? stat.world_name : 'world';
-      const key = uuid + ':' + material + ':' + game_mode + ':' + world_name;
-      if (statMap[key]) {
-        statMap[key].mined = (statMap[key].mined || 0) + mined_delta;
-        statMap[key].placed = (statMap[key].placed || 0) + placed_delta;
-        statMap[key].player_name = player_name;
+      const project_slug = normalizeProjectSlug(stat.project_slug);
+      const project_name = normalizeProjectName(stat.project_name);
+
+      // Normal (non-project) record — always stored, keeps existing dashboards working
+      const normalKey = uuid + ':' + material + ':' + game_mode + ':' + world_name + ':';
+      if (statMap[normalKey]) {
+        statMap[normalKey].mined = (statMap[normalKey].mined || 0) + mined_delta;
+        statMap[normalKey].placed = (statMap[normalKey].placed || 0) + placed_delta;
+        statMap[normalKey].player_name = player_name;
       } else {
-        statMap[key] = {
+        statMap[normalKey] = {
           server_id: server.id, uuid, player_name, material, game_mode, world_name,
+          project_slug: null, project_name: null,
           mined: mined_delta, placed: placed_delta, _isNew: true
         };
+      }
+
+      // Project-scoped record — only when project_slug is present
+      if (project_slug) {
+        const projKey = uuid + ':' + material + ':' + game_mode + ':' + world_name + ':' + project_slug;
+        if (statMap[projKey]) {
+          statMap[projKey].mined = (statMap[projKey].mined || 0) + mined_delta;
+          statMap[projKey].placed = (statMap[projKey].placed || 0) + placed_delta;
+          statMap[projKey].player_name = player_name;
+          statMap[projKey].project_name = project_name || statMap[projKey].project_name;
+        } else {
+          statMap[projKey] = {
+            server_id: server.id, uuid, player_name, material, game_mode, world_name,
+            project_slug, project_name,
+            mined: mined_delta, placed: placed_delta, _isNew: true
+          };
+        }
+
+        // Update project last_activity_at
+        // We do this in a batch below to avoid N queries
       }
     }
     const toUpdate = [];
     const toCreate = [];
+    const projectSlugsTouched = new Set();
     for (const key in statMap) {
       const s = statMap[key];
       if (s._isNew) {
         const { _isNew, ...createData } = s;
         toCreate.push(createData);
       } else {
-        toUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL', world_name: s.world_name || 'world' });
+        const upd = { id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL', world_name: s.world_name || 'world' };
+        if (s.project_slug) {
+          upd.project_slug = s.project_slug;
+          if (s.project_name) upd.project_name = s.project_name;
+        }
+        toUpdate.push(upd);
       }
+      if (s.project_slug) projectSlugsTouched.add(s.project_slug);
     }
     if (toUpdate.length > 0) await base44.asServiceRole.entities.BlockStat.bulkUpdate(toUpdate);
     if (toCreate.length > 0) await base44.asServiceRole.entities.BlockStat.bulkCreate(toCreate);
+
+    // Update last_activity_at for touched projects
+    if (projectSlugsTouched.size > 0) {
+      const touchedProjects = await base44.asServiceRole.entities.Project.filter(
+        { server_id: server.id }
+      );
+      const nowIso2 = new Date().toISOString();
+      const projUpdates = touchedProjects
+        .filter(p => projectSlugsTouched.has(p.project_slug) && !p.archived)
+        .map(p => ({ id: p.id, last_activity_at: nowIso2 }));
+      if (projUpdates.length > 0) await base44.asServiceRole.entities.Project.bulkUpdate(projUpdates);
+    }
 
     // --- DailyBlockStat (time-filtered queries) ---
     const today = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Berlin', year: 'numeric', month: '2-digit', day: '2-digit' }).format(new Date());
@@ -123,23 +180,46 @@ Deno.serve(async (req) => {
     for (const s of existingDaily) {
       const gm = s.game_mode || 'SURVIVAL';
       const wn = s.world_name || 'world';
-      dailyMap[s.uuid + ':' + s.material + ':' + gm + ':' + wn] = s;
+      const ps = s.project_slug || '';
+      dailyMap[s.uuid + ':' + s.material + ':' + gm + ':' + wn + ':' + ps] = s;
     }
     for (const stat of stats) {
       const { uuid, player_name, material, mined_delta = 0, placed_delta = 0 } = stat;
       if (!uuid || !player_name || !material) continue;
       const game_mode = normalizeGameMode(stat.game_mode);
       const world_name = (typeof stat.world_name === 'string' && stat.world_name.length > 0 && stat.world_name.length <= 64) ? stat.world_name : 'world';
-      const key = uuid + ':' + material + ':' + game_mode + ':' + world_name;
-      if (dailyMap[key]) {
-        dailyMap[key].mined = (dailyMap[key].mined || 0) + mined_delta;
-        dailyMap[key].placed = (dailyMap[key].placed || 0) + placed_delta;
-        dailyMap[key].player_name = player_name;
+      const project_slug = normalizeProjectSlug(stat.project_slug);
+      const project_name = normalizeProjectName(stat.project_name);
+
+      // Normal record
+      const normalKey = uuid + ':' + material + ':' + game_mode + ':' + world_name + ':';
+      if (dailyMap[normalKey]) {
+        dailyMap[normalKey].mined = (dailyMap[normalKey].mined || 0) + mined_delta;
+        dailyMap[normalKey].placed = (dailyMap[normalKey].placed || 0) + placed_delta;
+        dailyMap[normalKey].player_name = player_name;
       } else {
-        dailyMap[key] = {
+        dailyMap[normalKey] = {
           server_id: server.id, uuid, player_name, material, game_mode, world_name, date: today,
+          project_slug: null, project_name: null,
           mined: mined_delta, placed: placed_delta, _isNew: true
         };
+      }
+
+      // Project-scoped record
+      if (project_slug) {
+        const projKey = uuid + ':' + material + ':' + game_mode + ':' + world_name + ':' + project_slug;
+        if (dailyMap[projKey]) {
+          dailyMap[projKey].mined = (dailyMap[projKey].mined || 0) + mined_delta;
+          dailyMap[projKey].placed = (dailyMap[projKey].placed || 0) + placed_delta;
+          dailyMap[projKey].player_name = player_name;
+          dailyMap[projKey].project_name = project_name || dailyMap[projKey].project_name;
+        } else {
+          dailyMap[projKey] = {
+            server_id: server.id, uuid, player_name, material, game_mode, world_name, date: today,
+            project_slug, project_name,
+            mined: mined_delta, placed: placed_delta, _isNew: true
+          };
+        }
       }
     }
     const dailyToUpdate = [];
@@ -150,7 +230,12 @@ Deno.serve(async (req) => {
         const { _isNew, ...createData } = s;
         dailyToCreate.push(createData);
       } else {
-        dailyToUpdate.push({ id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL', world_name: s.world_name || 'world' });
+        const upd = { id: s.id, mined: s.mined, placed: s.placed, player_name: s.player_name, game_mode: s.game_mode || 'SURVIVAL', world_name: s.world_name || 'world' };
+        if (s.project_slug) {
+          upd.project_slug = s.project_slug;
+          if (s.project_name) upd.project_name = s.project_name;
+        }
+        dailyToUpdate.push(upd);
       }
     }
     if (dailyToUpdate.length > 0) await base44.asServiceRole.entities.DailyBlockStat.bulkUpdate(dailyToUpdate);

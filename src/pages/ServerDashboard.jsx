@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Swords, TrendingUp, Gem, Boxes, Users } from "lucide-react";
+import { Swords, TrendingUp, Gem, Boxes, Users, Folder } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import Background from "@/components/Background";
 import ServerHeader from "@/components/ServerHeader";
@@ -145,6 +145,12 @@ export default function ServerDashboard() {
                 className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2.5 text-sm font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]"
               >
                 <Swords className="h-4 w-4" /> {t("dashboard.compare")}
+              </Link>
+              <Link
+                to={`/server/${slug}/projects`}
+                className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#FF0055]/30 bg-[#FF0055]/5 px-4 py-2.5 text-sm font-bold text-[#FF0055] transition-all hover:bg-[#FF0055]/10 hover:shadow-[0_0_15px_rgba(255,0,85,0.15)]"
+              >
+                <Folder className="h-4 w-4" /> {t("projects.button")}
               </Link>
             </div>
           </div>
