@@ -28,6 +28,14 @@
       "default": "world",
       "description": "Minecraft world name where the activity occurred"
     },
+    "project_slug": {
+      "type": "string",
+      "description": "Project slug if activity occurred in project mode (null = non-project activity)"
+    },
+    "project_name": {
+      "type": "string",
+      "description": "Project display name if activity occurred in project mode"
+    },
     "date": {
       "type": "string",
       "description": "Date in YYYY-MM-DD format"
@@ -56,11 +64,7 @@
         "role": "admin"
       }
     },
-    "read": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
+    "read": true,
     "update": {
       "user_condition": {
         "role": "admin"
