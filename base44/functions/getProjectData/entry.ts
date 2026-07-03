@@ -53,9 +53,11 @@ function getTimeRangeStart(timeRange) {
 Deno.serve(async (req) => {
   try {
     const body = await req.json();
-    const { slug, project_slug, game_mode, world_name, time_range } = body;
+    const { slug, server_slug, project_slug, game_mode, world_name, time_range } = body;
 
-    if (typeof slug !== 'string' || slug.length === 0 || slug.length > 32) {
+    // Accept both slug and server_slug for plugin/website compatibility
+    const resolvedSlug = slug || server_slug;
+    if (typeof resolvedSlug !== 'string' || resolvedSlug.length === 0 || resolvedSlug.length > 32) {
       return Response.json({ error: 'Invalid slug' }, { status: 400 });
     }
     if (typeof project_slug !== 'string' || project_slug.length === 0 || project_slug.length > 64) {
@@ -68,24 +70,45 @@ Deno.serve(async (req) => {
 
     const base44 = createClientFromRequest(req);
 
-    const servers = await base44.asServiceRole.entities.Server.filter({ server_slug: slug });
-    if (!servers || servers.length === 0) {
-      return Response.json({ error: 'Server not found' }, { status: 404 });
-    }
-    const server = servers[0];
+    // Plugin auth: Bearer token with f0f_live_ API key — skip web panel password
+    const authHeader = req.headers.get('authorization') || '';
+    const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
+    const apiKey = bearerMatch ? bearerMatch[1].trim() : null;
+    const isPluginKey = apiKey && apiKey.startsWith('f0f_live_');
 
-    // Password protection
-    if (server.webpanel_password_enabled) {
-      const token = body.access_token;
-      if (!token) return Response.json({ error: 'Password required', password_required: true }, { status: 403 });
-      const expectedToken = await sha256(server.server_slug + ':' + (server.webpanel_password_hash || '') + ':' + server.id);
-      if (token !== expectedToken) return Response.json({ error: 'Invalid token', password_required: true }, { status: 403 });
+    let server;
+    if (isPluginKey) {
+      // Plugin request: authenticate via API key hash
+      const keyHash = await sha256(apiKey);
+      const keyServers = await base44.asServiceRole.entities.Server.filter({ api_key_hash: keyHash });
+      if (!keyServers || keyServers.length === 0) {
+        return Response.json({ success: false, error: 'Invalid API key' }, { status: 401 });
+      }
+      server = keyServers[0];
+      // Verify the slug matches this server
+      if (server.server_slug !== resolvedSlug) {
+        return Response.json({ success: false, error: 'Server slug mismatch' }, { status: 403 });
+      }
+    } else {
+      // Website request: lookup by slug, apply web panel password protection
+      const servers = await base44.asServiceRole.entities.Server.filter({ server_slug: resolvedSlug });
+      if (!servers || servers.length === 0) {
+        return Response.json({ error: 'Server not found' }, { status: 404 });
+      }
+      server = servers[0];
+
+      if (server.webpanel_password_enabled) {
+        const token = body.access_token;
+        if (!token) return Response.json({ error: 'Password required', password_required: true }, { status: 403 });
+        const expectedToken = await sha256(server.server_slug + ':' + (server.webpanel_password_hash || '') + ':' + server.id);
+        if (token !== expectedToken) return Response.json({ error: 'Invalid token', password_required: true }, { status: 403 });
+      }
     }
 
     // Find project
     const projects = await base44.asServiceRole.entities.Project.filter({ server_id: server.id, project_slug });
     if (!projects || projects.length === 0) {
-      return Response.json({ error: 'Project not found' }, { status: 404 });
+      return Response.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
     const project = projects[0];
 
