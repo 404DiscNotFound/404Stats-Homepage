@@ -40,19 +40,22 @@ Deno.serve(async (req) => {
       return Response.json({ success: false, error: 'Project not found' }, { status: 404 });
     }
 
-    // Soft-delete: archive the project to preserve old stats
-    await base44.asServiceRole.entities.Project.update(projects[0].id, { archived: true });
-
-    // Mark all active members as left
-    const members = await base44.asServiceRole.entities.ProjectMember.filter({
-      server_id: server.id, project_slug: projectSlug, left_at: null
+    // Delete project-scoped stats so a new project with the same slug starts fresh.
+    // Player overall stats (no project_slug) are NOT affected.
+    await base44.asServiceRole.entities.BlockStat.deleteMany({
+      server_id: server.id, project_slug: projectSlug
     });
-    const nowIso = new Date().toISOString();
-    if (members.length > 0) {
-      await base44.asServiceRole.entities.ProjectMember.bulkUpdate(
-        members.map(m => ({ id: m.id, left_at: nowIso }))
-      );
-    }
+    await base44.asServiceRole.entities.DailyBlockStat.deleteMany({
+      server_id: server.id, project_slug: projectSlug
+    });
+
+    // Delete the project record entirely (no soft-archive needed since stats are gone)
+    await base44.asServiceRole.entities.Project.delete(projects[0].id);
+
+    // Remove all member records for this project
+    await base44.asServiceRole.entities.ProjectMember.deleteMany({
+      server_id: server.id, project_slug: projectSlug
+    });
 
     return Response.json({ success: true, deleted: true });
   } catch (error) {
