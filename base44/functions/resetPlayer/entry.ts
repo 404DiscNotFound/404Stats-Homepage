@@ -64,6 +64,7 @@ Deno.serve(async (req) => {
       return Response.json({ success: true, deleted: 0, message: `Keine Stats für '${player_name}' gefunden` });
     }
 
+    // Delete ALL stats for this player — includes project-scoped records (project_slug != null)
     await base44.asServiceRole.entities.BlockStat.deleteMany({
       server_id: server.id,
       player_name: player_name
@@ -77,11 +78,13 @@ Deno.serve(async (req) => {
       player_name: player_name
     });
 
+    // Optionally reset only within a specific project if project_slug is provided
+    // (above already covers this since it deletes ALL — this is just for the response)
     return Response.json({
       success: true,
       deleted: playerStats.length,
       player_name,
-      message: `${playerStats.length} Stat-Einträge für '${player_name}' gelöscht`
+      message: `${playerStats.length} Stat-Einträge für '${player_name}' gelöscht (inkl. Projekt-Stats)`
     });
   } catch (error) {
     return Response.json({ error: error.message }, { status: 500 });

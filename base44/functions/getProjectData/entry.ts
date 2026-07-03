@@ -145,8 +145,8 @@ Deno.serve(async (req) => {
     // Get distinct worlds available
     const worldNames = [...new Set(stats.map(s => s.world_name || 'world'))].sort();
 
-    // Get members
-    const members = await base44.asServiceRole.entities.ProjectMember.filter(
+    // Get members — formal ProjectMember records (may be empty if plugin doesn't call joinProject)
+    const memberRecords = await base44.asServiceRole.entities.ProjectMember.filter(
       { server_id: server.id, project_slug, left_at: null }, '-created_date', 500
     );
 
@@ -167,6 +167,14 @@ Deno.serve(async (req) => {
     const topContributor = contributors[0] || null;
     const topBlock = topMaterials[0] || null;
     const netBuildGain = totalPlaced - totalMined;
+
+    // Members: prefer ProjectMember records; fall back to distinct contributors from stats
+    let members = memberRecords;
+    if (!members || members.length === 0) {
+      members = contributors.map(c => ({
+        uuid: c.uuid, player_name: c.player_name, joined_at: null
+      }));
+    }
 
     // Activity timeline from DailyBlockStat
     let timeline = [];
