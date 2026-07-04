@@ -27,6 +27,11 @@ Deno.serve(async (req) => {
       return Response.json({ password_required: false, access_token: null });
     }
 
+    // Reject if password protection is enabled but no hash is configured
+    if (typeof server.webpanel_password_hash !== 'string' || server.webpanel_password_hash.length === 0) {
+      return Response.json({ error: 'Server password not configured' }, { status: 500 });
+    }
+
     // Password protection is enabled — require password
     if (typeof password !== 'string' || password.length === 0) {
       return Response.json({ password_required: true, access_token: null });
@@ -38,8 +43,9 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Falsches Passwort' }, { status: 401 });
     }
 
-    // Generate deterministic access token (proves knowledge of password without exposing hash)
-    const accessToken = await sha256(server.server_slug + ':' + server.webpanel_password_hash + ':' + server.id);
+    // Generate cryptographically random session token and store it on the server
+    const accessToken = crypto.randomUUID();
+    await base44.asServiceRole.entities.Server.update(server.id, { session_token: accessToken });
 
     return Response.json({ password_required: false, access_token: accessToken });
   } catch (error) {

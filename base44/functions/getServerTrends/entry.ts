@@ -26,8 +26,7 @@ Deno.serve(async (req) => {
     if (server.webpanel_password_enabled) {
       const token = body.access_token;
       if (!token) return Response.json({ error: 'Password required', password_required: true }, { status: 403 });
-      const expectedToken = await sha256(server.server_slug + ':' + (server.webpanel_password_hash || '') + ':' + server.id);
-      if (token !== expectedToken) return Response.json({ error: 'Invalid token', password_required: true }, { status: 403 });
+      if (!server.session_token || token !== server.session_token) return Response.json({ error: 'Invalid token', password_required: true }, { status: 403 });
     }
 
     const dailyStats = await base44.asServiceRole.entities.DailyBlockStat.filter(

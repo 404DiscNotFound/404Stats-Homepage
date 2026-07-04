@@ -26,6 +26,10 @@
     "webpanel_password_hash": {
       "type": "string",
       "description": "SHA-256 hash of the web panel password (never exposed to frontend)"
+    },
+    "session_token": {
+      "type": "string",
+      "description": "Cryptographically random session token issued after password verification"
     }
   },
   "required": [
