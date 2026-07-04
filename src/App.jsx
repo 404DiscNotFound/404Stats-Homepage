@@ -8,17 +8,10 @@ import { LanguageProvider } from '@/lib/i18n';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Landing from './pages/Landing';
-import ServerDashboard from './pages/ServerDashboard';
-import PlayerProfile from './pages/PlayerProfile';
 import NotFound from './pages/NotFound';
-import ComparePlayers from './pages/ComparePlayers';
-import BlockIndex from './pages/BlockIndex';
-import PlayerIndex from './pages/PlayerIndex';
-import Projects from './pages/Projects';
-import ProjectDetail from './pages/ProjectDetail';
-import GlobalStats from './pages/GlobalStats';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
+import About from './pages/About';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,14 +40,7 @@ const AuthenticatedApp = () => {
   return (
     <Routes>
       <Route path="/" element={<Landing />} />
-      <Route path="/server/:slug" element={<ServerDashboard />} />
-      <Route path="/server/:slug/player/:playerName" element={<PlayerProfile />} />
-      <Route path="/server/:slug/compare" element={<ComparePlayers />} />
-      <Route path="/server/:slug/blocks" element={<BlockIndex />} />
-      <Route path="/server/:slug/players" element={<PlayerIndex />} />
-      <Route path="/server/:slug/projects" element={<Projects />} />
-      <Route path="/server/:slug/project/:projectSlug" element={<ProjectDetail />} />
-      <Route path="/global-stats" element={<GlobalStats />} />
+      <Route path="/about" element={<About />} />
       <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />

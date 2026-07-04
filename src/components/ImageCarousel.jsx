@@ -9,22 +9,22 @@ export default function ImageCarousel() {
   const SLIDES = [
     {
       image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/b740d0fce_Seeyourmostactiveplayersandevenstatistics.png",
-      title: t("landing.features.liveDashboard"),
+      title: t("landing.carousel.slide1"),
       subtitle: t("carousel.dashboardSubtitle"),
     },
     {
       image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/242a50b92_1vs1-whoisthebiggestblockaddict.png",
-      title: t("landing.features.playerCompare"),
+      title: t("landing.carousel.slide2"),
       subtitle: t("carousel.compareSubtitle"),
     },
     {
       image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/4d595df1e_Seethemostlovedblocksofyourplayers.png",
-      title: t("landing.features.blockIndex"),
+      title: t("landing.carousel.slide3"),
       subtitle: t("carousel.blockIndexSubtitle"),
     },
     {
       image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/45b6e64d5_Trackindividualplayersandtheirstats.png",
-      title: t("landing.features.playerProfiles"),
+      title: t("landing.carousel.slide4"),
       subtitle: t("carousel.profilesSubtitle"),
     },
   ];
