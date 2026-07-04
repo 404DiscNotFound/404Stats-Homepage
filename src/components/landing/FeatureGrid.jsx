@@ -1,4 +1,4 @@
-import { Boxes, LayoutDashboard, FolderKanban, BarChart3, Code2, ShieldCheck, Gamepad2, Trophy, Share2 } from "lucide-react";
+import { Boxes, LayoutDashboard, FolderKanban, BarChart3, Code2, ShieldCheck, Gamepad2, Share2 } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const FEATURES = [
@@ -9,8 +9,7 @@ const FEATURES = [
   { icon: Code2, key: "placeholder", accent: "cyan" },
   { icon: ShieldCheck, key: "privacy", accent: "pink" },
   { icon: Gamepad2, key: "gameModes", accent: "cyan" },
-  { icon: Trophy, key: "achievements", accent: "pink" },
-  { icon: Share2, key: "share", accent: "cyan" },
+  { icon: Share2, key: "share", accent: "pink" },
 ];
 
 export default function FeatureGrid() {
