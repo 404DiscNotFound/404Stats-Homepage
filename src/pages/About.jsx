@@ -27,7 +27,7 @@ export default function About() {
       </header>
       <div className="relative z-10 mx-auto max-w-2xl px-6 py-16">
         <div className="mb-8 flex flex-col items-center text-center">
-          <GlitchLogo size="md" />
+          <GlitchLogo size="2xl" />
           <h1 className="mt-6 text-3xl font-black tracking-tight md:text-4xl">{t("about.title")}</h1>
           <p className="mt-2 text-sm text-[#00F5FF]">{t("about.creator")}</p>
           <p className="mt-1 text-xs text-gray-600">{t("about.community")} · {t("about.communityDesc")}</p>
