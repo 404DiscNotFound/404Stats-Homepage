@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import {
   Download, RotateCw, Compass, Terminal, Shield, Settings,
-  Type, BarChart3, Globe, Zap, Code2, Key, Copy, Check
+  BarChart3, Globe, Zap, Code2, Key, Copy, Check
 } from "lucide-react";
 import { useState } from "react";
 import GlitchLogo from "@/components/GlitchLogo";
+import PlaceholderAPISection from "@/components/howto/PlaceholderAPISection";
 import LanguageToggle from "@/components/LanguageToggle";
 import Background from "@/components/Background";
 import { useT } from "@/lib/i18n";
@@ -218,40 +219,7 @@ bstats: true`} />
       </div>
 
       {/* PlaceholderAPI */}
-      <div id="placeholderapi" className="border-t border-[#1A1A24]">
-        <Section icon={Type} accentColor="#FF0055" title={t("howto.placeholderapi.title")} desc={t("howto.placeholderapi.desc")}>
-          <InfoCard title={t("howto.placeholderapi.requirementTitle")}>
-            {t("howto.placeholderapi.requirementDesc")}
-          </InfoCard>
-          <CodeBlock label={t("howto.placeholderapi.playerLabel")} code={`%404stats_blocks_mined%
-%404stats_blocks_placed%
-%404stats_blocks_total%
-%404stats_mined_survival%
-%404stats_mined_creative%
-%404stats_placed_survival%
-%404stats_placed_creative%
-%404stats_unique_blocks%
-%404stats_rank%
-%404stats_rank_total%`} />
-          <CodeBlock label={t("howto.placeholderapi.serverLabel")} code={`%404stats_server_total_mined%
-%404stats_server_total_placed%
-%404stats_server_players%
-%404stats_server_top_block%
-%404stats_server_top_miner%
-%404stats_server_top_builder%`} />
-          <CodeBlock label={t("howto.placeholderapi.leaderboardLabel")} code={`# Top 5 miners — usable in scoreboards, holograms, tab lists
-%404stats_top_miner_1%
-%404stats_top_miner_2%
-%404stats_top_miner_3%
-%404stats_top_miner_4%
-%404stats_top_miner_5%
-
-# Top 5 builders
-%404stats_top_builder_1%
-%404stats_top_builder_2%
-%404stats_top_builder_3%`} />
-        </Section>
-      </div>
+      <PlaceholderAPISection />
 
       {/* Web Panel */}
       <div id="webpanel" className="border-t border-[#1A1A24]">
