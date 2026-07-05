@@ -29,9 +29,9 @@ export default function CommunityCTA() {
           <h2 className="relative text-3xl font-black tracking-tight md:text-4xl">{t("landing.cta.title")}</h2>
           <p className="relative mt-3 text-sm text-gray-500">{t("landing.cta.desc")}</p>
           <div className="relative mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg bg-[#00F5FF] px-6 py-3 text-sm font-black text-black transition-all hover:shadow-[0_0_25px_rgba(0,245,255,0.4)]">
+            <span className="inline-flex items-center gap-2 rounded-lg border border-[#00F5FF]/20 bg-[#00F5FF]/5 px-6 py-3 text-sm font-bold text-[#00F5FF]/60">
               <Download className="h-4 w-4" /> {t("landing.cta.download")}
-            </a>
+            </span>
             <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#2A2A3A] hover:text-white">
               <MessageCircle className="h-4 w-4" /> {t("landing.cta.discord")}
             </a>

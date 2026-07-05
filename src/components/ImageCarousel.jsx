@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ImageIcon } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const DURATION = 5000;
@@ -7,26 +7,10 @@ const DURATION = 5000;
 export default function ImageCarousel() {
   const t = useT();
   const SLIDES = [
-    {
-      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/b740d0fce_Seeyourmostactiveplayersandevenstatistics.png",
-      title: t("landing.carousel.slide1"),
-      subtitle: t("carousel.dashboardSubtitle"),
-    },
-    {
-      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/242a50b92_1vs1-whoisthebiggestblockaddict.png",
-      title: t("landing.carousel.slide2"),
-      subtitle: t("carousel.compareSubtitle"),
-    },
-    {
-      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/4d595df1e_Seethemostlovedblocksofyourplayers.png",
-      title: t("landing.carousel.slide3"),
-      subtitle: t("carousel.blockIndexSubtitle"),
-    },
-    {
-      image: "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/45b6e64d5_Trackindividualplayersandtheirstats.png",
-      title: t("landing.carousel.slide4"),
-      subtitle: t("carousel.profilesSubtitle"),
-    },
+    { title: t("landing.carousel.slide1") },
+    { title: t("landing.carousel.slide2") },
+    { title: t("landing.carousel.slide3") },
+    { title: t("landing.carousel.slide4") },
   ];
   const [current, setCurrent] = useState(0);
   const [progress, setProgress] = useState(0);
@@ -37,7 +21,6 @@ export default function ImageCarousel() {
   const next = () => setCurrent((c) => (c + 1) % SLIDES.length);
   const prev = () => setCurrent((c) => (c - 1 + SLIDES.length) % SLIDES.length);
 
-  // Reset progress when slide changes
   useEffect(() => {
     setProgress(0);
     startRef.current = null;
@@ -73,25 +56,21 @@ export default function ImageCarousel() {
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
     >
-      {/* Slides */}
       <div className="relative aspect-[4/3] w-full">
         {SLIDES.map((slide, i) => (
           <div
             key={i}
-            className="absolute inset-0 transition-opacity duration-500"
+            className="absolute inset-0 flex flex-col items-center justify-center transition-opacity duration-500"
             style={{ opacity: i === current ? 1 : 0 }}
           >
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="h-full w-full object-cover"
-              draggable={false}
-            />
+            <div className="pointer-events-none absolute left-1/2 top-1/2 h-[200px] w-[300px] -translate-x-1/2 -translate-y-1/2 rounded-full" style={{ background: i === current ? "radial-gradient(circle, rgba(0,245,255,0.06) 0%, transparent 70%)" : undefined }} />
+            <ImageIcon className="h-10 w-10 text-gray-700" />
+            <p className="mt-3 text-sm font-bold text-gray-400">{slide.title}</p>
+            <p className="mt-1 text-xs uppercase tracking-widest text-gray-700">{t("landing.carousel.soon")}</p>
           </div>
         ))}
       </div>
 
-      {/* Nav arrows */}
       <button
         onClick={prev}
         className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-lg border border-[#1A1A24] bg-[#0A0A0F]/80 p-1.5 text-gray-400 backdrop-blur transition-all hover:border-[#00F5FF]/30 hover:text-[#00F5FF]"
@@ -107,7 +86,6 @@ export default function ImageCarousel() {
         <ChevronRight className="h-4 w-4" />
       </button>
 
-      {/* Progress line indicators */}
       <div className="absolute bottom-0 left-0 right-0 z-20 flex gap-1.5 p-3">
         {SLIDES.map((slide, i) => (
           <div key={i} className="flex-1">

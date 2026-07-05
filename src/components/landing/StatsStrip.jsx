@@ -3,9 +3,9 @@ import { useT } from "@/lib/i18n";
 export default function StatsStrip() {
   const t = useT();
   const items = [
+    { value: t("landing.stats.modules"), desc: t("landing.stats.modulesDesc") },
     { value: t("landing.stats.local"), desc: t("landing.stats.localDesc") },
-    { value: t("landing.stats.free"), desc: t("landing.stats.freeDesc") },
-    { value: t("landing.stats.zeroCloud"), desc: t("landing.stats.zeroCloudDesc") },
+    { value: t("landing.stats.mobile"), desc: t("landing.stats.mobileDesc") },
   ];
   return (
     <div className="relative z-10 mx-auto max-w-4xl px-6 pb-16">

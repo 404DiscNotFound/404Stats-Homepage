@@ -1,15 +1,19 @@
-import { Boxes, LayoutDashboard, FolderKanban, BarChart3, Code2, ShieldCheck, Gamepad2, Share2 } from "lucide-react";
+import { Boxes, Crosshair, Footprints, Hammer, Hand, Globe, BarChart3, Code2, FolderKanban, ShieldCheck, Gamepad2, LayoutDashboard } from "lucide-react";
 import { useT } from "@/lib/i18n";
 
 const FEATURES = [
-  { icon: Boxes, key: "blockTracking", accent: "cyan" },
-  { icon: LayoutDashboard, key: "webPanel", accent: "pink" },
+  { icon: Boxes, key: "blocks", accent: "cyan" },
+  { icon: Crosshair, key: "npcCombat", accent: "pink" },
+  { icon: Footprints, key: "movement", accent: "cyan" },
+  { icon: Hammer, key: "production", accent: "pink" },
+  { icon: Hand, key: "interactions", accent: "cyan" },
+  { icon: Globe, key: "worlds", accent: "pink" },
+  { icon: BarChart3, key: "bossbar", accent: "cyan" },
+  { icon: Code2, key: "placeholder", accent: "pink" },
   { icon: FolderKanban, key: "projectMode", accent: "cyan" },
-  { icon: BarChart3, key: "bossbar", accent: "pink" },
-  { icon: Code2, key: "placeholder", accent: "cyan" },
-  { icon: ShieldCheck, key: "privacy", accent: "pink" },
-  { icon: Gamepad2, key: "gameModes", accent: "cyan" },
-  { icon: Share2, key: "share", accent: "pink" },
+  { icon: Gamepad2, key: "gameModes", accent: "pink" },
+  { icon: ShieldCheck, key: "privacy", accent: "cyan" },
+  { icon: LayoutDashboard, key: "adminPanel", accent: "pink" },
 ];
 
 export default function FeatureGrid() {

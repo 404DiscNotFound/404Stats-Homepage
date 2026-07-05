@@ -28,6 +28,10 @@ export default function About() {
       <div className="relative z-10 mx-auto max-w-2xl px-6 py-16">
         <div className="mb-8 flex flex-col items-center text-center">
           <GlitchLogo size="2xl" />
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-[#FF0055]/30 bg-[#FF0055]/5 px-4 py-1.5">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#FF0055] shadow-[0_0_8px_rgba(255,0,85,0.6)]" />
+            <span className="text-[11px] font-medium text-[#FF0055]">{t("landing.alpha.warning")} · 0.1a</span>
+          </div>
           <h1 className="mt-6 text-3xl font-black tracking-tight md:text-4xl">{t("about.title")}</h1>
           <p className="mt-2 text-sm text-[#00F5FF]">{t("about.creator")}</p>
           <p className="mt-1 text-xs text-gray-600">{t("about.community")} · {t("about.communityDesc")}</p>
