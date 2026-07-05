@@ -1,29 +1,15 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Play } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useT } from "@/lib/i18n";
-
-const SERVER_OVERVIEW_IMG = "https://media.base44.com/images/public/6a45bdde3d4c1a80f637ab4f/714e4cd0f_Bildschirmfoto2026-07-05um202359.png";
+import DemoEmbed from "@/components/DemoEmbed";
 
 export default function LandingShowcase() {
   const t = useT();
   return (
     <div className="relative z-10 mx-auto max-w-5xl px-6 pb-16">
-      <div className="grid items-center gap-6 lg:grid-cols-[1.4fr_1fr]">
-        {/* Static server overview image */}
-        <div className="relative overflow-hidden rounded-2xl border border-[#1A1A24] bg-[#0A0A0F]">
-          <div className="aspect-[16/10] w-full">
-            <img
-              src={SERVER_OVERVIEW_IMG}
-              alt={t("landing.carousel.slide1")}
-              className="h-full w-full object-cover object-top"
-            />
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0F] via-transparent to-transparent" />
-          <div className="absolute bottom-0 left-0 right-0 p-5">
-            <p className="text-sm font-bold text-white">{t("landing.carousel.slide1")}</p>
-            <p className="mt-0.5 text-xs text-gray-400">{t("landing.carousel.subtitle1")}</p>
-          </div>
-        </div>
+      <div className="grid items-stretch gap-6 lg:grid-cols-[1.4fr_1fr]">
+        {/* Live demo iframe */}
+        <DemoEmbed height="420px" />
 
         {/* Gallery CTA card */}
         <Link

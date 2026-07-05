@@ -4,6 +4,7 @@ import { ArrowLeft, X, ExternalLink } from "lucide-react";
 import GlitchLogo from "@/components/GlitchLogo";
 import LanguageToggle from "@/components/LanguageToggle";
 import Background from "@/components/Background";
+import DemoEmbed from "@/components/DemoEmbed";
 import { useT } from "@/lib/i18n";
 
 const WEB_PANEL_IMAGES = [
@@ -119,6 +120,15 @@ export default function Gallery() {
           {t("gallery.title")}
         </h1>
         <p className="mt-3 max-w-xl text-sm text-gray-500">{t("gallery.desc")}</p>
+
+        {/* Live Demo Section */}
+        <div className="mt-12">
+          <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#00F5FF]">
+            <span className="h-px w-6 bg-[#00F5FF]/40" /> {t("demo.title")}
+          </h2>
+          <p className="mb-4 max-w-xl text-sm text-gray-500">{t("demo.desc")}</p>
+          <DemoEmbed height="600px" />
+        </div>
 
         {/* Web Panel Section */}
         <div className="mt-12">
