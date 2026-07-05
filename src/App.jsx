@@ -9,7 +9,6 @@ import UserNotRegisteredError from '@/components/UserNotRegisteredError';
 import ScrollToTop from './components/ScrollToTop';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
-import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import About from './pages/About';
 
@@ -41,7 +40,6 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/about" element={<About />} />
-      <Route path="/terms" element={<Terms />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

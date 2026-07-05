@@ -4,132 +4,150 @@ import { useT } from "@/lib/i18n";
 export default function Privacy() {
   const t = useT();
   return (
-    <LegalLayout title={t("legal.privacyPolicy")} lastUpdated="July 2, 2026">
+    <LegalLayout title={t("legal.privacyPolicy")} lastUpdated="July 5, 2026">
       <Section title="1. Who We Are">
         <p>
-          404Stats is a free, non-commercial hobby project operated by <strong>404DiscNotFound</strong>
-          on behalf of the <strong>404GameNotFound Community</strong>. It collects and displays
-          Minecraft server block activity statistics. This project has no profit intent, no
-          advertising, and no commercial purpose.
+          404Stats is a free, non-commercial hobby project developed by <strong>404DiscNotFound</strong>
+          on behalf of the <strong>404GameNotFound Community</strong>. It is a self-hosted Minecraft
+          statistics plugin — everything runs locally on your own Minecraft server.
         </p>
       </Section>
 
-      <Section title="2. What Data We Collect">
-        <p>The following data is collected when a server owner installs and runs the 404Stats plugin:</p>
-        <ul>
-          <li><strong>IP Address:</strong> The Minecraft server's IP address is used to identify and associate the server with its data.</li>
-          <li><strong>Minecraft Player Names:</strong> In-game usernames of players who mine or place blocks on a connected server.</li>
-          <li><strong>Minecraft Player UUIDs:</strong> The unique identifiers assigned to players by Minecraft/Mojang, used to reliably track per-player statistics.</li>
-          <li><strong>Server Statistics:</strong> Block activity data — which blocks were mined or placed, how many, and when. This includes the material type, count, day, and hour of activity.</li>
-          <li><strong>Anonymous Aggregate Statistics:</strong> Combined, anonymized statistics across all servers (e.g., total blocks tracked globally). These contain no server-specific or player-specific identifiers.</li>
-        </ul>
+      <Section title="2. Local H2 Database">
+        <p>
+          All statistics are stored in a local H2 database file inside your server's
+          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">plugins/404Stats/</code>
+          directory. No data leaves your server — there is no cloud sync, no external database, and
+          no central server collecting your players' data.
+        </p>
+        <p>
+          The database file (<code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">404stats.mv.db</code>)
+          is fully under your control. You can back it up, delete it, or inspect it at any time.
+        </p>
       </Section>
 
-      <Section title="3. What We Do Not Collect or Track">
+      <Section title="3. What Data Is Stored">
+        <p>The plugin stores the following Minecraft data locally on your server:</p>
+        <ul>
+          <li><strong>Minecraft Player Names and UUIDs</strong> — in-game identifiers used to track per-player statistics.</li>
+          <li><strong>Block Activity</strong> — which blocks were mined or placed, by whom, in which world, game mode, and project.</li>
+          <li><strong>NPC Combat</strong> — kills and deaths against mobs and NPCs, including weapons used.</li>
+          <li><strong>Movement</strong> — distance traveled per movement type, biome, and mount.</li>
+          <li><strong>Production</strong> — crafting, smelting, smithing, and stonecutting output.</li>
+          <li><strong>Interactions</strong> — player interactions with blocks, entities, animals, and buckets.</li>
+          <li><strong>World Metadata</strong> — world environment, type, and first-seen timestamps.</li>
+          <li><strong>Project Metadata</strong> — community project names and membership.</li>
+        </ul>
+        <p>
+          Minecraft player names and UUIDs are in-game identifiers, not real-world personal data.
+          They are used solely for displaying game statistics on your server's local web panel.
+        </p>
+      </Section>
+
+      <Section title="4. What We Do Not Collect">
         <p>404Stats explicitly does <strong>not</strong> do the following:</p>
         <ul>
-          <li>Track persons, real names, or any real-world personal identity data.</li>
+          <li>Send any data to external servers, clouds, or third-party APIs.</li>
           <li>Track website visitors with analytics, cookies, or fingerprinting.</li>
-          <li>Sell, share, or pass on any data to advertisers, advertising networks, or third-party marketers.</li>
-          <li>Collect email addresses, passwords, or any account credentials — there are no user accounts.</li>
-          <li>Track browsing behavior across pages or other websites.</li>
+          <li>Collect email addresses, passwords, or any account credentials.</li>
+          <li>Sell, share, or pass on any data to advertisers or third parties.</li>
+          <li>Use browser localStorage, sessionStorage, or IndexedDB in the web panel.</li>
+          <li>Embed third-party social media widgets or share buttons with tracking.</li>
         </ul>
+      </Section>
+
+      <Section title="5. Web Panel">
         <p>
-          Minecraft player names and UUIDs are not considered personal data by 404Stats — they are
-          in-game identifiers used solely for displaying game statistics on the respective server's
-          public page.
+          The built-in web panel is served directly from your Minecraft server. It is designed for
+          desktop and mobile screens and does not hotlink block icons or player heads from
+          third-party CDNs — all assets are served locally from the plugin's internal webserver.
+        </p>
+        <p>
+          The web panel does not use browser <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">localStorage</code>,
+          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">sessionStorage</code>, or
+          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">IndexedDB</code>. No embedded
+          third-party share widgets are used.
+        </p>
+        <p>
+          Server owners can optionally protect the web panel with a password. When enabled, session
+          tokens are stored in HttpOnly, SameSite=Lax cookies.
         </p>
       </Section>
 
-      <Section title="5. How Data Is Used">
-        <p>Collected data is used exclusively for:</p>
-        <ul>
-          <li>Displaying block activity statistics on the server's public 404Stats page.</li>
-          <li>Generating leaderboards, player profiles, achievements, and activity heatmaps.</li>
-          <li>Producing fully anonymized global aggregate statistics (no individual server or player identifiable).</li>
-        </ul>
+      <Section title="6. Admin Panel Security">
         <p>
-          Data is never used for advertising, profiling, or commercial purposes. No data is sold or
-          shared with any third party.
-        </p>
-      </Section>
-
-      <Section title="6. Voluntary Data & Consent">
-        <p>
-          All data submission is entirely voluntary. Server owners choose to install the plugin and
-          send data. Players do not directly interact with 404Stats — their in-game names and UUIDs
-          are included automatically by the plugin as part of block activity records on servers where
-          they play.
-        </p>
-        <p>
-          If you are a player and do not want your Minecraft name or UUID displayed on a 404Stats
-          server page, you may ask the server owner to remove the plugin, or request data deletion
-          (see Section 7).
-        </p>
-      </Section>
-
-      <Section title="7. Data Deletion">
-        <p>
-          All data is voluntary and can be deleted at any time:
+          The admin panel at <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/admin</code>
+          allows database management without a password — access is granted through a single-use login
+          token generated in-game with <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/404stats webadmin</code>.
         </p>
         <ul>
-          <li>
-            <strong>Individual player reset:</strong> Server owners can delete a specific player's
-            data with the in-game command <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/404stats reset &lt;player&gt;</code>.
-          </li>
-          <li>
-            <strong>Full website data removal:</strong> The command
-            <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/404stats nukewebsite</code>
-            is planned for a future update and will allow server owners to remove all of their
-            server's data from the 404Stats website. This feature is not yet implemented.
-          </li>
+          <li>Login tokens are valid for 5 minutes, single-use, and SHA-256 hashed.</li>
+          <li>Sessions are valid for 30 minutes, stored in HttpOnly, SameSite=Lax cookies.</li>
+          <li>All write operations require CSRF protection.</li>
+          <li>Rate limiting: max 5 login attempts per 10 seconds per IP.</li>
+          <li>Two-step delete with confirmation for all database operations.</li>
         </ul>
       </Section>
 
-      <Section title="8. No Cookies or Tracking Technologies">
+      <Section title="7. bStats Anonymous Metrics">
         <p>
-          The 404Stats website does not use tracking cookies, analytics scripts, advertising
-          pixels, or any third-party tracking technologies. No browsing behavior is monitored.
+          404Stats uses <strong>bStats</strong> for anonymous plugin metrics. bStats collects
+          anonymous usage data (such as server count, player count, and Minecraft version) to
+          help developers understand how the plugin is used. This data is fully anonymized and
+          does not include any player-specific or server-specific identifiers.
+        </p>
+        <p>
+          You can review bStats' privacy policy at{" "}
+          <a href="https://bstats.org/privacy" target="_blank" rel="noopener noreferrer" className="text-[#00F5FF] hover:underline">bstats.org/privacy</a>.
+          bStats can be disabled in the plugin configuration if desired.
         </p>
       </Section>
 
-      <Section title="9. Data Storage">
+      <Section title="8. Optional Minecraft Textures">
         <p>
-          Data is stored on the 404Stats platform infrastructure. As this is a hobby project with no
-          commercial backing, no specific data retention guarantees apply. Data persists until
-          deleted by the server owner via the available or planned deletion commands.
+          By default, the web panel uses emoji icons for blocks, entities, and items. Optionally,
+          server owners can enable Minecraft texture icons by downloading the Mojang client JAR
+          textures. This is disabled by default and requires accepting the Mojang/Microsoft asset
+          terms. When enabled, textures are cached locally on the server — no browser hotlinks to
+          third-party CDNs.
         </p>
       </Section>
 
-      <Section title="10. Children's Privacy">
+      <Section title="9. Data Control">
         <p>
-          Minecraft is played by users of various ages. 404Stats collects only in-game identifiers
-          (Minecraft names and UUIDs) and block activity data — no real-world personal information.
-          Server owners are responsible for informing their players that the server uses 404Stats
-          and that block activity data is publicly displayed.
+          Since all data is stored locally on your Minecraft server, you have full control at all
+          times. To delete data, you can:
+        </p>
+        <ul>
+          <li>Use the admin panel to browse, search, and delete entries across all database tables.</li>
+          <li>Delete specific player data via in-game commands.</li>
+          <li>Delete the entire H2 database file to wipe all statistics.</li>
+        </ul>
+        <p>
+          If you are a player on a server using 404Stats and do not want your data displayed, ask
+          the server owner to remove the plugin or reset your data.
         </p>
       </Section>
 
-      <Section title="11. Third-Party Services">
+      <Section title="10. No Liability">
         <p>
-          Player head images are loaded from <strong>mc-heads.net</strong>, a third-party service
-          that renders Minecraft avatars from UUIDs. When a 404Stats page is loaded, the browser
-          may request images from mc-heads.net. 404Stats has no control over mc-heads.net's data
-          practices. No other third-party services are used.
+          404Stats is a hobby project provided free of charge. The developer (404DiscNotFound) and
+          the 404GameNotFound Community assume no liability for any damages, data loss, or service
+          interruptions arising from the use of the plugin. You use the service at your own risk.
         </p>
       </Section>
 
-      <Section title="12. Changes to This Policy">
+      <Section title="11. Changes to This Policy">
         <p>
-          This Privacy Policy may be updated at any time. Changes will be posted on this page with an
-          updated "Last updated" date.
+          This Privacy Policy may be updated at any time. Changes will be posted on this page with
+          an updated "Last updated" date.
         </p>
       </Section>
 
-      <Section title="13. Contact">
+      <Section title="12. Contact">
         <p>
-          For privacy questions or data deletion requests, reach out through the 404GameNotFound
-          Community channels or ask your server owner to use the in-game deletion commands.
+          For privacy questions, reach out through the 404GameNotFound Community channels (Discord,
+          GitHub, or the community website).
         </p>
       </Section>
     </LegalLayout>

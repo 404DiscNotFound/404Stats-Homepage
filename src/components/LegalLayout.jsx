@@ -36,7 +36,6 @@ export default function LegalLayout({ title, lastUpdated, children }) {
             {t("legal.footerText")}
           </p>
           <div className="mt-3 flex justify-center gap-4">
-            <Link to="/terms" className="text-xs text-gray-500 transition-colors hover:text-[#00F5FF]">{t("legal.termsOfService")}</Link>
             <Link to="/privacy" className="text-xs text-gray-500 transition-colors hover:text-[#00F5FF]">{t("legal.privacyPolicy")}</Link>
             <Link to="/" className="text-xs text-gray-500 transition-colors hover:text-[#00F5FF]">{t("legal.home")}</Link>
           </div>

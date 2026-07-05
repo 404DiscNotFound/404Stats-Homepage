@@ -13,7 +13,6 @@ export default function SiteFooter() {
         </div>
         <div className="flex items-center gap-4">
           <Link to="/about" className="text-xs text-gray-600 transition-colors hover:text-[#00F5FF]">{t("landing.footer.about")}</Link>
-          <Link to="/terms" className="text-xs text-gray-600 transition-colors hover:text-[#00F5FF]">{t("landing.footer.terms")}</Link>
           <Link to="/privacy" className="text-xs text-gray-600 transition-colors hover:text-[#00F5FF]">{t("landing.footer.privacy")}</Link>
           <p className="text-xs text-gray-600">© 2026 404GameNotFound</p>
         </div>
