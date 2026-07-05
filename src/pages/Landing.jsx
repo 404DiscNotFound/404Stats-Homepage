@@ -30,7 +30,7 @@ export default function Landing() {
       </nav>
       <Hero />
       <StatsStrip />
-      <div className="relative z-10 mx-auto max-w-3xl px-6 pb-16">
+      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-16">
         <ImageCarousel />
       </div>
       <FeatureGrid />
