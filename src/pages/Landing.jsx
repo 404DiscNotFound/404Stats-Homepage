@@ -9,7 +9,7 @@ import FeatureGrid from "@/components/landing/FeatureGrid";
 import HowItWorks from "@/components/landing/HowItWorks";
 import CommunityCTA from "@/components/landing/CommunityCTA";
 import SiteFooter from "@/components/landing/SiteFooter";
-import ImageCarousel from "@/components/ImageCarousel";
+import LandingShowcase from "@/components/landing/LandingShowcase";
 
 export default function Landing() {
   const t = useT();
@@ -19,6 +19,7 @@ export default function Landing() {
       <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
+          <Link to="/gallery" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
           <Link to="/about" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
@@ -30,9 +31,7 @@ export default function Landing() {
       </nav>
       <Hero />
       <StatsStrip />
-      <div className="relative z-10 mx-auto max-w-5xl px-6 pb-16">
-        <ImageCarousel />
-      </div>
+      <LandingShowcase />
       <FeatureGrid />
       <HowItWorks />
       <CommunityCTA />
