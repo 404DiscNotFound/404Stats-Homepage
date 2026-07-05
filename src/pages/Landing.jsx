@@ -19,6 +19,7 @@ export default function Landing() {
       <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
+          <Link to="/how-to-use" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.howto")}</Link>
           <Link to="/gallery" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
           <Link to="/about" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
           <div className="flex items-center gap-3">
