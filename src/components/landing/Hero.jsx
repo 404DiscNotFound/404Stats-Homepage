@@ -1,6 +1,5 @@
 import { Download, MessageCircle, AlertTriangle } from "lucide-react";
 import { useT } from "@/lib/i18n";
-import ShareButtons from "@/components/ShareButtons";
 
 export default function Hero() {
   const t = useT();
@@ -23,9 +22,6 @@ export default function Hero() {
         <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#2A2A3A] hover:text-white">
           <MessageCircle className="h-4 w-4" /> {t("landing.hero.discord")}
         </a>
-      </div>
-      <div className="mt-6">
-        <ShareButtons url={typeof window !== "undefined" ? window.location.origin : ""} title="404Stats — Six modules. All local." />
       </div>
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
         <img src="https://img.shields.io/bstats/servers/32369?style=for-the-badge&label=Servers&color=00F5FF&labelColor=0A0A0F" alt="Servers" className="h-6 rounded" />
