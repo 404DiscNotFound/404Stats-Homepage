@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import {
   Download, Terminal, Shield, Settings, Globe, Zap, BarChart3, Type,
-  Search, Book, Rocket, X, Menu
+  Search, Book, Rocket, X, Menu, Boxes, Navigation
 } from "lucide-react";
 import GlitchLogo from "@/components/GlitchLogo";
 import LanguageToggle from "@/components/LanguageToggle";
@@ -13,6 +13,7 @@ import {
   InstallArticle, CommandsArticle, PermissionsArticle, ConfigArticle,
   WebPanelArticle, ProjectModeArticle, BossBarArticle, PlaceholderAPIArticle
 } from "@/components/wiki/WikiArticles";
+import WarpArticle from "@/components/wiki/WarpArticle";
 
 const CATEGORIES = [
   {
@@ -33,6 +34,12 @@ const CATEGORIES = [
     icon: Zap,
     articles: ["placeholderapi", "projectmode", "bossbar"],
   },
+  {
+    id: "other-apps",
+    labelKey: "wiki.category.otherApps",
+    icon: Boxes,
+    articles: ["404warp"],
+  },
 ];
 
 const ARTICLES = {
@@ -44,6 +51,7 @@ const ARTICLES = {
   placeholderapi: { titleKey: "howto.placeholderapi.title", icon: Type, accent: "#FF0055", keywords: "placeholderapi papi placeholders scoreboards holograms leaderboard player stats syntax" },
   projectmode: { titleKey: "howto.projectmode.title", icon: Zap, accent: "#FF0055", keywords: "project mode community build members create spawn farm" },
   bossbar: { titleKey: "howto.bossbar.title", icon: BarChart3, accent: "#00F5FF", keywords: "bossbar boss bar display mode blocks combat movement toggle" },
+  "404warp": { titleKey: "warp.title", icon: Navigation, accent: "#FF007A", keywords: "404warp warp teleport portal survival other app plugin" },
 };
 
 const ARTICLE_COMPONENTS = {
@@ -55,6 +63,7 @@ const ARTICLE_COMPONENTS = {
   placeholderapi: PlaceholderAPIArticle,
   projectmode: ProjectModeArticle,
   bossbar: BossBarArticle,
+  "404warp": WarpArticle,
 };
 
 const NAV_LINKS = [
