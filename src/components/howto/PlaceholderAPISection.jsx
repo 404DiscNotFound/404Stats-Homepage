@@ -47,22 +47,24 @@ function SubSection({ icon: Icon, title, children }) {
   );
 }
 
-export default function PlaceholderAPISection() {
+export default function PlaceholderAPISection({ embedded = false }) {
   const t = useT();
   return (
-    <div id="placeholderapi" className="border-t border-[#1A1A24]">
-      <section className="relative z-10 mx-auto max-w-3xl px-6 py-10">
-        <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#1A1A24] bg-[#0F0F14]" style={{ color: "#FF0055" }}>
-            <Type className="h-5 w-5" />
+    <div id="placeholderapi" className={embedded ? "" : "border-t border-[#1A1A24]"}>
+      <section className={embedded ? "" : "relative z-10 mx-auto max-w-3xl px-6 py-10"}>
+        {!embedded && (
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#1A1A24] bg-[#0F0F14]" style={{ color: "#FF0055" }}>
+              <Type className="h-5 w-5" />
+            </div>
+            <div>
+              <h2 className="text-xl font-black text-white">{t("howto.placeholderapi.title")}</h2>
+              <p className="text-xs text-gray-500">{t("howto.placeholderapi.desc")}</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-xl font-black text-white">{t("howto.placeholderapi.title")}</h2>
-            <p className="text-xs text-gray-500">{t("howto.placeholderapi.desc")}</p>
-          </div>
-        </div>
+        )}
 
-        <div className="mt-6 space-y-4">
+        <div className={embedded ? "space-y-4" : "mt-6 space-y-4"}>
           <InfoCard title={t("howto.placeholderapi.requirementTitle")}>
             {t("howto.placeholderapi.requirementDesc")}
           </InfoCard>
