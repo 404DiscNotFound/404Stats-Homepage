@@ -51,7 +51,7 @@ export default function OtherProjects() {
               <img
                 src={PTERIOS_IMG}
                 alt={t("projects.pterios.name")}
-                className="h-28 w-28 rounded-2xl border border-[#FF8A65]/20 object-cover shadow-[0_0_30px_rgba(255,138,101,0.08)] sm:h-32 sm:w-32"
+                className="w-full max-w-[320px] rounded-2xl border border-[#FF8A65]/20 object-contain shadow-[0_0_30px_rgba(255,138,101,0.08)]"
               />
             </div>
             {/* Text Content */}
