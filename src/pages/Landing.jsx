@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import GlitchLogo from "@/components/GlitchLogo";
 import LanguageToggle from "@/components/LanguageToggle";
+import MobileMenu from "@/components/MobileMenu";
 import Background from "@/components/Background";
 import { useT } from "@/lib/i18n";
 import Hero from "@/components/landing/Hero";
@@ -22,11 +23,18 @@ export default function Landing() {
           <Link to="/how-to-use" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.howto")}</Link>
           <Link to="/gallery" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
           <Link to="/about" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
+          <Link to="/projects" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
-            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
+            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
               {t("landing.nav.download")}
             </a>
+            <MobileMenu links={[
+              { to: "/how-to-use", label: "landing.nav.howto" },
+              { to: "/gallery", label: "landing.nav.gallery" },
+              { to: "/about", label: "landing.nav.about" },
+              { to: "/projects", label: "landing.nav.projects" },
+            ]} />
           </div>
         </div>
       </nav>

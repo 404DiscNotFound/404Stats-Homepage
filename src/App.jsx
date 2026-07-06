@@ -13,6 +13,7 @@ import Privacy from './pages/Privacy';
 import About from './pages/About';
 import Gallery from './pages/Gallery';
 import HowToUse from './pages/HowToUse';
+import OtherProjects from './pages/OtherProjects';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -44,6 +45,7 @@ const AuthenticatedApp = () => {
       <Route path="/about" element={<About />} />
       <Route path="/gallery" element={<Gallery />} />
       <Route path="/how-to-use" element={<HowToUse />} />
+      <Route path="/projects" element={<OtherProjects />} />
       <Route path="/privacy" element={<Privacy />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
