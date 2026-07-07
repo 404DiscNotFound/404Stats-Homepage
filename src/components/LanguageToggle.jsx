@@ -5,11 +5,11 @@ export default function LanguageToggle({ compact = false }) {
 
   const base = "rounded-md px-2 py-1 text-xs font-bold transition-all";
   const active = "bg-[#5BA033]/15 text-[#5BA033]";
-  const inactive = "text-[#888888] hover:text-white";
+  const inactive = "text-[#8A8A8A] hover:text-white";
 
   if (compact) {
     return (
-      <div className="inline-flex rounded-md border border-[#3D3D3D] bg-[#2E2E2E] p-0.5">
+      <div className="inline-flex rounded-md border border-[#1E1E1F] bg-[#313233] p-0.5">
         <button
           onClick={() => setLang("en")}
           className={`${base} ${lang === "en" ? active : inactive}`}
@@ -27,16 +27,16 @@ export default function LanguageToggle({ compact = false }) {
   }
 
   return (
-    <div className="inline-flex rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] p-1">
+    <div className="inline-flex rounded-lg border border-[#1E1E1F] bg-[#313233] p-1">
       <button
         onClick={() => setLang("en")}
-        className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${lang === "en" ? "bg-[#5BA033]/15 text-[#5BA033] shadow-[0_0_8px_rgba(91,160,51,0.15)]" : "text-[#888888] hover:text-white"}`}
+        className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${lang === "en" ? "bg-[#5BA033]/15 text-[#5BA033] shadow-[0_0_8px_rgba(91,160,51,0.15)]" : "text-[#8A8A8A] hover:text-white"}`}
       >
         EN
       </button>
       <button
         onClick={() => setLang("de")}
-        className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${lang === "de" ? "bg-[#5BA033]/15 text-[#5BA033] shadow-[0_0_8px_rgba(91,160,51,0.15)]" : "text-[#888888] hover:text-white"}`}
+        className={`rounded-md px-3 py-1.5 text-xs font-bold transition-all ${lang === "de" ? "bg-[#5BA033]/15 text-[#5BA033] shadow-[0_0_8px_rgba(91,160,51,0.15)]" : "text-[#8A8A8A] hover:text-white"}`}
       >
         DE
       </button>

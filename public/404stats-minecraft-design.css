@@ -1,5 +1,6 @@
 /* ============================================================
    404STATS — MINECRAFT DESIGN SYSTEM
+   "Modern Minecraft Menu"
    Standalone CSS · drop into any project
    ============================================================ */
 
@@ -19,31 +20,35 @@
 
 /* ---------- Design Tokens ---------- */
 :root {
-  /* Backgrounds (dark stone palette) */
-  --mc-bg:          #1A1A1A;   /* page background */
-  --mc-surface:     #2E2E2E;   /* card / panel background */
-  --mc-surface-2:   #383838;   /* elevated / hover surface */
-  --mc-surface-3:   #454545;   /* border hover */
-  --mc-border:      #3D3D3D;   /* default border */
-  --mc-inner:       #1F1F1F;   /* inner stat boxes */
+  /* Backgrounds — dark stone palette */
+  --mc-bg:          #121213;   /* page background / slots */
+  --mc-surface:     #313233;   /* card / panel background */
+  --mc-surface-2:   #3A3A3B;   /* elevated / hover surface */
+  --mc-surface-3:   #48494A;   /* border hover */
+  --mc-border:      #1E1E1F;   /* default border */
 
   /* Brand colors */
-  --mc-green:       #5BA033;   /* primary — Minecraft grass green */
+  --mc-green:       #5BA033;   /* primary — grass green */
   --mc-green-dark:  #2D5E1A;   /* primary pressed */
-  --mc-purple:      #8B4FE8;   /* accent — Minecraft purple */
+  --mc-green-hover: hsl(105 55% 26%);
+  --mc-green-bg:    hsl(105 55% 12%);
+  --mc-purple:      #8B4FE8;   /* accent */
   --mc-red:         #B33A3A;   /* destructive */
+  --mc-yellow:      #FFAA00;
+  --mc-aqua:        #3BAA90;
 
   /* Text */
   --mc-text:        #FFFFFF;
-  --mc-text-muted:  #888888;
+  --mc-text-muted:  #8A8A8A;
   --mc-text-dim:    #5A5A5A;
+  --mc-text-dark:   #CCCCCC;
 
   /* Fonts */
   --font-heading:   'MinecraftTen', ui-monospace, monospace;
   --font-body:      'MinecraftRegular', ui-monospace, monospace;
   --font-mono:      ui-monospace, SFMono-Regular, Menlo, monospace;
 
-  /* Radius — sharp corners, Minecraft style */
+  /* Radius — always 0px */
   --mc-radius: 0px;
 }
 
@@ -55,6 +60,9 @@ body {
   background: var(--mc-bg);
   color: var(--mc-text);
   font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.5;
   -webkit-font-smoothing: none;
   font-smooth: never;
   color-scheme: dark;
@@ -62,7 +70,9 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
+  font-weight: 400;
   letter-spacing: 2px;
+  line-height: 1;
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
 }
 
@@ -72,6 +82,11 @@ code, pre {
 
 a { color: var(--mc-green); text-decoration: none; }
 a:hover { color: var(--mc-purple); }
+
+img {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
 
 /* ---------- Pixelated images ---------- */
 .pixelated {
@@ -93,31 +108,39 @@ a:hover { color: var(--mc-purple); }
   border: 3px solid var(--mc-border);
   box-shadow:
     inset 0 -6px 0 0 var(--mc-green-dark),
-    inset 3px 3px 0 rgba(255,255,255,0.15),
-    inset -3px -9px 0 rgba(0,0,0,0.2);
+    inset 3px 3px 0 rgba(255,255,255,0.12),
+    inset -3px -9px 0 rgba(0,0,0,0.18);
   text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
   padding: 5px 20px 15px 20px;
   cursor: pointer;
   transition: background-color 0.1s;
 }
 .mc-btn-3d:hover {
-  background-color: hsl(105 55% 26%);
+  background-color: var(--mc-green-hover);
 }
 .mc-btn-3d:active {
   box-shadow:
     inset 0 0 0 0 var(--mc-green-dark),
-    inset 3px 3px 0 rgba(255,255,255,0.15),
-    inset -3px -3px 0 rgba(0,0,0,0.2);
+    inset 3px 3px 0 rgba(255,255,255,0.12),
+    inset -3px -3px 0 rgba(0,0,0,0.18);
   position: relative;
   top: 2px;
 }
 
-/* ---------- Minecraft Panel (inset border) ---------- */
+/* ---------- Minecraft Panel ---------- */
 .mc-panel {
+  background: var(--mc-surface);
   border: 1px solid var(--mc-border);
   box-shadow:
-    inset 2px 2px 0 rgba(255, 255, 255, 0.1),
+    inset 2px 2px 0 rgba(255, 255, 255, 0.04),
     inset -2px -2px 0 rgba(0, 0, 0, 0.3);
+}
+
+/* ---------- Slot (inner item box) ---------- */
+.mc-slot {
+  background: var(--mc-bg);
+  border: 1px solid var(--mc-border);
+  box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.3);
 }
 
 /* ---------- Surface Card ---------- */
@@ -127,16 +150,11 @@ a:hover { color: var(--mc-purple); }
   padding: 24px;
 }
 
-/* ---------- Inner stat box ---------- */
-.mc-inner {
-  background: var(--mc-inner);
-  border: 1px solid var(--mc-border);
-  padding: 12px;
-}
-
 /* ---------- Accent variants ---------- */
 .mc-text-green  { color: var(--mc-green); }
 .mc-text-purple { color: var(--mc-purple); }
+.mc-text-muted  { color: var(--mc-text-muted); }
+.mc-text-dim    { color: var(--mc-text-dim); }
 .mc-border-green  { border-color: rgba(91, 160, 51, 0.3); }
 .mc-border-purple { border-color: rgba(139, 79, 232, 0.3); }
 .mc-bg-green    { background-color: rgba(91, 160, 51, 0.05); }
@@ -146,7 +164,7 @@ a:hover { color: var(--mc-purple); }
 ::-webkit-scrollbar       { width: 12px; height: 12px; }
 ::-webkit-scrollbar-track { background: var(--mc-bg); }
 ::-webkit-scrollbar-thumb { background: var(--mc-surface-2); border: 2px solid var(--mc-border); }
-::-webkit-scrollbar-thumb:hover { background: var(--mc-surface); }
+::-webkit-scrollbar-thumb:hover { background: var(--mc-surface-3); }
 
 /* ---------- Grid Background ---------- */
 .mc-grid-bg {
@@ -200,4 +218,8 @@ a:hover { color: var(--mc-purple); }
 @media (max-width: 768px) {
   .glitch-text::before,
   .glitch-text::after { animation: none; opacity: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .glitch-text::before,
+  .glitch-text::after { animation: none; }
 }

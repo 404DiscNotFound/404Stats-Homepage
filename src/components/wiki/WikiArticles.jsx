@@ -35,9 +35,9 @@ export function CommandsArticle() {
       <WikiArticleHeader icon={Terminal} accent="#5BA033" title={t("howto.commands.title")} desc={t("howto.commands.desc")} />
       <div className="space-y-3">
         {cmds.map((c) => (
-          <div key={c.cmd} className="flex flex-col gap-1 rounded-lg border border-[#3D3D3D] bg-[#383838] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={c.cmd} className="flex flex-col gap-1 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-4 sm:flex-row sm:items-center sm:justify-between">
             <code className="text-sm font-mono text-[#5BA033]">{c.cmd}</code>
-            <span className="text-xs text-[#888888]">{c.desc}</span>
+            <span className="text-xs text-[#8A8A8A]">{c.desc}</span>
           </div>
         ))}
       </div>
@@ -60,13 +60,13 @@ export function PermissionsArticle() {
       <WikiArticleHeader icon={Shield} accent="#8B4FE8" title={t("howto.permissions.title")} desc={t("howto.permissions.desc")} />
       <div className="space-y-3">
         {perms.map((p) => (
-          <div key={p.perm} className="flex flex-col gap-1 rounded-lg border border-[#3D3D3D] bg-[#383838] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <div key={p.perm} className="flex flex-col gap-1 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-4 sm:flex-row sm:items-center sm:justify-between">
             <code className="text-sm font-mono text-[#8B4FE8]">{p.perm}</code>
-            <span className="text-xs text-[#888888]">{p.desc}</span>
+            <span className="text-xs text-[#8A8A8A]">{p.desc}</span>
           </div>
         ))}
-        <div className="rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] p-4">
-          <p className="text-xs text-[#888888]">{t("howto.permissions.note")}</p>
+        <div className="rounded-lg border border-[#1E1E1F] bg-[#313233] p-4">
+          <p className="text-xs text-[#8A8A8A]">{t("howto.permissions.note")}</p>
         </div>
       </div>
     </article>
@@ -135,7 +135,7 @@ http://YOUR-SERVER-IP:8088/server/local`} />
         <WikiInfoCard title={t("howto.webpanel.passwordTitle")}>{t("howto.webpanel.passwordDesc")}</WikiInfoCard>
         <div className="grid gap-3 sm:grid-cols-2">
           {["blocks", "npc-combat", "movement", "production", "interactions", "worlds"].map((m) => (
-            <div key={m} className="flex items-center gap-2 rounded-lg border border-[#3D3D3D] bg-[#383838] p-3">
+            <div key={m} className="flex items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-3">
               <BarChart3 className="h-4 w-4 text-[#5BA033]" />
               <span className="text-xs text-gray-400">{t(`howto.modules.${m}`)}</span>
             </div>

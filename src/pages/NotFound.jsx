@@ -13,7 +13,7 @@ export default function NotFound() {
         <h1 className="mt-12 text-6xl font-black text-white glitch-text" data-text="404">
           404
         </h1>
-        <p className="mt-4 text-sm text-[#888888]">{t("notFound.text")}</p>
+        <p className="mt-4 text-sm text-[#8A8A8A]">{t("notFound.text")}</p>
         <Link to="/" className="mt-8 text-sm text-[#5BA033] hover:underline">
           {t("common.backToHome")}
         </Link>

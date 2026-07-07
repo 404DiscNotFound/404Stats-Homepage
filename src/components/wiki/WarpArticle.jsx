@@ -19,7 +19,7 @@ export default function WarpArticle() {
           <div className="relative text-center">
             <p className="text-lg font-bold text-white">{t("warp.hero.line1")}</p>
             <p className="mt-1 text-lg font-bold">
-              <span className="bg-gradient-to-r from-[#5BA033] to-[#8B4FE8] bg-clip-text text-transparent">{t("warp.hero.line2a")}</span>{" "}
+              <span className="text-[#5BA033]">{t("warp.hero.line2a")}</span>{" "}
               <span className="text-[#8B4FE8]">{t("warp.hero.line2b")}</span>
             </p>
           </div>
@@ -34,7 +34,7 @@ export default function WarpArticle() {
         {/* Features */}
         <div className="grid gap-3 sm:grid-cols-2">
           {["feature1", "feature2", "feature3", "feature4"].map((f) => (
-            <div key={f} className="flex items-start gap-2 rounded-lg border border-[#3D3D3D] bg-[#1F1F1F] p-3">
+            <div key={f} className="flex items-start gap-2 rounded-lg border border-[#3D3D3D] bg-[#121213] p-3">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5BA033]" />
               <span className="text-xs text-gray-400">{t(`warp.${f}`)}</span>
             </div>

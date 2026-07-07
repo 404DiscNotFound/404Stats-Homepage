@@ -9,14 +9,13 @@ export default function LegalLayout({ title, lastUpdated, children }) {
     <div className="min-h-screen bg-background text-white">
       {/* Background */}
       <div className="pointer-events-none fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:40px_40px]" />
-        <div className="absolute left-1/4 top-0 h-[300px] w-[300px] rounded-full" style={{ background: 'radial-gradient(circle, rgba(91,160,51,0.06) 0%, transparent 70%)' }} />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:40px_40px]" />
       </div>
 
       {/* Nav */}
       <nav className="relative z-10 mx-auto flex max-w-3xl items-center justify-between px-6 py-5">
         <Link to="/"><GlitchLogo size="sm" /></Link>
-        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-[#888888] transition-colors hover:text-white">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-[#8A8A8A] transition-colors hover:text-white">
           <ArrowLeft className="h-3.5 w-3.5" /> {t("legal.backToHome")}
         </Link>
       </nav>
@@ -31,13 +30,13 @@ export default function LegalLayout({ title, lastUpdated, children }) {
         </div>
 
         {/* Footer */}
-        <div className="mt-16 border-t border-[#3D3D3D] pt-6 text-center">
+        <div className="mt-16 border-t border-[#1E1E1F] pt-6 text-center">
           <p className="text-xs text-[#5A5A5A]">
             {t("legal.footerText")}
           </p>
           <div className="mt-3 flex justify-center gap-4">
-            <Link to="/privacy" className="text-xs text-[#888888] transition-colors hover:text-[#5BA033]">{t("legal.privacyPolicy")}</Link>
-            <Link to="/" className="text-xs text-[#888888] transition-colors hover:text-[#5BA033]">{t("legal.home")}</Link>
+            <Link to="/privacy" className="text-xs text-[#8A8A8A] transition-colors hover:text-[#5BA033]">{t("legal.privacyPolicy")}</Link>
+            <Link to="/" className="text-xs text-[#8A8A8A] transition-colors hover:text-[#5BA033]">{t("legal.home")}</Link>
           </div>
         </div>
       </div>

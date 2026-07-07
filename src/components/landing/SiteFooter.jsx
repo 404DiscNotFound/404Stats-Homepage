@@ -5,7 +5,7 @@ import GlitchLogo from "@/components/GlitchLogo";
 export default function SiteFooter() {
   const t = useT();
   return (
-    <footer className="relative z-10 border-t border-[#3D3D3D] px-6 py-8">
+    <footer className="relative z-10 border-t border-[#1E1E1F] px-6 py-8">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 sm:flex-row">
         <div className="flex items-center gap-3">
           <GlitchLogo size="sm" />

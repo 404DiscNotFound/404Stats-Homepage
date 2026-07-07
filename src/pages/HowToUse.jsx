@@ -110,9 +110,9 @@ export default function HowToUse() {
       <nav className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
-          <Link to="/gallery" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
-          <Link to="/about" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
-          <Link to="/projects" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
+          <Link to="/gallery" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
+          <Link to="/about" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
+          <Link to="/projects" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
             <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-4 py-2 text-xs font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
@@ -124,13 +124,13 @@ export default function HowToUse() {
       </nav>
 
       {/* Wiki Header */}
-      <div className="relative z-10 border-b border-[#3D3D3D]">
+      <div className="relative z-10 border-b border-[#1E1E1F]">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <div className="flex items-center gap-2">
             <Book className="h-5 w-5 text-[#5BA033]" />
             <h1 className="text-2xl font-black tracking-tight">{t("howto.title")}</h1>
           </div>
-          <p className="mt-1 text-sm text-[#888888]">{t("howto.desc")}</p>
+          <p className="mt-1 text-sm text-[#8A8A8A]">{t("howto.desc")}</p>
         </div>
       </div>
 
@@ -142,7 +142,7 @@ export default function HowToUse() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              className="mb-3 flex w-full items-center justify-between rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-4 py-3 text-sm text-gray-400 lg:hidden"
+              className="mb-3 flex w-full items-center justify-between rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-sm text-gray-400 lg:hidden"
             >
               <span className="flex items-center gap-2">
                 {mobileSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -159,7 +159,7 @@ export default function HowToUse() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t("wiki.search")}
-                  className="w-full rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] py-2 pl-9 pr-3 text-xs text-white placeholder:text-[#5A5A5A] focus:border-[#5BA033]/30 focus:outline-none"
+                  className="w-full rounded-lg border border-[#1E1E1F] bg-[#313233] py-2 pl-9 pr-3 text-xs text-white placeholder:text-[#5A5A5A] focus:border-[#5BA033]/30 focus:outline-none"
                 />
                 {searchQuery && (
                   <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-[#5A5A5A] hover:text-white">
@@ -182,7 +182,7 @@ export default function HowToUse() {
                         <button
                           key={a.id}
                           onClick={() => selectArticle(a.id)}
-                          className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === a.id ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#383838] hover:text-white"}`}
+                          className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === a.id ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#3A3A3B] hover:text-white"}`}
                         >
                           {a.icon && <a.icon className="h-3.5 w-3.5 shrink-0" />}
                           <span className="truncate">{t(a.titleKey)}</span>
@@ -207,7 +207,7 @@ export default function HowToUse() {
                             <button
                               key={articleId}
                               onClick={() => selectArticle(articleId)}
-                              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === articleId ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#383838] hover:text-white"}`}
+                              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === articleId ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#3A3A3B] hover:text-white"}`}
                             >
                               {AIcon && <AIcon className="h-3.5 w-3.5 shrink-0" />}
                               <span className="truncate">{t(a.titleKey)}</span>
@@ -224,7 +224,7 @@ export default function HowToUse() {
 
           {/* Article Content */}
           <main className="min-w-0 flex-1">
-            <div className="rounded-xl border border-[#3D3D3D] bg-[#2E2E2E] p-6 sm:p-8">
+            <div className="rounded-xl border border-[#1E1E1F] bg-[#313233] p-6 sm:p-8">
               <ArticleComponent />
             </div>
 
@@ -232,14 +232,14 @@ export default function HowToUse() {
             <ArticleNav activeArticle={activeArticle} selectArticle={selectArticle} t={t} />
 
             {/* CTA */}
-            <div className="mt-6 rounded-2xl border border-[#3D3D3D] bg-gradient-to-br from-[#383838] to-[#2E2E2E] p-8 text-center">
+            <div className="mt-6 rounded-2xl border border-[#1E1E1F] bg-[#313233] p-8 text-center">
               <h3 className="text-2xl font-black text-white">{t("howto.cta.title")}</h3>
-              <p className="mx-auto mt-3 max-w-md text-sm text-[#888888]">{t("howto.cta.desc")}</p>
+              <p className="mx-auto mt-3 max-w-md text-sm text-[#8A8A8A]">{t("howto.cta.desc")}</p>
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
                 <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-6 py-3 text-sm font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10">
                   <Download className="h-4 w-4" /> {t("howto.cta.github")}
                 </a>
-                <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#454545] hover:text-white">
+                <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#48494A] hover:text-white">
                   {t("howto.cta.discord")}
                 </a>
               </div>
@@ -249,7 +249,7 @@ export default function HowToUse() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#3D3D3D] py-6 text-center">
+      <footer className="relative z-10 border-t border-[#1E1E1F] py-6 text-center">
         <Link to="/" className="text-xs text-[#5A5A5A] transition-colors hover:text-white">{t("legal.backToHome")}</Link>
       </footer>
     </div>
@@ -265,13 +265,13 @@ function ArticleNav({ activeArticle, selectArticle, t }) {
   return (
     <div className="mt-4 flex items-center justify-between gap-3">
       {prev ? (
-        <button onClick={() => selectArticle(prev)} className="flex flex-1 items-center gap-2 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
+        <button onClick={() => selectArticle(prev)} className="flex flex-1 items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
           <span>← {t("wiki.prev")}</span>
           <span className="truncate text-[#5A5A5A]">{t(ARTICLES[prev].titleKey)}</span>
         </button>
       ) : <div className="flex-1" />}
       {next ? (
-        <button onClick={() => selectArticle(next)} className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
+        <button onClick={() => selectArticle(next)} className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
           <span className="truncate text-[#5A5A5A]">{t(ARTICLES[next].titleKey)}</span>
           <span>{t("wiki.next")} →</span>
         </button>

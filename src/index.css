@@ -18,77 +18,83 @@
 
 @layer base {
   :root {
-    --background: 0 0% 10%;
+    /* Backgrounds */
+    --background: 0 0% 7%;
     --foreground: 0 0% 100%;
-    --card: 0 0% 18%;
+    --card: 0 0% 19%;
     --card-foreground: 0 0% 100%;
-    --popover: 0 0% 18%;
+    --popover: 0 0% 19%;
     --popover-foreground: 0 0% 100%;
+    /* Brand */
     --primary: 98 52% 41%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 24%;
+    --secondary: 0 0% 23%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 53%;
+    --muted: 0 0% 7%;
+    --muted-foreground: 0 0% 54%;
     --accent: 264 77% 61%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 42%;
+    --destructive: 0 62% 46%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 24%;
-    --input: 0 0% 12%;
+    --border: 0 0% 12%;
+    --input: 0 0% 7%;
     --ring: 98 52% 41%;
+    /* Charts */
     --chart-1: 98 52% 41%;
     --chart-2: 264 77% 61%;
     --chart-3: 0 0% 100%;
-    --chart-4: 0 0% 53%;
-    --chart-5: 0 0% 24%;
+    --chart-4: 0 0% 54%;
+    --chart-5: 0 0% 23%;
+    /* Radius — always 0px */
     --radius: 0px;
+    /* Fonts */
     --font-heading: 'MinecraftTen', ui-monospace, monospace;
     --font-body: 'MinecraftRegular', ui-monospace, monospace;
     --font-display: 'MinecraftTen', ui-monospace, monospace;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 0 0% 10%;
+    /* Sidebar */
+    --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 98 52% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 24%;
+    --sidebar-accent: 0 0% 23%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 24%;
+    --sidebar-border: 0 0% 12%;
     --sidebar-ring: 98 52% 41%;
   }
 
   .dark {
-    --background: 0 0% 10%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 100%;
-    --card: 0 0% 18%;
+    --card: 0 0% 19%;
     --card-foreground: 0 0% 100%;
-    --popover: 0 0% 18%;
+    --popover: 0 0% 19%;
     --popover-foreground: 0 0% 100%;
     --primary: 98 52% 41%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 24%;
+    --secondary: 0 0% 23%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 0 0% 12%;
-    --muted-foreground: 0 0% 53%;
+    --muted: 0 0% 7%;
+    --muted-foreground: 0 0% 54%;
     --accent: 264 77% 61%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 0 62% 42%;
+    --destructive: 0 62% 46%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 24%;
-    --input: 0 0% 12%;
+    --border: 0 0% 12%;
+    --input: 0 0% 7%;
     --ring: 98 52% 41%;
     --chart-1: 98 52% 41%;
     --chart-2: 264 77% 61%;
     --chart-3: 0 0% 100%;
-    --chart-4: 0 0% 53%;
-    --chart-5: 0 0% 24%;
-    --sidebar-background: 0 0% 10%;
+    --chart-4: 0 0% 54%;
+    --chart-5: 0 0% 23%;
+    --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 0 0% 100%;
     --sidebar-primary: 98 52% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 0 0% 24%;
+    --sidebar-accent: 0 0% 23%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 0 0% 24%;
+    --sidebar-border: 0 0% 12%;
     --sidebar-ring: 98 52% 41%;
   }
 }
@@ -99,8 +105,25 @@
   }
 
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground;
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: none;
+    font-smooth: never;
     color-scheme: dark;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: 2px;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    line-height: 1;
+  }
+
+  img {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
   }
 }
 
@@ -110,30 +133,46 @@
     image-rendering: crisp-edges;
   }
 
+  /* 3D Minecraft Button */
   .mc-btn-3d {
-    font-family: 'MinecraftTen', monospace;
+    font-family: var(--font-heading);
     font-weight: 400;
     letter-spacing: 2px;
-    border: 3px solid hsl(0 0% 24%);
-    box-shadow: inset 0 -6px 0 0 hsl(105 55% 22%), inset 3px 3px 0 hsla(98 52% 41% / 0.75), inset -3px -9px 0 hsl(105 55% 45%);
+    border: 3px solid #1E1E1F;
+    box-shadow: inset 0 -6px 0 0 #2D5E1A, inset 3px 3px 0 rgba(255,255,255,0.12), inset -3px -9px 0 rgba(0,0,0,0.18);
     text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
-    padding-bottom: 15px;
-    padding-top: 5px;
   }
   .mc-btn-3d:hover {
     background-color: hsl(105 55% 26%);
   }
   .mc-btn-3d:active {
-    box-shadow: inset 0 0 0 0 hsl(105 55% 22%), inset 3px 3px 0 hsla(98 52% 41% / 0.75), inset -3px -3px 0 hsl(105 55% 45%);
+    box-shadow: inset 0 0 0 0 #2D5E1A, inset 3px 3px 0 rgba(255,255,255,0.12), inset -3px -3px 0 rgba(0,0,0,0.18);
     position: relative;
     top: 2px;
   }
 
+  /* Minecraft Panel — inset border */
   .mc-panel {
-    border: 1px solid hsl(0 0% 24%);
-    box-shadow: inset 2px 2px 0 hsla(0 0% 82% / 0.1), inset -2px -2px 0 hsla(0 0% 0% / 0.3);
+    border: 1px solid #1E1E1F;
+    box-shadow: inset 2px 2px 0 rgba(255, 255, 255, 0.04), inset -2px -2px 0 rgba(0, 0, 0, 0.3);
   }
 
+  /* Slot — inner item box */
+  .mc-slot {
+    background: #121213;
+    border: 1px solid #1E1E1F;
+    box-shadow: inset 2px 2px 0 rgba(0, 0, 0, 0.3);
+  }
+
+  /* Grid background */
+  .mc-grid-bg {
+    background-image:
+      linear-gradient(to right, rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  /* Glitch Text */
   .glitch-text {
     position: relative;
     display: inline-block;
@@ -182,19 +221,25 @@
       opacity: 0;
     }
   }
+  @media (prefers-reduced-motion: reduce) {
+    .glitch-text::before,
+    .glitch-text::after {
+      animation: none;
+    }
+  }
 
   ::-webkit-scrollbar {
     width: 12px;
     height: 12px;
   }
   ::-webkit-scrollbar-track {
-    background: hsl(0 0% 10%);
+    background: #121213;
   }
   ::-webkit-scrollbar-thumb {
-    background: hsl(0 0% 24%);
-    border: 2px solid hsl(0 0% 24%);
+    background: #3A3A3B;
+    border: 2px solid #1E1E1F;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background: hsl(0 0% 18%);
+    background: #48494A;
   }
 }
