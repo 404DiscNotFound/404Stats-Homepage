@@ -21,7 +21,7 @@ export default function Landing() {
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
           <Link to="/how-to-use" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.howto")}</Link>
-          <Link to="/gallery" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
+
           <Link to="/about" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
           <Link to="/projects" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">
@@ -31,7 +31,7 @@ export default function Landing() {
             </a>
             <MobileMenu links={[
               { to: "/how-to-use", label: "landing.nav.howto" },
-              { to: "/gallery", label: "landing.nav.gallery" },
+
               { to: "/about", label: "landing.nav.about" },
               { to: "/projects", label: "landing.nav.projects" },
             ]} />

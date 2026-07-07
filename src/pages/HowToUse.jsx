@@ -67,7 +67,7 @@ const ARTICLE_COMPONENTS = {
 };
 
 const NAV_LINKS = [
-  { to: "/gallery", label: "landing.nav.gallery" },
+
   { to: "/about", label: "landing.nav.about" },
   { to: "/projects", label: "landing.nav.projects" },
 ];
@@ -110,7 +110,7 @@ export default function HowToUse() {
       <nav className="relative z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
-          <Link to="/gallery" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
+
           <Link to="/about" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
           <Link to="/projects" className="hidden text-xs text-[#8A8A8A] transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">

@@ -11,7 +11,7 @@ import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 import Privacy from './pages/Privacy';
 import About from './pages/About';
-import Gallery from './pages/Gallery';
+
 import HowToUse from './pages/HowToUse';
 import OtherProjects from './pages/OtherProjects';
 
@@ -43,7 +43,7 @@ const AuthenticatedApp = () => {
     <Routes>
       <Route path="/" element={<Landing />} />
       <Route path="/about" element={<About />} />
-      <Route path="/gallery" element={<Gallery />} />
+
       <Route path="/how-to-use" element={<HowToUse />} />
       <Route path="/projects" element={<OtherProjects />} />
       <Route path="/privacy" element={<Privacy />} />
