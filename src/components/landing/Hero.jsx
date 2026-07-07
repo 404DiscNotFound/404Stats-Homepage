@@ -13,13 +13,13 @@ export default function Hero() {
         {t("landing.hero.title1")}<br />
         <span className="bg-gradient-to-r from-[#5BA033] to-[#8B4FE8] bg-clip-text text-transparent">{t("landing.hero.title2")}</span>
       </h1>
-      <p className="mt-6 max-w-xl text-base text-gray-500 md:text-lg">{t("landing.hero.desc")}</p>
-      <p className="mt-3 max-w-md text-xs text-gray-600">{t("landing.alpha.desc")}</p>
+      <p className="mt-6 max-w-xl text-base text-[#888888] md:text-lg">{t("landing.hero.desc")}</p>
+      <p className="mt-3 max-w-md text-xs text-[#5A5A5A]">{t("landing.alpha.desc")}</p>
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
         <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-6 py-3 text-sm font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_25px_rgba(91,160,51,0.15)]">
           <Download className="h-4 w-4" /> {t("landing.hero.getPlugin")}
         </a>
-        <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-[#1E1E1F] bg-[#313233] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#48494A] hover:text-white">
+        <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#48494A] hover:text-white">
           <MessageCircle className="h-4 w-4" /> {t("landing.hero.discord")}
         </a>
       </div>

@@ -34,7 +34,7 @@ export default function WarpArticle() {
         {/* Features */}
         <div className="grid gap-3 sm:grid-cols-2">
           {["feature1", "feature2", "feature3", "feature4"].map((f) => (
-            <div key={f} className="flex items-start gap-2 rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-3">
+            <div key={f} className="flex items-start gap-2 rounded-lg border border-[#3D3D3D] bg-[#1F1F1F] p-3">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5BA033]" />
               <span className="text-xs text-gray-400">{t(`warp.${f}`)}</span>
             </div>

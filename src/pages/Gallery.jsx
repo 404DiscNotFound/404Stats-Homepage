@@ -54,9 +54,9 @@ function GalleryCard({ img, onOpen }) {
   return (
     <button
       onClick={() => onOpen(img.src, t(img.titleKey))}
-      className="group relative overflow-hidden rounded-xl border border-[#1E1E1F] bg-[#313233] text-left transition-all hover:border-[#5BA033]/30 hover:shadow-[0_0_25px_rgba(91,160,51,0.08)]"
+      className="group relative overflow-hidden rounded-xl border border-[#3D3D3D] bg-[#2E2E2E] text-left transition-all hover:border-[#5BA033]/30 hover:shadow-[0_0_25px_rgba(91,160,51,0.08)]"
     >
-      <div className="aspect-[16/10] w-full overflow-hidden bg-[#3A3A3B]">
+      <div className="aspect-[16/10] w-full overflow-hidden bg-[#383838]">
         <img
           src={img.src}
           alt={t(img.titleKey)}
@@ -66,7 +66,7 @@ function GalleryCard({ img, onOpen }) {
       </div>
       <div className="p-4">
         <p className="text-sm font-bold text-white">{t(img.titleKey)}</p>
-        <p className="mt-1 text-xs text-gray-500">{t(img.descKey)}</p>
+        <p className="mt-1 text-xs text-[#888888]">{t(img.descKey)}</p>
       </div>
     </button>
   );
@@ -80,14 +80,14 @@ function Lightbox({ src, title, onClose }) {
     >
       <button
         onClick={onClose}
-        className="absolute right-4 top-4 z-10 rounded-lg border border-[#1E1E1F] bg-[#313233]/80 p-2 text-gray-400 backdrop-blur transition-all hover:border-[#5BA033]/30 hover:text-[#5BA033]"
+        className="absolute right-4 top-4 z-10 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E]/80 p-2 text-gray-400 backdrop-blur transition-all hover:border-[#5BA033]/30 hover:text-[#5BA033]"
         aria-label="Close"
       >
         <X className="h-5 w-5" />
       </button>
       <div className="max-h-[90vh] max-w-5xl" onClick={(e) => e.stopPropagation()}>
         {title && <p className="mb-3 text-center text-sm font-bold text-white">{title}</p>}
-        <img src={src} alt={title || ""} className="max-h-[80vh] w-auto rounded-xl border border-[#1E1E1F]" />
+        <img src={src} alt={title || ""} className="max-h-[80vh] w-auto rounded-xl border border-[#3D3D3D]" />
       </div>
     </div>
   );
@@ -103,7 +103,7 @@ export default function Gallery() {
       <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
-          <Link to="/" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("gallery.back")}</Link>
+          <Link to="/" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("gallery.back")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
             <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-4 py-2 text-xs font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_15px_rgba(91,160,51,0.15)]">
@@ -120,20 +120,20 @@ export default function Gallery() {
       </nav>
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 pb-20">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-500 transition-colors hover:text-[#5BA033]">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-[#888888] transition-colors hover:text-[#5BA033]">
           <ArrowLeft className="h-3.5 w-3.5" /> {t("gallery.back")}
         </Link>
         <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">
           {t("gallery.title")}
         </h1>
-        <p className="mt-3 max-w-xl text-sm text-gray-500">{t("gallery.desc")}</p>
+        <p className="mt-3 max-w-xl text-sm text-[#888888]">{t("gallery.desc")}</p>
 
         {/* Live Demo Section */}
         <div className="mt-12">
           <h2 className="mb-5 flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-[#5BA033]">
             <span className="h-px w-6 bg-[#5BA033]/40" /> {t("demo.title")}
           </h2>
-          <p className="mb-4 max-w-xl text-sm text-gray-500">{t("demo.desc")}</p>
+          <p className="mb-4 max-w-xl text-sm text-[#888888]">{t("demo.desc")}</p>
           <DemoEmbed height="600px" />
         </div>
 

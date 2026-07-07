@@ -14,13 +14,13 @@ export default function LandingShowcase() {
         {/* Gallery CTA card */}
         <Link
           to="/gallery"
-          className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#1E1E1F] bg-gradient-to-br from-[#3A3A3B] to-[#313233] p-6 transition-all hover:border-[#5BA033]/30 hover:shadow-[0_0_30px_rgba(91,160,51,0.06)] min-h-[200px]"
+          className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-[#3D3D3D] bg-gradient-to-br from-[#383838] to-[#2E2E2E] p-6 transition-all hover:border-[#5BA033]/30 hover:shadow-[0_0_30px_rgba(91,160,51,0.06)] min-h-[200px]"
         >
           <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full" style={{ background: "radial-gradient(circle, rgba(91,160,51,0.08) 0%, transparent 70%)" }} />
           <div>
             <p className="text-xs font-bold uppercase tracking-widest text-[#5BA033]">{t("landing.gallery.badge")}</p>
             <h3 className="mt-3 text-xl font-black leading-tight text-white">{t("landing.gallery.title")}</h3>
-            <p className="mt-2 text-sm text-gray-500">{t("landing.gallery.desc")}</p>
+            <p className="mt-2 text-sm text-[#888888]">{t("landing.gallery.desc")}</p>
           </div>
           <span className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-[#5BA033] transition-transform group-hover:translate-x-1">
             {t("landing.gallery.cta")} <ArrowRight className="h-4 w-4" />

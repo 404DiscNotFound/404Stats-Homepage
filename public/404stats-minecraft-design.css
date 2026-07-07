@@ -8,23 +8,24 @@
   font-family: 'MinecraftRegular';
   font-style: normal;
   font-weight: 400;
-  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516/Minecraft-CSS@main/src/fonts/Minecraft-Regular.otf') format('opentype');
+  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516F/Minecraft-CSS@main/src/fonts/Minecraft-Regular.otf') format('opentype');
 }
 @font-face {
   font-family: 'MinecraftTen';
   font-style: normal;
   font-weight: 400;
-  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516/Minecraft-CSS@main/src/fonts/Minecraft-Ten.ttf') format('truetype');
+  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516F/Minecraft-CSS@main/src/fonts/Minecraft-Ten.ttf') format('truetype');
 }
 
 /* ---------- Design Tokens ---------- */
 :root {
   /* Backgrounds (dark stone palette) */
-  --mc-bg:          #121213;   /* page background */
-  --mc-surface:     #313233;   /* card / panel background */
-  --mc-surface-2:   #3A3A3B;   /* elevated / hover surface */
-  --mc-surface-3:   #48494A;   /* border hover */
-  --mc-border:      #1E1E1F;   /* default border */
+  --mc-bg:          #1A1A1A;   /* page background */
+  --mc-surface:     #2E2E2E;   /* card / panel background */
+  --mc-surface-2:   #383838;   /* elevated / hover surface */
+  --mc-surface-3:   #454545;   /* border hover */
+  --mc-border:      #3D3D3D;   /* default border */
+  --mc-inner:       #1F1F1F;   /* inner stat boxes */
 
   /* Brand colors */
   --mc-green:       #5BA033;   /* primary — Minecraft grass green */
@@ -34,7 +35,7 @@
 
   /* Text */
   --mc-text:        #FFFFFF;
-  --mc-text-muted:  #8A8A8A;
+  --mc-text-muted:  #888888;
   --mc-text-dim:    #5A5A5A;
 
   /* Fonts */
@@ -124,6 +125,13 @@ a:hover { color: var(--mc-purple); }
   background: var(--mc-surface);
   border: 1px solid var(--mc-border);
   padding: 24px;
+}
+
+/* ---------- Inner stat box ---------- */
+.mc-inner {
+  background: var(--mc-inner);
+  border: 1px solid var(--mc-border);
+  padding: 12px;
 }
 
 /* ---------- Accent variants ---------- */

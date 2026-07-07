@@ -23,9 +23,9 @@ export default function OtherProjects() {
       <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
         <div className="flex items-center gap-6">
-          <Link to="/how-to-use" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.howto")}</Link>
-          <Link to="/gallery" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
-          <Link to="/about" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
+          <Link to="/how-to-use" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.howto")}</Link>
+          <Link to="/gallery" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.gallery")}</Link>
+          <Link to="/about" className="hidden text-xs text-[#888888] transition-colors hover:text-white sm:block">{t("landing.nav.about")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
             <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-4 py-2 text-xs font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_15px_rgba(91,160,51,0.15)]">
@@ -37,14 +37,14 @@ export default function OtherProjects() {
       </nav>
 
       <div className="relative z-10 mx-auto max-w-6xl px-6 pb-20">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-500 transition-colors hover:text-[#5BA033]">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-[#888888] transition-colors hover:text-[#5BA033]">
           <ArrowLeft className="h-3.5 w-3.5" /> {t("common.backToHome")}
         </Link>
         <h1 className="mt-4 text-4xl font-black tracking-tight md:text-5xl">{t("projects.page.title")}</h1>
-        <p className="mt-3 max-w-xl text-sm text-gray-500">{t("projects.page.desc")}</p>
+        <p className="mt-3 max-w-xl text-sm text-[#888888]">{t("projects.page.desc")}</p>
 
         {/* Pterios Project Card */}
-        <div className="mt-10 max-w-3xl overflow-hidden rounded-2xl border border-[#1E1E1F] bg-gradient-to-br from-[#1A0B2E]/40 to-[#313233] p-6 transition-all hover:border-[#FF8A65]/20 sm:p-8">
+        <div className="mt-10 max-w-3xl overflow-hidden rounded-2xl border border-[#3D3D3D] bg-gradient-to-br from-[#1A0B2E]/40 to-[#2E2E2E] p-6 transition-all hover:border-[#FF8A65]/20 sm:p-8">
           <div className="flex flex-col gap-6 sm:flex-row sm:items-center">
             {/* App Icon */}
             <div className="shrink-0">
@@ -75,7 +75,7 @@ export default function OtherProjects() {
                   href="https://github.com/404DiscNotFound/Pterios-iOS"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#5BA033]/30 hover:text-[#5BA033]"
+                  className="inline-flex items-center gap-1.5 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] px-4 py-2 text-xs font-bold text-gray-400 transition-all hover:border-[#5BA033]/30 hover:text-[#5BA033]"
                 >
                   <Github className="h-3.5 w-3.5" /> {t("projects.pterios.github")}
                 </a>

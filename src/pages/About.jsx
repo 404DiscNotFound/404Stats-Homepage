@@ -17,9 +17,9 @@ export default function About() {
   return (
     <div className="relative min-h-screen bg-background text-white">
       <Background />
-      <header className="sticky top-0 z-10 border-b border-[#1E1E1F] bg-background/80 backdrop-blur-lg">
+      <header className="sticky top-0 z-10 border-b border-[#3D3D3D] bg-background/80 backdrop-blur-lg">
         <div className="mx-auto flex max-w-3xl items-center justify-between px-6 py-3">
-          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-gray-500 transition-colors hover:text-[#5BA033]">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-xs text-[#888888] transition-colors hover:text-[#5BA033]">
             <ArrowLeft className="h-3.5 w-3.5" /> {t("common.backToHome")}
           </Link>
           <LanguageToggle compact />
@@ -34,26 +34,26 @@ export default function About() {
           </div>
           <h1 className="mt-6 text-3xl font-black tracking-tight md:text-4xl">{t("about.title")}</h1>
           <p className="mt-2 text-sm text-[#5BA033]">{t("about.creator")}</p>
-          <p className="mt-1 text-xs text-gray-600">{t("about.community")} · {t("about.communityDesc")}</p>
+          <p className="mt-1 text-xs text-[#5A5A5A]">{t("about.community")} · {t("about.communityDesc")}</p>
         </div>
         <p className="text-center text-sm leading-relaxed text-gray-400">{t("about.desc")}</p>
         <div className="mt-12">
-          <h2 className="mb-4 text-center text-xs uppercase tracking-widest text-gray-600">{t("about.links")}</h2>
+          <h2 className="mb-4 text-center text-xs uppercase tracking-widest text-[#5A5A5A]">{t("about.links")}</h2>
           <div className="grid gap-3 sm:grid-cols-2">
             {LINKS.map(({ icon: Icon, label, href }) => (
-              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg border border-[#1E1E1F] bg-[#313233] p-4 transition-all hover:border-[#5BA033]/30">
+              <a key={label} href={href} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 rounded-lg border border-[#3D3D3D] bg-[#2E2E2E] p-4 transition-all hover:border-[#5BA033]/30">
                 <Icon className="h-4 w-4 text-[#5BA033]" />
                 <span className="text-xs font-bold text-gray-400">{label}</span>
               </a>
             ))}
           </div>
         </div>
-        <div className="mt-12 rounded-xl border border-[#1E1E1F] bg-[#313233] p-6">
+        <div className="mt-12 rounded-xl border border-[#3D3D3D] bg-[#2E2E2E] p-6">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-4 w-4 text-[#5BA033]" />
             <h2 className="text-sm font-bold text-white">{t("about.privacy")}</h2>
           </div>
-          <p className="mt-2 text-xs leading-relaxed text-gray-500">{t("about.privacyDesc")}</p>
+          <p className="mt-2 text-xs leading-relaxed text-[#888888]">{t("about.privacyDesc")}</p>
         </div>
       </div>
     </div>
