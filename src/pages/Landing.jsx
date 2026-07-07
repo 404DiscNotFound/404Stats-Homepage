@@ -15,7 +15,7 @@ import LandingShowcase from "@/components/landing/LandingShowcase";
 export default function Landing() {
   const t = useT();
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden">
+    <div className="min-h-screen bg-background text-white overflow-hidden">
       <Background />
       <nav className="relative z-10 mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <GlitchLogo size="sm" />
@@ -26,7 +26,7 @@ export default function Landing() {
           <Link to="/projects" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
-            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
+            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-4 py-2 text-xs font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_15px_rgba(91,160,51,0.15)]">
               {t("landing.nav.download")}
             </a>
             <MobileMenu links={[

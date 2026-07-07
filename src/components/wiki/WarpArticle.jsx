@@ -9,18 +9,18 @@ export default function WarpArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Navigation} accent="#FF007A" title="404Warp" desc={t("warp.tagline")} />
+      <WikiArticleHeader icon={Navigation} accent="#8B4FE8" title="404Warp" desc={t("warp.tagline")} />
 
       {/* Hero with app icon */}
-      <div className="mb-6 overflow-hidden rounded-xl border border-[#FF007A]/20 bg-black">
+      <div className="mb-6 overflow-hidden rounded-xl border border-[#8B4FE8]/20 bg-black">
         <div className="relative flex flex-col items-center gap-4 px-6 py-10">
           <div className="absolute inset-0 opacity-30" style={{ background: "radial-gradient(circle at 50% 40%, rgba(0,242,255,0.15) 0%, transparent 50%), radial-gradient(circle at 50% 60%, rgba(255,0,122,0.15) 0%, transparent 50%)" }} />
           <img src={WARP_ICON} alt="404Warp" className="relative h-24 w-24 rounded-2xl object-contain" />
           <div className="relative text-center">
             <p className="text-lg font-bold text-white">{t("warp.hero.line1")}</p>
             <p className="mt-1 text-lg font-bold">
-              <span className="bg-gradient-to-r from-[#00F2FF] to-[#3B82F6] bg-clip-text text-transparent">{t("warp.hero.line2a")}</span>{" "}
-              <span className="text-[#FF007A]">{t("warp.hero.line2b")}</span>
+              <span className="bg-gradient-to-r from-[#5BA033] to-[#8B4FE8] bg-clip-text text-transparent">{t("warp.hero.line2a")}</span>{" "}
+              <span className="text-[#8B4FE8]">{t("warp.hero.line2b")}</span>
             </p>
           </div>
         </div>
@@ -35,7 +35,7 @@ export default function WarpArticle() {
         <div className="grid gap-3 sm:grid-cols-2">
           {["feature1", "feature2", "feature3", "feature4"].map((f) => (
             <div key={f} className="flex items-start gap-2 rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-3">
-              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#00F2FF]" />
+              <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#5BA033]" />
               <span className="text-xs text-gray-400">{t(`warp.${f}`)}</span>
             </div>
           ))}
@@ -46,7 +46,7 @@ export default function WarpArticle() {
           href={WARP_URL}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-[#FF007A]/30 bg-[#FF007A]/5 px-5 py-3 text-sm font-bold text-[#FF007A] transition-all hover:bg-[#FF007A]/10"
+          className="mt-2 inline-flex items-center gap-2 rounded-lg border border-[#8B4FE8]/30 bg-[#8B4FE8]/5 px-5 py-3 text-sm font-bold text-[#8B4FE8] transition-all hover:bg-[#8B4FE8]/10"
         >
           <Navigation className="h-4 w-4" />
           {t("warp.visit")}

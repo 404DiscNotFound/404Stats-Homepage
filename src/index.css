@@ -1,86 +1,97 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap');
+/* Minecraft Pixel Fonts */
+@font-face {
+  font-family: 'MinecraftRegular';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516F/Minecraft-CSS@main/src/fonts/Minecraft-Regular.otf') format('opentype');
+}
+@font-face {
+  font-family: 'MinecraftTen';
+  font-style: normal;
+  font-weight: 400;
+  src: url('https://cdn.jsdelivr.net/gh/Jiyath5516F/Minecraft-CSS@main/src/fonts/Minecraft-Ten.ttf') format('truetype');
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --background: 240 20% 4%;
+    --background: 0 0% 7%;
     --foreground: 0 0% 100%;
-    --card: 240 20% 6%;
+    --card: 0 0% 19%;
     --card-foreground: 0 0% 100%;
-    --popover: 240 20% 6%;
+    --popover: 0 0% 19%;
     --popover-foreground: 0 0% 100%;
-    --primary: 0 0% 100%;
-    --primary-foreground: 240 20% 4%;
-    --secondary: 240 16% 12%;
+    --primary: 98 52% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 28%;
     --secondary-foreground: 0 0% 100%;
-    --muted: 240 16% 10%;
-    --muted-foreground: 240 8% 57%;
-    --accent: 240 16% 12%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 57%;
+    --accent: 264 77% 61%;
     --accent-foreground: 0 0% 100%;
-    --destructive: 338 100% 50%;
+    --destructive: 0 62% 42%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 16% 12%;
-    --input: 240 16% 12%;
-    --ring: 184 100% 48%;
-    --chart-1: 184 100% 48%;
-    --chart-2: 338 100% 50%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 98 52% 41%;
+    --chart-1: 98 52% 41%;
+    --chart-2: 264 77% 61%;
     --chart-3: 0 0% 100%;
-    --chart-4: 240 8% 57%;
-    --chart-5: 240 16% 12%;
-    --radius: 0.5rem;
-    --font-heading: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
-    --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
-    --font-display: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif;
+    --chart-4: 0 0% 57%;
+    --chart-5: 0 0% 28%;
+    --radius: 0px;
+    --font-heading: 'MinecraftTen', ui-monospace, monospace;
+    --font-body: 'MinecraftRegular', ui-monospace, monospace;
+    --font-display: 'MinecraftTen', ui-monospace, monospace;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-    --sidebar-background: 240 20% 4%;
+    --sidebar-background: 0 0% 7%;
     --sidebar-foreground: 0 0% 100%;
-    --sidebar-primary: 0 0% 100%;
-    --sidebar-primary-foreground: 240 20% 4%;
-    --sidebar-accent: 240 16% 12%;
+    --sidebar-primary: 98 52% 41%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 28%;
     --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 240 16% 12%;
-    --sidebar-ring: 184 100% 48%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 98 52% 41%;
   }
 
   .dark {
-    --background: 0 0% 3.9%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 100%;
+    --card: 0 0% 19%;
+    --card-foreground: 0 0% 100%;
+    --popover: 0 0% 19%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 98 52% 41%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 0 0% 28%;
+    --secondary-foreground: 0 0% 100%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 57%;
+    --accent: 264 77% 61%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 62% 42%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 12%;
+    --input: 0 0% 12%;
+    --ring: 98 52% 41%;
+    --chart-1: 98 52% 41%;
+    --chart-2: 264 77% 61%;
+    --chart-3: 0 0% 100%;
+    --chart-4: 0 0% 57%;
+    --chart-5: 0 0% 28%;
+    --sidebar-background: 0 0% 7%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 98 52% 41%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 0 0% 28%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 0 0% 12%;
+    --sidebar-ring: 98 52% 41%;
   }
 }
-
-
 
 @layer base {
   * {
@@ -94,6 +105,35 @@
 }
 
 @layer utilities {
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+  }
+
+  .mc-btn-3d {
+    font-family: 'MinecraftTen', monospace;
+    font-weight: 400;
+    letter-spacing: 2px;
+    border: 3px solid hsl(0 0% 12%);
+    box-shadow: inset 0 -6px 0 0 hsl(105 55% 22%), inset 3px 3px 0 hsla(98 52% 41% / 0.75), inset -3px -9px 0 hsl(105 55% 45%);
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
+    padding-bottom: 15px;
+    padding-top: 5px;
+  }
+  .mc-btn-3d:hover {
+    background-color: hsl(105 55% 26%);
+  }
+  .mc-btn-3d:active {
+    box-shadow: inset 0 0 0 0 hsl(105 55% 22%), inset 3px 3px 0 hsla(98 52% 41% / 0.75), inset -3px -3px 0 hsl(105 55% 45%);
+    position: relative;
+    top: 2px;
+  }
+
+  .mc-panel {
+    border: 1px solid hsl(0 0% 12%);
+    box-shadow: inset 2px 2px 0 hsla(0 0% 82% / 0.1), inset -2px -2px 0 hsla(0 0% 0% / 0.3);
+  }
+
   .glitch-text {
     position: relative;
     display: inline-block;
@@ -110,13 +150,13 @@
     will-change: transform, clip-path;
   }
   .glitch-text::before {
-    color: #00F5FF;
+    color: #5BA033;
     transform: translate(-1px, 0);
     animation: glitch-anim-1 4s infinite steps(1) alternate-reverse;
     z-index: -1;
   }
   .glitch-text::after {
-    color: #FF0055;
+    color: #8B4FE8;
     transform: translate(1px, 0);
     animation: glitch-anim-2 4.5s infinite steps(1) alternate-reverse;
     z-index: -2;
@@ -141,5 +181,20 @@
       animation: none;
       opacity: 0;
     }
+  }
+
+  ::-webkit-scrollbar {
+    width: 12px;
+    height: 12px;
+  }
+  ::-webkit-scrollbar-track {
+    background: hsl(0 0% 7%);
+  }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(0 0% 28%);
+    border: 2px solid hsl(0 0% 12%);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(0 0% 19%);
   }
 }

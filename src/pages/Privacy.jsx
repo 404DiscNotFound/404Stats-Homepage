@@ -16,12 +16,12 @@ export default function Privacy() {
       <Section title="2. Local H2 Database">
         <p>
           All statistics are stored in a local H2 database file inside your server's
-          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">plugins/404Stats/</code>
+          <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">plugins/404Stats/</code>
           directory. No data leaves your server — there is no cloud sync, no external database, and
           no central server collecting your players' data.
         </p>
         <p>
-          The database file (<code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">404stats.mv.db</code>)
+          The database file (<code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">404stats.mv.db</code>)
           is fully under your control. You can back it up, delete it, or inspect it at any time.
         </p>
       </Section>
@@ -63,9 +63,9 @@ export default function Privacy() {
           third-party CDNs — all assets are served locally from the plugin's internal webserver.
         </p>
         <p>
-          The web panel does not use browser <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">localStorage</code>,
-          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">sessionStorage</code>, or
-          <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">IndexedDB</code>. No embedded
+          The web panel does not use browser <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">localStorage</code>,
+          <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">sessionStorage</code>, or
+          <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">IndexedDB</code>. No embedded
           third-party share widgets are used.
         </p>
         <p>
@@ -76,9 +76,9 @@ export default function Privacy() {
 
       <Section title="6. Admin Panel Security">
         <p>
-          The admin panel at <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/admin</code>
+          The admin panel at <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">/admin</code>
           allows database management without a password — access is granted through a single-use login
-          token generated in-game with <code className="rounded bg-[#1A1A24] px-1.5 py-0.5 text-[#00F5FF]">/404stats webadmin</code>.
+          token generated in-game with <code className="rounded bg-[#1E1E1F] px-1.5 py-0.5 text-[#5BA033]">/404stats webadmin</code>.
         </p>
         <ul>
           <li>Login tokens are valid for 5 minutes, single-use, and SHA-256 hashed.</li>
@@ -98,7 +98,7 @@ export default function Privacy() {
         </p>
         <p>
           You can review bStats' privacy policy at{" "}
-          <a href="https://bstats.org/privacy" target="_blank" rel="noopener noreferrer" className="text-[#00F5FF] hover:underline">bstats.org/privacy</a>.
+          <a href="https://bstats.org/privacy" target="_blank" rel="noopener noreferrer" className="text-[#5BA033] hover:underline">bstats.org/privacy</a>.
           bStats can be disabled in the plugin configuration if desired.
         </p>
       </Section>
@@ -157,7 +157,7 @@ export default function Privacy() {
 function Section({ title, children }) {
   return (
     <section>
-      <h2 className="mb-3 text-sm font-black uppercase tracking-wider text-[#00F5FF]">{title}</h2>
+      <h2 className="mb-3 text-sm font-black uppercase tracking-wider text-[#5BA033]">{title}</h2>
       <div className="space-y-3 text-sm leading-relaxed text-gray-400 [&_code]:text-xs [&_li]:ml-4 [&_li]:list-disc [&_li]:marker:text-gray-700 [&_ul]:space-y-1.5">
         {children}
       </div>

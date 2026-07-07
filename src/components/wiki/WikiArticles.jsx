@@ -8,13 +8,13 @@ export function InstallArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Download} accent="#00F5FF" title={t("howto.install.title")} desc={t("howto.install.desc")} />
+      <WikiArticleHeader icon={Download} accent="#5BA033" title={t("howto.install.title")} desc={t("howto.install.desc")} />
       <div className="space-y-4">
         <WikiInfoCard title={t("howto.install.step1Title")}>{t("howto.install.step1Desc")}</WikiInfoCard>
         <WikiInfoCard title={t("howto.install.step2Title")}>{t("howto.install.step2Desc")}</WikiInfoCard>
         <WikiInfoCard title={t("howto.install.step3Title")}>{t("howto.install.step3Desc")}</WikiInfoCard>
-        <div className="rounded-lg border border-[#FF0055]/20 bg-[#FF0055]/5 p-4">
-          <p className="text-xs text-[#FF0055]">{t("howto.install.requirements")}</p>
+        <div className="rounded-lg border border-[#8B4FE8]/20 bg-[#8B4FE8]/5 p-4">
+          <p className="text-xs text-[#8B4FE8]">{t("howto.install.requirements")}</p>
         </div>
       </div>
     </article>
@@ -32,11 +32,11 @@ export function CommandsArticle() {
   ];
   return (
     <article>
-      <WikiArticleHeader icon={Terminal} accent="#00F5FF" title={t("howto.commands.title")} desc={t("howto.commands.desc")} />
+      <WikiArticleHeader icon={Terminal} accent="#5BA033" title={t("howto.commands.title")} desc={t("howto.commands.desc")} />
       <div className="space-y-3">
         {cmds.map((c) => (
-          <div key={c.cmd} className="flex flex-col gap-1 rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-4 sm:flex-row sm:items-center sm:justify-between">
-            <code className="text-sm font-mono text-[#00F5FF]">{c.cmd}</code>
+          <div key={c.cmd} className="flex flex-col gap-1 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <code className="text-sm font-mono text-[#5BA033]">{c.cmd}</code>
             <span className="text-xs text-gray-500">{c.desc}</span>
           </div>
         ))}
@@ -57,15 +57,15 @@ export function PermissionsArticle() {
   ];
   return (
     <article>
-      <WikiArticleHeader icon={Shield} accent="#FF0055" title={t("howto.permissions.title")} desc={t("howto.permissions.desc")} />
+      <WikiArticleHeader icon={Shield} accent="#8B4FE8" title={t("howto.permissions.title")} desc={t("howto.permissions.desc")} />
       <div className="space-y-3">
         {perms.map((p) => (
-          <div key={p.perm} className="flex flex-col gap-1 rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-4 sm:flex-row sm:items-center sm:justify-between">
-            <code className="text-sm font-mono text-[#FF0055]">{p.perm}</code>
+          <div key={p.perm} className="flex flex-col gap-1 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-4 sm:flex-row sm:items-center sm:justify-between">
+            <code className="text-sm font-mono text-[#8B4FE8]">{p.perm}</code>
             <span className="text-xs text-gray-500">{p.desc}</span>
           </div>
         ))}
-        <div className="rounded-lg border border-[#1A1A24] bg-[#0A0A0F] p-4">
+        <div className="rounded-lg border border-[#1E1E1F] bg-[#313233] p-4">
           <p className="text-xs text-gray-500">{t("howto.permissions.note")}</p>
         </div>
       </div>
@@ -77,7 +77,7 @@ export function ConfigArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Settings} accent="#00F5FF" title={t("howto.config.title")} desc={t("howto.config.desc")} />
+      <WikiArticleHeader icon={Settings} accent="#5BA033" title={t("howto.config.title")} desc={t("howto.config.desc")} />
       <div className="space-y-4">
         <WikiCodeBlock label={t("howto.config.fileLabel")} code={`# 404Stats Configuration
 # Located at: plugins/404Stats/config.yml
@@ -127,7 +127,7 @@ export function WebPanelArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Globe} accent="#00F5FF" title={t("howto.webpanel.title")} desc={t("howto.webpanel.desc")} />
+      <WikiArticleHeader icon={Globe} accent="#5BA033" title={t("howto.webpanel.title")} desc={t("howto.webpanel.desc")} />
       <div className="space-y-4">
         <WikiInfoCard title={t("howto.webpanel.accessTitle")}>{t("howto.webpanel.accessDesc")}</WikiInfoCard>
         <WikiCodeBlock code={`http://localhost:8088/server/local
@@ -135,8 +135,8 @@ http://YOUR-SERVER-IP:8088/server/local`} />
         <WikiInfoCard title={t("howto.webpanel.passwordTitle")}>{t("howto.webpanel.passwordDesc")}</WikiInfoCard>
         <div className="grid gap-3 sm:grid-cols-2">
           {["blocks", "npc-combat", "movement", "production", "interactions", "worlds"].map((m) => (
-            <div key={m} className="flex items-center gap-2 rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-3">
-              <BarChart3 className="h-4 w-4 text-[#00F5FF]" />
+            <div key={m} className="flex items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-3">
+              <BarChart3 className="h-4 w-4 text-[#5BA033]" />
               <span className="text-xs text-gray-400">{t(`howto.modules.${m}`)}</span>
             </div>
           ))}
@@ -150,7 +150,7 @@ export function ProjectModeArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Zap} accent="#FF0055" title={t("howto.projectmode.title")} desc={t("howto.projectmode.desc")} />
+      <WikiArticleHeader icon={Zap} accent="#8B4FE8" title={t("howto.projectmode.title")} desc={t("howto.projectmode.desc")} />
       <div className="space-y-4">
         <WikiInfoCard title={t("howto.projectmode.createTitle")}>{t("howto.projectmode.createDesc")}</WikiInfoCard>
         <WikiCodeBlock code={`/404stats project add "Spawn Build"
@@ -167,7 +167,7 @@ export function BossBarArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={BarChart3} accent="#00F5FF" title={t("howto.bossbar.title")} desc={t("howto.bossbar.desc")} />
+      <WikiArticleHeader icon={BarChart3} accent="#5BA033" title={t("howto.bossbar.title")} desc={t("howto.bossbar.desc")} />
       <div className="space-y-4">
         <WikiInfoCard title={t("howto.bossbar.modesTitle")}>
           <ul className="space-y-1.5">
@@ -189,7 +189,7 @@ export function PlaceholderAPIArticle() {
   const t = useT();
   return (
     <article>
-      <WikiArticleHeader icon={Type} accent="#FF0055" title={t("howto.placeholderapi.title")} desc={t("howto.placeholderapi.desc")} />
+      <WikiArticleHeader icon={Type} accent="#8B4FE8" title={t("howto.placeholderapi.title")} desc={t("howto.placeholderapi.desc")} />
       <PlaceholderAPISection embedded />
     </article>
   );

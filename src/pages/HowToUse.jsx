@@ -43,14 +43,14 @@ const CATEGORIES = [
 ];
 
 const ARTICLES = {
-  install: { titleKey: "howto.install.title", icon: Download, accent: "#00F5FF", keywords: "install download jar setup plugin folder server restart" },
-  webpanel: { titleKey: "howto.webpanel.title", icon: Globe, accent: "#00F5FF", keywords: "web panel browser dashboard port 8088 password access modules" },
-  commands: { titleKey: "howto.commands.title", icon: Terminal, accent: "#00F5FF", keywords: "commands me panel project reload bossbar in-game" },
+  install: { titleKey: "howto.install.title", icon: Download, accent: "#5BA033", keywords: "install download jar setup plugin folder server restart" },
+  webpanel: { titleKey: "howto.webpanel.title", icon: Globe, accent: "#5BA033", keywords: "web panel browser dashboard port 8088 password access modules" },
+  commands: { titleKey: "howto.commands.title", icon: Terminal, accent: "#5BA033", keywords: "commands me panel project reload bossbar in-game" },
   permissions: { titleKey: "howto.permissions.title", icon: Shield, accent: "#FF0055", keywords: "permissions use bossbar project admin panel luckperms reload" },
-  config: { titleKey: "howto.config.title", icon: Settings, accent: "#00F5FF", keywords: "config yml configuration modules bossbar database bstats game-mode web-panel" },
+  config: { titleKey: "howto.config.title", icon: Settings, accent: "#5BA033", keywords: "config yml configuration modules bossbar database bstats game-mode web-panel" },
   placeholderapi: { titleKey: "howto.placeholderapi.title", icon: Type, accent: "#FF0055", keywords: "placeholderapi papi placeholders scoreboards holograms leaderboard player stats syntax" },
   projectmode: { titleKey: "howto.projectmode.title", icon: Zap, accent: "#FF0055", keywords: "project mode community build members create spawn farm" },
-  bossbar: { titleKey: "howto.bossbar.title", icon: BarChart3, accent: "#00F5FF", keywords: "bossbar boss bar display mode blocks combat movement toggle" },
+  bossbar: { titleKey: "howto.bossbar.title", icon: BarChart3, accent: "#5BA033", keywords: "bossbar boss bar display mode blocks combat movement toggle" },
   "404warp": { titleKey: "warp.title", icon: Navigation, accent: "#FF007A", keywords: "404warp warp teleport portal survival other app plugin" },
 };
 
@@ -115,7 +115,7 @@ export default function HowToUse() {
           <Link to="/projects" className="hidden text-xs text-gray-500 transition-colors hover:text-white sm:block">{t("landing.nav.projects")}</Link>
           <div className="flex items-center gap-3">
             <LanguageToggle compact />
-            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-4 py-2 text-xs font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
+            <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-4 py-2 text-xs font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10 hover:shadow-[0_0_15px_rgba(0,245,255,0.15)]">
               {t("landing.nav.download")}
             </a>
             <MobileMenu links={NAV_LINKS} />
@@ -124,10 +124,10 @@ export default function HowToUse() {
       </nav>
 
       {/* Wiki Header */}
-      <div className="relative z-10 border-b border-[#1A1A24]">
+      <div className="relative z-10 border-b border-[#1E1E1F]">
         <div className="mx-auto max-w-6xl px-6 py-6">
           <div className="flex items-center gap-2">
-            <Book className="h-5 w-5 text-[#00F5FF]" />
+            <Book className="h-5 w-5 text-[#5BA033]" />
             <h1 className="text-2xl font-black tracking-tight">{t("howto.title")}</h1>
           </div>
           <p className="mt-1 text-sm text-gray-500">{t("howto.desc")}</p>
@@ -142,7 +142,7 @@ export default function HowToUse() {
             {/* Mobile toggle */}
             <button
               onClick={() => setMobileSidebarOpen(!mobileSidebarOpen)}
-              className="mb-3 flex w-full items-center justify-between rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-3 text-sm text-gray-400 lg:hidden"
+              className="mb-3 flex w-full items-center justify-between rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-sm text-gray-400 lg:hidden"
             >
               <span className="flex items-center gap-2">
                 {mobileSidebarOpen ? <X className="h-4 w-4" /> : <Menu className="h-4 w-4" />}
@@ -159,7 +159,7 @@ export default function HowToUse() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder={t("wiki.search")}
-                  className="w-full rounded-lg border border-[#1A1A24] bg-[#0A0A0F] py-2 pl-9 pr-3 text-xs text-white placeholder:text-gray-600 focus:border-[#00F5FF]/30 focus:outline-none"
+                  className="w-full rounded-lg border border-[#1E1E1F] bg-[#313233] py-2 pl-9 pr-3 text-xs text-white placeholder:text-gray-600 focus:border-[#5BA033]/30 focus:outline-none"
                 />
                 {searchQuery && (
                   <button onClick={() => setSearchQuery("")} className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-600 hover:text-white">
@@ -182,7 +182,7 @@ export default function HowToUse() {
                         <button
                           key={a.id}
                           onClick={() => selectArticle(a.id)}
-                          className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === a.id ? "bg-[#00F5FF]/10 text-[#00F5FF]" : "text-gray-400 hover:bg-[#15151a] hover:text-white"}`}
+                          className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === a.id ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#3A3A3B] hover:text-white"}`}
                         >
                           {a.icon && <a.icon className="h-3.5 w-3.5 shrink-0" />}
                           <span className="truncate">{t(a.titleKey)}</span>
@@ -207,7 +207,7 @@ export default function HowToUse() {
                             <button
                               key={articleId}
                               onClick={() => selectArticle(articleId)}
-                              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === articleId ? "bg-[#00F5FF]/10 text-[#00F5FF]" : "text-gray-400 hover:bg-[#15151a] hover:text-white"}`}
+                              className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-xs transition-colors ${activeArticle === articleId ? "bg-[#5BA033]/10 text-[#5BA033]" : "text-gray-400 hover:bg-[#3A3A3B] hover:text-white"}`}
                             >
                               {AIcon && <AIcon className="h-3.5 w-3.5 shrink-0" />}
                               <span className="truncate">{t(a.titleKey)}</span>
@@ -224,7 +224,7 @@ export default function HowToUse() {
 
           {/* Article Content */}
           <main className="min-w-0 flex-1">
-            <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-6 sm:p-8">
+            <div className="rounded-xl border border-[#1E1E1F] bg-[#313233] p-6 sm:p-8">
               <ArticleComponent />
             </div>
 
@@ -232,14 +232,14 @@ export default function HowToUse() {
             <ArticleNav activeArticle={activeArticle} selectArticle={selectArticle} t={t} />
 
             {/* CTA */}
-            <div className="mt-6 rounded-2xl border border-[#1A1A24] bg-gradient-to-br from-[#0F0F14] to-[#0A0A0F] p-8 text-center">
+            <div className="mt-6 rounded-2xl border border-[#1E1E1F] bg-gradient-to-br from-[#3A3A3B] to-[#313233] p-8 text-center">
               <h3 className="text-2xl font-black text-white">{t("howto.cta.title")}</h3>
               <p className="mx-auto mt-3 max-w-md text-sm text-gray-500">{t("howto.cta.desc")}</p>
               <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
-                <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#00F5FF]/30 bg-[#00F5FF]/5 px-6 py-3 text-sm font-bold text-[#00F5FF] transition-all hover:bg-[#00F5FF]/10">
+                <a href="https://github.com/404DiscNotFound" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#5BA033]/30 bg-[#5BA033]/5 px-6 py-3 text-sm font-bold text-[#5BA033] transition-all hover:bg-[#5BA033]/10">
                   <Download className="h-4 w-4" /> {t("howto.cta.github")}
                 </a>
-                <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#2A2A3A] hover:text-white">
+                <a href="https://discord.gg/gsQEWZScuX" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-6 py-3 text-sm font-bold text-gray-400 transition-all hover:border-[#48494A] hover:text-white">
                   {t("howto.cta.discord")}
                 </a>
               </div>
@@ -249,7 +249,7 @@ export default function HowToUse() {
       </div>
 
       {/* Footer */}
-      <footer className="relative z-10 border-t border-[#1A1A24] py-6 text-center">
+      <footer className="relative z-10 border-t border-[#1E1E1F] py-6 text-center">
         <Link to="/" className="text-xs text-gray-600 transition-colors hover:text-white">{t("legal.backToHome")}</Link>
       </footer>
     </div>
@@ -265,13 +265,13 @@ function ArticleNav({ activeArticle, selectArticle, t }) {
   return (
     <div className="mt-4 flex items-center justify-between gap-3">
       {prev ? (
-        <button onClick={() => selectArticle(prev)} className="flex flex-1 items-center gap-2 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#00F5FF]/30 hover:text-[#00F5FF]">
+        <button onClick={() => selectArticle(prev)} className="flex flex-1 items-center gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
           <span>← {t("wiki.prev")}</span>
           <span className="truncate text-gray-600">{t(ARTICLES[prev].titleKey)}</span>
         </button>
       ) : <div className="flex-1" />}
       {next ? (
-        <button onClick={() => selectArticle(next)} className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[#1A1A24] bg-[#0A0A0F] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#00F5FF]/30 hover:text-[#00F5FF]">
+        <button onClick={() => selectArticle(next)} className="flex flex-1 items-center justify-end gap-2 rounded-lg border border-[#1E1E1F] bg-[#313233] px-4 py-3 text-xs text-gray-400 transition-colors hover:border-[#5BA033]/30 hover:text-[#5BA033]">
           <span className="truncate text-gray-600">{t(ARTICLES[next].titleKey)}</span>
           <span>{t("wiki.next")} →</span>
         </button>

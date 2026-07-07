@@ -12,14 +12,14 @@ function CodeBlock({ code, label }) {
   return (
     <div className="relative">
       {label && <p className="mb-1.5 text-xs font-medium text-gray-500">{label}</p>}
-      <div className="group relative overflow-hidden rounded-lg border border-[#1A1A24] bg-[#0A0A0F]">
-        <pre className="overflow-x-auto p-4 text-xs leading-relaxed text-[#00F5FF]"><code>{code}</code></pre>
+      <div className="group relative overflow-hidden rounded-lg border border-[#1E1E1F] bg-[#313233]">
+        <pre className="overflow-x-auto p-4 text-xs leading-relaxed text-[#5BA033]"><code>{code}</code></pre>
         <button
           onClick={copy}
-          className="absolute right-2 top-2 rounded border border-[#1A1A24] bg-[#0A0A0F]/80 p-1.5 text-gray-500 opacity-0 backdrop-blur transition-all hover:text-[#00F5FF] group-hover:opacity-100"
+          className="absolute right-2 top-2 rounded border border-[#1E1E1F] bg-[#313233]/80 p-1.5 text-gray-500 opacity-0 backdrop-blur transition-all hover:text-[#5BA033] group-hover:opacity-100"
           aria-label="Copy"
         >
-          {copied ? <Check className="h-3.5 w-3.5 text-[#00F5FF]" /> : <Copy className="h-3.5 w-3.5" />}
+          {copied ? <Check className="h-3.5 w-3.5 text-[#5BA033]" /> : <Copy className="h-3.5 w-3.5" />}
         </button>
       </div>
     </div>
@@ -28,7 +28,7 @@ function CodeBlock({ code, label }) {
 
 function InfoCard({ title, children }) {
   return (
-    <div className="rounded-lg border border-[#1A1A24] bg-[#0F0F14] p-5">
+    <div className="rounded-lg border border-[#1E1E1F] bg-[#3A3A3B] p-5">
       <p className="mb-2 text-sm font-bold text-white">{title}</p>
       <div className="text-sm text-gray-400 leading-relaxed">{children}</div>
     </div>
@@ -37,9 +37,9 @@ function InfoCard({ title, children }) {
 
 function SubSection({ icon: Icon, title, children }) {
   return (
-    <div className="rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-5">
+    <div className="rounded-xl border border-[#1E1E1F] bg-[#313233] p-5">
       <div className="mb-4 flex items-center gap-2">
-        <Icon className="h-4 w-4 text-[#FF0055]" />
+        <Icon className="h-4 w-4 text-[#8B4FE8]" />
         <h3 className="text-sm font-bold text-white">{title}</h3>
       </div>
       <div className="space-y-3">{children}</div>
@@ -50,11 +50,11 @@ function SubSection({ icon: Icon, title, children }) {
 export default function PlaceholderAPISection({ embedded = false }) {
   const t = useT();
   return (
-    <div id="placeholderapi" className={embedded ? "" : "border-t border-[#1A1A24]"}>
+    <div id="placeholderapi" className={embedded ? "" : "border-t border-[#1E1E1F]"}>
       <section className={embedded ? "" : "relative z-10 mx-auto max-w-3xl px-6 py-10"}>
         {!embedded && (
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#1A1A24] bg-[#0F0F14]" style={{ color: "#FF0055" }}>
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-[#1E1E1F] bg-[#3A3A3B]" style={{ color: "#8B4FE8" }}>
               <Type className="h-5 w-5" />
             </div>
             <div>
@@ -93,7 +93,7 @@ export default function PlaceholderAPISection({ embedded = false }) {
 
           {/* Own Stats — Mode Suffix */}
           <SubSection icon={User} title="Own Stats — With Mode Suffix">
-            <p className="text-xs text-gray-500">Append <code className="text-[#00F5FF]">_all</code>, <code className="text-[#00F5FF]">_survival</code>, or <code className="text-[#00F5FF]">_creative</code>:</p>
+            <p className="text-xs text-gray-500">Append <code className="text-[#5BA033]">_all</code>, <code className="text-[#5BA033]">_survival</code>, or <code className="text-[#5BA033]">_creative</code>:</p>
             <CodeBlock code={`%404stats_mined_all%
 %404stats_mined_survival%
 %404stats_mined_creative%
@@ -117,7 +117,7 @@ export default function PlaceholderAPISection({ embedded = false }) {
 
           {/* Other Player — Summary */}
           <SubSection icon={Users} title="Other Player — Full Summary">
-            <p className="text-xs text-gray-500">Use <code className="text-[#00F5FF]">player_&lt;Name&gt;</code> for a complete summary line:</p>
+            <p className="text-xs text-gray-500">Use <code className="text-[#5BA033]">player_&lt;Name&gt;</code> for a complete summary line:</p>
             <CodeBlock code={`%404stats_player_Talonachris%              # #1 Talonachris · 9,999 total · 8,000 mined / 1,999 placed
 %404stats_player_Talonachris_all%          # (All mode)
 %404stats_player_Talonachris_survival%     # (Survival mode)
@@ -126,7 +126,7 @@ export default function PlaceholderAPISection({ embedded = false }) {
 
           {/* Other Player — Single Stat */}
           <SubSection icon={Users} title="Other Player — Single Stat">
-            <p className="text-xs text-gray-500">Use <code className="text-[#00F5FF]">&lt;stat&gt;_player_&lt;Name&gt;</code> for a single value:</p>
+            <p className="text-xs text-gray-500">Use <code className="text-[#5BA033]">&lt;stat&gt;_player_&lt;Name&gt;</code> for a single value:</p>
             <CodeBlock code={`%404stats_mined_player_Talonachris%       # 8000
 %404stats_placed_player_Talonachris%      # 1999
 %404stats_total_player_Talonachris%       # 9999
@@ -157,7 +157,7 @@ export default function PlaceholderAPISection({ embedded = false }) {
 
           {/* Leaderboards — Sort Order */}
           <SubSection icon={Trophy} title="Leaderboards — With Sort Order">
-            <p className="text-xs text-gray-500">Sort by <code className="text-[#00F5FF]">mined</code>, <code className="text-[#00F5FF]">placed</code>, or <code className="text-[#00F5FF]">total</code>:</p>
+            <p className="text-xs text-gray-500">Sort by <code className="text-[#5BA033]">mined</code>, <code className="text-[#5BA033]">placed</code>, or <code className="text-[#5BA033]">total</code>:</p>
             <CodeBlock code={`%404stats_top_mined_1_line%
 %404stats_top_placed_1_line%
 %404stats_top_total_1_line%
@@ -189,9 +189,9 @@ export default function PlaceholderAPISection({ embedded = false }) {
           <SubSection icon={Trophy} title="Leaderboards — Any Rank">
             <CodeBlock code={`%404stats_top_1_*%     ...   %404stats_top_10_*%     ...   %404stats_top_100_*%`} />
             <InfoCard title="Missing ranks (rank > player count)">
-              <code className="text-[#00F5FF]">#5 No player · 0 total · 0 mined / 0 placed</code>
+              <code className="text-[#5BA033]">#5 No player · 0 total · 0 mined / 0 placed</code>
               <br />
-              <code className="text-[#00F5FF]">#5 No player · 0 mined · 0 total · 0 placed</code> <span className="text-gray-500">(when sorted by mined)</span>
+              <code className="text-[#5BA033]">#5 No player · 0 mined · 0 total · 0 placed</code> <span className="text-gray-500">(when sorted by mined)</span>
             </InfoCard>
           </SubSection>
 
@@ -200,11 +200,11 @@ export default function PlaceholderAPISection({ embedded = false }) {
             <p className="text-xs text-gray-500">Suffix order is flexible — the parser recognizes each part regardless of position:</p>
             <CodeBlock code={`%404stats_[stat|top]_[mode?]_[order?]_[player_NAME?]_[rank?]_[line|formatted?]_[mode?]%`} />
             <div className="space-y-1.5 text-xs text-gray-400">
-              <p>• <code className="text-[#00F5FF]">_all</code>, <code className="text-[#00F5FF]">_survival</code>, <code className="text-[#00F5FF]">_creative</code> → Game Mode (any position)</p>
-              <p>• <code className="text-[#00F5FF]">_mined</code>, <code className="text-[#00F5FF]">_placed</code>, <code className="text-[#00F5FF]">_total</code> → Sort order (leaderboards) or stat selection (own stats)</p>
-              <p>• <code className="text-[#00F5FF]">_player_NAME</code> → Target player (name or UUID, any position, only one <code className="text-[#00F5FF]">_player_</code> allowed)</p>
-              <p>• <code className="text-[#00F5FF]">_line</code>, <code className="text-[#00F5FF]">_formatted</code> → Formatted line instead of raw number</p>
-              <p>• <code className="text-[#00F5FF]">_1</code> to <code className="text-[#00F5FF]">_999</code> → Rank (leaderboards)</p>
+              <p>• <code className="text-[#5BA033]">_all</code>, <code className="text-[#5BA033]">_survival</code>, <code className="text-[#5BA033]">_creative</code> → Game Mode (any position)</p>
+              <p>• <code className="text-[#5BA033]">_mined</code>, <code className="text-[#5BA033]">_placed</code>, <code className="text-[#5BA033]">_total</code> → Sort order (leaderboards) or stat selection (own stats)</p>
+              <p>• <code className="text-[#5BA033]">_player_NAME</code> → Target player (name or UUID, any position, only one <code className="text-[#5BA033]">_player_</code> allowed)</p>
+              <p>• <code className="text-[#5BA033]">_line</code>, <code className="text-[#5BA033]">_formatted</code> → Formatted line instead of raw number</p>
+              <p>• <code className="text-[#5BA033]">_1</code> to <code className="text-[#5BA033]">_999</code> → Rank (leaderboards)</p>
             </div>
           </SubSection>
         </div>

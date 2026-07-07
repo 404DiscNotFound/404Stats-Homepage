@@ -26,10 +26,10 @@ export default function FeatureGrid() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {FEATURES.map(({ icon: Icon, key, accent }) => {
-          const color = accent === "cyan" ? "#00F5FF" : "#FF0055";
+          const color = accent === "cyan" ? "#5BA033" : "#8B4FE8";
           return (
-            <div key={key} className="group rounded-xl border border-[#1A1A24] bg-[#0A0A0F] p-6 transition-all hover:border-[#2A2A3A]">
-              <div className="inline-flex rounded-lg border border-[#1A1A24] p-2.5" style={{ boxShadow: `0 0 15px ${color}10` }}>
+            <div key={key} className="group rounded-xl border border-[#1E1E1F] bg-[#313233] p-6 transition-all hover:border-[#48494A]">
+              <div className="inline-flex rounded-lg border border-[#1E1E1F] p-2.5" style={{ boxShadow: `0 0 15px ${color}10` }}>
                 <Icon className="h-5 w-5" style={{ color, filter: `drop-shadow(0 0 4px ${color}80)` }} />
               </div>
               <h3 className="mt-4 text-sm font-bold text-white">{t(`landing.features.${key}`)}</h3>

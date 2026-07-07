@@ -9,11 +9,11 @@ export default function DemoEmbed({ height = "560px", showHeader = true }) {
   const [loaded, setLoaded] = useState(false);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#1A1A24] bg-[#0A0A0F]">
+    <div className="overflow-hidden rounded-2xl border border-[#1E1E1F] bg-[#313233]">
       {showHeader && (
-        <div className="flex items-center justify-between border-b border-[#1A1A24] bg-[#0F0F14] px-4 py-2.5">
+        <div className="flex items-center justify-between border-b border-[#1E1E1F] bg-[#3A3A3B] px-4 py-2.5">
           <div className="flex items-center gap-2">
-            <Monitor className="h-4 w-4 text-[#00F5FF]" />
+            <Monitor className="h-4 w-4 text-[#5BA033]" />
             <span className="text-xs font-bold text-white">{t("demo.label")}</span>
             <span className="hidden text-xs text-gray-600 sm:inline">demo.mcstats.404gnf.de</span>
           </div>
@@ -21,7 +21,7 @@ export default function DemoEmbed({ height = "560px", showHeader = true }) {
             href={DEMO_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-[#00F5FF]"
+            className="inline-flex items-center gap-1 text-xs font-medium text-gray-500 transition-colors hover:text-[#5BA033]"
           >
             {t("demo.openFull")} <ExternalLink className="h-3 w-3" />
           </a>
@@ -29,8 +29,8 @@ export default function DemoEmbed({ height = "560px", showHeader = true }) {
       )}
       <div className="relative w-full" style={{ height }}>
         {!loaded && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#0A0A0F]">
-            <div className="w-8 h-8 border-4 border-[#1A1A24] border-t-[#00F5FF] rounded-full animate-spin" />
+          <div className="absolute inset-0 flex items-center justify-center bg-[#313233]">
+            <div className="w-8 h-8 border-4 border-[#1E1E1F] border-t-[#5BA033] rounded-full animate-spin" />
           </div>
         )}
         <iframe
