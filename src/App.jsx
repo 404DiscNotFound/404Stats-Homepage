@@ -14,6 +14,7 @@ import About from './pages/About';
 import Gallery from './pages/Gallery';
 import HowToUse from './pages/HowToUse';
 import OtherProjects from './pages/OtherProjects';
+import StatsDashboard from './pages/StatsDashboard';
 
 const AuthenticatedApp = () => {
   const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
@@ -47,6 +48,7 @@ const AuthenticatedApp = () => {
       <Route path="/how-to-use" element={<HowToUse />} />
       <Route path="/projects" element={<OtherProjects />} />
       <Route path="/privacy" element={<Privacy />} />
+      <Route path="/stats" element={<StatsDashboard />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
