@@ -1,4 +1,8 @@
-/* Minecraft Pixel Fonts */
+/* Reliable pixel font CDNs */
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap');
+@import url('https://fonts.cdnfonts.com/css/minecraft-3');
+
+/* Minecraft Pixel Fonts (jsDelivr fallback) */
 @font-face {
   font-family: 'MinecraftRegular';
   font-style: normal;
@@ -48,9 +52,9 @@
     /* Radius — always 0px */
     --radius: 0px;
     /* Fonts */
-    --font-heading: 'MinecraftTen', ui-monospace, monospace;
-    --font-body: 'MinecraftRegular', ui-monospace, monospace;
-    --font-display: 'MinecraftTen', ui-monospace, monospace;
+    --font-heading: 'Press Start 2P', 'MinecraftTen', 'Minecraft', monospace;
+    --font-body: 'Minecraft', 'MinecraftRegular', monospace;
+    --font-display: 'Press Start 2P', 'MinecraftTen', monospace;
     --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
     /* Sidebar */
     --sidebar-background: 0 0% 7%;
@@ -104,9 +108,14 @@
     @apply border-border outline-ring/50;
   }
 
+  /* Force all corners to 0px per DESIGN.md */
+  * {
+    border-radius: 0 !important;
+  }
+
   body {
     @apply bg-background text-foreground;
-    font-family: var(--font-body);
+    font-family: var(--font-body) !important;
     font-size: 15px;
     line-height: 1.5;
     -webkit-font-smoothing: none;
@@ -114,11 +123,13 @@
     color-scheme: dark;
   }
 
+  /* Headings: pixel font, 2px letter-spacing, hard text-shadow */
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-heading);
-    letter-spacing: 2px;
-    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35);
-    line-height: 1;
+    font-family: var(--font-heading) !important;
+    font-weight: 400 !important;
+    letter-spacing: 2px !important;
+    line-height: 1.2 !important;
+    text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.35) !important;
   }
 
   img {
